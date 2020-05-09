@@ -8,9 +8,9 @@ namespace BlazorFlow.Data
 {
     public class FlowLink : Edge<FlowNode>
     {
-        public readonly IFlowCondition? FlowCondition;
+        public readonly FlowCondition? FlowCondition;
 
-        public FlowLink(FlowNode fromFlowNode, FlowNode toFlowNode, IFlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
+        public FlowLink(FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
         {
             FlowCondition = flowCondition;
         }

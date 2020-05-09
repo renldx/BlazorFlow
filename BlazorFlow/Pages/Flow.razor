@@ -90,15 +90,13 @@ else
                 {
                     switch (CurrentNode!.FlowNodeType)
                     {
-                        case FlowNodeType.radio: link.FlowCondition.SetUserValue<int>(PageModel.RadioValue);
+                        case FlowNodeType.radio: if (link.FlowCondition.Evaluate(PageModel.RadioValue, null)) availableLinks.Add(link);
                             break;
-                        case FlowNodeType.number: link.FlowCondition.SetUserValue<decimal>(PageModel.NumberValue);
+                        case FlowNodeType.number: if (link.FlowCondition.Evaluate(null, PageModel.NumberValue)) availableLinks.Add(link);
                             break;
                         default:
                             break;
                     }
-
-                    if (link.FlowCondition.Evaluate()) availableLinks.Add(link);
                 }
             }
 

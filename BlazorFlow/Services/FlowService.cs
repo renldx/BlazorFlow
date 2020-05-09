@@ -25,10 +25,10 @@ namespace BlazorFlow.Data
             var node5 = new FlowNode(flowQuestions.First(x => x.FlowQuestionCode == "NOTENOUGH"), FlowNodeType.none);
             var node6 = new FlowNode(flowQuestions.First(x => x.FlowQuestionCode == "END"), FlowNodeType.none);
 
-            var cond1 = new FlowConditionRadio(false);
-            var cond2 = new FlowConditionRadio(true);
-            var cond3 = new FlowConditionNumber(OperationHelper.LessThan<decimal>(), 9000);
-            var cond4 = new FlowConditionNumber(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000);
+            var cond1 = new FlowCondition(0);
+            var cond2 = new FlowCondition(1);
+            var cond3 = new FlowCondition(OperationHelper.LessThan<decimal>(), 9000);
+            var cond4 = new FlowCondition(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000);
 
             var link1 = new FlowLink(node1, node2);
             var link2 = new FlowLink(node2, node3, cond1);
