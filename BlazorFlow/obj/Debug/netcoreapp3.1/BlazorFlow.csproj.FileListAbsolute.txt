@@ -27,8 +27,8 @@ C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\BlazorFlow.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\BlazorFlow.RazorComponent.input.cache
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\App.razor.g.cs
+C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Application.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Error.razor.g.cs
-C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Flow.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\Components\InputRadio.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\RazorDeclaration\Shared\MainLayout.razor.g.cs
@@ -40,8 +40,8 @@ C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\BlazorFlow.TagHelpers.output.cache
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\BlazorFlow.RazorCoreGenerate.cache
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\App.razor.g.cs
+C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Pages\Application.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Pages\Error.razor.g.cs
-C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Pages\Flow.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Pages\Index.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Shared\Components\InputRadio.razor.g.cs
 C:\Users\rene.ledoux\source\repos\BlazorFlow\BlazorFlow\obj\Debug\netcoreapp3.1\Razor\Shared\MainLayout.razor.g.cs

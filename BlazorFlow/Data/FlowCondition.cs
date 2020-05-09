@@ -23,13 +23,19 @@ namespace BlazorFlow.Data
             this.requiredDecimal = requiredDecimal;
         }
 
-        public bool Evaluate(int? userInt = null, decimal? userDecimal = null)
+        public bool Evaluate(int? userInt)
         {
             if (userInt.HasValue && requiredInt.HasValue)
             {
                 return userInt.Value == requiredInt;
             }
-            else if (userDecimal.HasValue && requiredDecimal.HasValue && operation != null)
+
+            return false;
+        }
+
+        public bool Evaluate(decimal? userDecimal)
+        {
+            if (userDecimal.HasValue && requiredDecimal.HasValue && operation != null)
             {
                 return operation(userDecimal.Value, requiredDecimal.Value);
             }

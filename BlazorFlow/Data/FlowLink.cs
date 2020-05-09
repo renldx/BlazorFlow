@@ -10,17 +10,18 @@ namespace BlazorFlow.Data
     {
         public readonly FlowCondition? FlowCondition;
 
-        public FlowLink(FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
+        public FlowLink(int flowLinkId, FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
         {
+            FlowLinkId = flowLinkId;
             FlowCondition = flowCondition;
         }
 
         public int FlowLinkId { get; set; }
         public double FlowLinkVersion { get; set; }
 
-        public bool IsAvailable()
-        {
-            return FlowCondition?.Evaluate() ?? true;
-        }
+        //public bool IsAvailable()
+        //{
+        //    return FlowCondition?.Evaluate() ?? true;
+        //}
     }
 }

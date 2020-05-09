@@ -8,8 +8,9 @@ namespace BlazorFlow.Data
 {
     public class Flow : AdjacencyGraph<FlowNode, FlowLink>
     {
-        public Flow(double flowVersion)
+        public Flow(int flowId, double flowVersion)
         {
+            FlowId = flowId;
             FlowVersion = flowVersion;
         }
         public int FlowId { get; set; }
