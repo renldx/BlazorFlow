@@ -1,32 +1,29 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rene.ledoux\\source\\repos\\BlazorFlow\\BlazorFlow\\BlazorFlow.csproj": {}
+    "/Users/renldx/Source/BlazorFlow/BlazorFlow/BlazorFlow.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rene.ledoux\\source\\repos\\BlazorFlow\\BlazorFlow\\BlazorFlow.csproj": {
+    "/Users/renldx/Source/BlazorFlow/BlazorFlow/BlazorFlow.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rene.ledoux\\source\\repos\\BlazorFlow\\BlazorFlow\\BlazorFlow.csproj",
+        "projectUniqueName": "/Users/renldx/Source/BlazorFlow/BlazorFlow/BlazorFlow.csproj",
         "projectName": "BlazorFlow",
-        "projectPath": "C:\\Users\\rene.ledoux\\source\\repos\\BlazorFlow\\BlazorFlow\\BlazorFlow.csproj",
-        "packagesPath": "C:\\Users\\rene.ledoux\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rene.ledoux\\source\\repos\\BlazorFlow\\BlazorFlow\\obj\\",
+        "projectPath": "/Users/renldx/Source/BlazorFlow/BlazorFlow/BlazorFlow.csproj",
+        "packagesPath": "/Users/renldx/.nuget/packages/",
+        "outputPath": "/Users/renldx/Source/BlazorFlow/BlazorFlow/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\rene.ledoux\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/renldx/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://jade-repos.intra.dev/artifactory/api/nuget/nuget-virtual": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
@@ -69,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.202/RuntimeIdentifierGraph.json"
         }
       }
     }
