@@ -8,6 +8,12 @@ namespace BlazorFlow.Data
 {
     public class FlowNode
     {
+        public int FlowNodeId { get; }
+        public double FlowNodeVersion { get; }
+        public FlowNodeType FlowNodeType { get; }
+        public FlowQuestion FlowQuestion { get; }
+        public FlowAnswer[]? FlowAnswers { get; }
+
         public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowNodeType flowNodeType, FlowAnswer[]? flowAnswers = null)
         {
             FlowNodeId = flowNodeId;
@@ -16,22 +22,13 @@ namespace BlazorFlow.Data
             FlowNodeType = flowNodeType;
             FlowAnswers = flowAnswers;
         }
-
-        public int FlowNodeId { get; set; }
-        public double FlowNodeVersion { get; set; }
-        public FlowNodeType FlowNodeType { get; set; }
-        public FlowQuestion FlowQuestion { get; set; }
-        public FlowAnswer[]? FlowAnswers { get; set; }
     }
 
     public enum FlowNodeType
     {
         none,
-        checkbox,
-        date,
-        dropdown,
-        radio,
-        number,
-        text
+        singleChoice,
+        multiChoice,
+        numberCompare
     }
 }

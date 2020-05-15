@@ -24,22 +24,22 @@ else
     </div>
 
     <div id="answer">
-        @if (CurrentNode.FlowNodeType == FlowNodeType.radio)
+        @if (CurrentNode.FlowNodeType == FlowNodeType.singleChoice)
         {
             if (CurrentNode.FlowAnswers is { } flowAnswers)
             {
                 @foreach (var answer in flowAnswers)
                 {
                     <label class="radio-answer">
-                        <InputRadio name="radio" SelectedValue="int.Parse(answer.FlowAnswerValue!)" @bind-Value="PageModel.RadioValue" />
+                        <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.SingleChoiceValue" />
                         @answer.FlowAnswerTextEn
                     </label>
                 }
             }
         }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.number)
+        else if (CurrentNode.FlowNodeType == FlowNodeType.numberCompare)
         {
-            <InputNumber TValue="decimal" @bind-Value="PageModel.NumberValue"></InputNumber>
+            <InputNumber TValue="decimal?" @bind-Value="PageModel.NumberValue" />
         }
     </div>
 </EditForm>
@@ -59,15 +59,17 @@ else
 }
 
 @code {
-    Flow? CurrentFlow;
+    Flow CurrentFlow = null!;
     FlowNode? CurrentNode;
-    FlowLink[]? CurrentLinks => CurrentFlow!.OutEdges(CurrentNode!).ToArray();
-    UserFlow? UserFlow;
-
-    Model PageModel = new Model();
+    FlowNodeType? CurrentNodeType => CurrentNode?.FlowNodeType;
+    FlowLink[]? CurrentLinks => CurrentFlow.OutEdges(CurrentNode!).ToArray();
+    UserFlow UserFlow = null!;
+    LinkedList<LinkedListNode<UserFlowAnswer>> UserFlowAnswers => UserFlow.UserFlowAnswers;
 
     bool isFirstNode => false;
     bool isLastNode => false;
+
+    Model PageModel = new Model();
 
     protected override async Task OnInitializedAsync()
     {
@@ -79,9 +81,9 @@ else
 
     void next()
     {
-        saveUserFlowAnswer();
+        SaveUserAnswer();
 
-        evaluateLinks();
+        EvaluateLinks();
     }
 
     void previous()
@@ -94,54 +96,52 @@ else
         NavigationManager.NavigateTo("/");
     }
 
-    void saveUserFlowAnswer()
+    void SaveUserAnswer()
     {
         // check if userNode already exists for this flowNode
-        var existingUserNode = UserFlow!.UserFlowAnswers.Where(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
+        var userFlowAnswer = UserFlowAnswers.Where(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId).FirstOrDefault();
+        string[] answerValue;
+
+        switch (CurrentNodeType)
+        {
+            case FlowNodeType.singleChoice:
+                answerValue = new string[] { PageModel.SingleChoiceValue ?? "" };
+                break;
+            case FlowNodeType.numberCompare:
+                answerValue = new string[] { PageModel.NumberValue.ToString() ?? "" };
+                break;
+            default:
+                answerValue = new string[0];
+                break;
+        }
 
         // userNode already exists for this flowNode, compare current answer with existing answer
-        if (existingUserNode.Any())
+        if (userFlowAnswer is {} ufa)
         {
-            // if no differences, do nothing and navigate forward
-
-            // difference found, update current userNode, need to check for changes down the line
+            // difference found, update current userNode
+            if (ufa.Value.UserFlowAnswerValue != answerValue) {
+                userFlowAnswer.Value.UserFlowAnswerValue = answerValue;
+            }
         }
 
         // no userNode exists for this flowNode, create new
         else
         {
-
+             userFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, answerValue));
         }
 
-        LinkedListNode<UserFlowAnswer> newUserNode;
-
-        switch (CurrentNode!.FlowNodeType)
+        if (UserFlowAnswers.Count() == 0)
         {
-            case FlowNodeType.none:
-                newUserNode = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode.FlowNodeId));
-                break;
-            case FlowNodeType.radio:
-                newUserNode = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode.FlowNodeId, PageModel.RadioValue));
-                break;
-            case FlowNodeType.number:
-                newUserNode = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode.FlowNodeId, PageModel.NumberValue));
-                break;
-            default:
-                newUserNode = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, 0));
-                break;
-        }
-
-        if (UserFlow!.UserFlowAnswers.Count() == 0)
-        {
-            UserFlow.UserFlowAnswers.AddFirst(newUserNode);
+            UserFlowAnswers.AddFirst(userFlowAnswer);
         }
         else
         {
+            // Add to the end
             throw new NotImplementedException();
         }
     }
 
-    void evaluateLinks()
+    void EvaluateLinks()
     {
         if (CurrentLinks?.Length == 1)
         {
@@ -149,25 +149,7 @@ else
         }
         else if (CurrentLinks?.Length >= 2)
         {
-            var availableLinks = new List<FlowLink>();
-
-            foreach (var link in CurrentLinks!)
-            {
-                if (link.FlowCondition is { } flowCondition)
-                {
-                    switch (CurrentNode!.FlowNodeType)
-                    {
-                        case FlowNodeType.radio:
-                            if (flowCondition.Evaluate(PageModel.RadioValue)) availableLinks.Add(link);
-                            break;
-                        case FlowNodeType.number:
-                            if (flowCondition.Evaluate(PageModel.NumberValue)) availableLinks.Add(link);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
+            var availableLinks = CurrentLinks.Where(l => l.IsAvailable()).ToList();
 
             if (availableLinks.Count == 1)
             {
@@ -178,10 +160,9 @@ else
 
     public class Model
     {
-        [Range(0, 1)]
-        public int RadioValue { get; set; }
+        public string? SingleChoiceValue { get; set; }
 
-        public decimal NumberValue { get; set; }
+        public decimal? NumberValue { get; set; }
     }
 }
 

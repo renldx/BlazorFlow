@@ -7,6 +7,11 @@ namespace BlazorFlow.Data
 {
     public class FlowQuestion
     {
+        int FlowQuestionId;
+        public string FlowQuestionCode { get; }
+        public string FlowQuestionTextEn { get; }
+        public string FlowQuestionTextFr { get; }
+
         public FlowQuestion(int flowQuestionId, string flowQuestionCode, string flowQuestionTextEn, string flowQuestionTextFr)
         {
             FlowQuestionId = flowQuestionId;
@@ -14,10 +19,5 @@ namespace BlazorFlow.Data
             FlowQuestionTextEn = flowQuestionTextEn;
             FlowQuestionTextFr = flowQuestionTextFr;
         }
-
-        public int FlowQuestionId { get; set; }
-        public string FlowQuestionCode { get; set; }
-        public string FlowQuestionTextEn { get; set; }
-        public string FlowQuestionTextFr { get; set; }
     }
 }

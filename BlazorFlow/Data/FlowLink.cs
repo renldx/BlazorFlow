@@ -8,20 +8,20 @@ namespace BlazorFlow.Data
 {
     public class FlowLink : Edge<FlowNode>
     {
-        public readonly FlowCondition? FlowCondition;
+        int FlowLinkId;
+        public double FlowLinkVersion { get; set; }
+        IFlowCondition? FlowCondition;
 
-        public FlowLink(int flowLinkId, FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
+        public FlowLink(int flowLinkId, double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, IFlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
         {
             FlowLinkId = flowLinkId;
+            FlowLinkVersion = flowLinkVersion;
             FlowCondition = flowCondition;
         }
 
-        public int FlowLinkId { get; set; }
-        public double FlowLinkVersion { get; set; }
-
-        //public bool IsAvailable()
-        //{
-        //    return FlowCondition?.Evaluate() ?? true;
-        //}
+        public bool IsAvailable()
+        {
+           return FlowCondition?.Evaluate() ?? true;
+        }
     }
 }

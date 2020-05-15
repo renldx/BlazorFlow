@@ -7,10 +7,10 @@ namespace BlazorFlow.Data
 {
     public class UserFlow
     {
-        public int UserFlowId { get; set; }
-        public int FlowId { get; set; }
-        public int UserId { get; set; }
-        public LinkedList<LinkedListNode<UserFlowAnswer>> UserFlowAnswers { get; set; }
+        int UserFlowId;
+        public int FlowId { get; }
+        public int UserId { get; }
+        public LinkedList<LinkedListNode<UserFlowAnswer>> UserFlowAnswers { get; }
 
         public UserFlow(int userFlowId, int flowId, int userId)
         {

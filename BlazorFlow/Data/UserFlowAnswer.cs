@@ -7,25 +7,15 @@ namespace BlazorFlow.Data
 {
     public class UserFlowAnswer
     {
-        public UserFlowAnswer(int userFlowAnswerId, int flowNodeId)
+        int UserFlowAnswerId;
+        public int FlowNodeId { get; }
+        public string[]? UserFlowAnswerValue { get; set; }
+
+        public UserFlowAnswer(int userFlowAnswerId, int flowNodeId, string[]? userFlowAnswerValue = null)
         {
             UserFlowAnswerId = userFlowAnswerId;
             FlowNodeId = flowNodeId;
+            UserFlowAnswerValue = userFlowAnswerValue;
         }
-
-        public UserFlowAnswer(int userFlowAnswerId, int flowNodeId, int userFlowAnswerInt) : this(userFlowAnswerId, flowNodeId)
-        {
-            UserFlowAnswerInt = userFlowAnswerInt;
-        }
-
-        public UserFlowAnswer(int userFlowAnswerId, int flowNodeId, decimal userFlowAnswerDecimal) : this(userFlowAnswerId, flowNodeId)
-        {
-            UserFlowAnswerDecimal = userFlowAnswerDecimal;
-        }
-
-        public int UserFlowAnswerId { get; set; }
-        public int FlowNodeId { get; set; }
-        public int? UserFlowAnswerInt { get; set; }
-        public decimal? UserFlowAnswerDecimal { get; set; }
     }
 }
