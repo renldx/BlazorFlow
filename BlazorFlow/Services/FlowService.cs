@@ -25,10 +25,10 @@ namespace BlazorFlow.Data
             var node5 = new FlowNode(5, 1, flowQuestions.First(x => x.FlowQuestionCode == "NOTENOUGH"), FlowNodeType.none);
             var node6 = new FlowNode(6, 1, flowQuestions.First(x => x.FlowQuestionCode == "END"), FlowNodeType.none);
 
-            var cond1 = new FlowConditionMultiChoice(new string[] { "0" });
-            var cond2 = new FlowConditionMultiChoice(new string[] { "1" });
-            var cond3 = new FlowConditionNumberCompare(OperationHelper.LessThan<decimal>(), 9000);
-            var cond4 = new FlowConditionNumberCompare(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000);
+            var cond1 = new FlowCondition(new string[] { "NO" });
+            var cond2 = new FlowCondition(new string[] { "YES" });
+            var cond3 = new FlowCondition(OperationHelper.LessThan<decimal>(), 9000);
+            var cond4 = new FlowCondition(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000);
 
             var link1 = new FlowLink(1, 1, node1, node2);
             var link2 = new FlowLink(2, 1, node2, node3, cond1);
