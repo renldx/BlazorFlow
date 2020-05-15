@@ -82,7 +82,6 @@ else
     void next()
     {
         SaveUserAnswer();
-
         EvaluateLinks();
     }
 
@@ -98,46 +97,25 @@ else
 
     void SaveUserAnswer()
     {
-        // check if userNode already exists for this flowNode
+        string[] newAnswerValue() => CurrentNodeType switch
+        {
+            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue ?? "" },
+            FlowNodeType.numberCompare => new string[] { PageModel.NumberValue.ToString() ?? "" },
+            _ => new string[0]
+        };
+
         var userFlowAnswer = UserFlowAnswers.Where(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId).FirstOrDefault();
-        string[] answerValue;
 
-        switch (CurrentNodeType)
+        if (userFlowAnswer is {} existing)
         {
-            case FlowNodeType.singleChoice:
-                answerValue = new string[] { PageModel.SingleChoiceValue ?? "" };
-                break;
-            case FlowNodeType.numberCompare:
-                answerValue = new string[] { PageModel.NumberValue.ToString() ?? "" };
-                break;
-            default:
-                answerValue = new string[0];
-                break;
-        }
-
-        // userNode already exists for this flowNode, compare current answer with existing answer
-        if (userFlowAnswer is {} ufa)
-        {
-            // difference found, update current userNode
-            if (ufa.Value.UserFlowAnswerValue != answerValue) {
-                userFlowAnswer.Value.UserFlowAnswerValue = answerValue;
+            if (existing.Value.UserFlowAnswerValue != newAnswerValue()) {
+                userFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
             }
         }
-
-        // no userNode exists for this flowNode, create new
         else
         {
-             userFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, answerValue));
-        }
-
-        if (UserFlowAnswers.Count() == 0)
-        {
-            UserFlowAnswers.AddFirst(userFlowAnswer);
-        }
-        else
-        {
-            // Add to the end
-            throw new NotImplementedException();
+            userFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, newAnswerValue()));
+            UserFlowAnswers.AddLast(userFlowAnswer);
         }
     }
 
@@ -149,11 +127,10 @@ else
         }
         else if (CurrentLinks?.Length >= 2)
         {
-            var availableLinks = CurrentLinks.Where(l => l.IsAvailable()).ToList();
+            FlowLink[]? availableLinks;
 
-            if (availableLinks.Count == 1)
-            {
-                CurrentNode = availableLinks[0].Target;
+            foreach (var link in CurrentLinks) {
+                
             }
         }
     }
