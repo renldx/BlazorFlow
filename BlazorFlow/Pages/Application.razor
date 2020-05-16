@@ -1,6 +1,7 @@
 ﻿@page "/application"
 
 @using BlazorFlow.Data
+@using System.ComponentModel.DataAnnotations
 @using BlazorFlow.Helpers
 @using BlazorFlow.Shared.Components
 
@@ -40,6 +41,19 @@ else
         else if (CurrentNode.FlowNodeType == FlowNodeType.numberCompare)
         {
             <InputNumber TValue="decimal?" @bind-Value="PageModel.NumberValue" />
+        }
+        else if (CurrentNode.FlowNodeType == FlowNodeType.multiChoice)
+        {
+            if (CurrentNode.FlowAnswers is { } flowAnswers)
+            {
+                @foreach (var answer in flowAnswers)
+                {
+                    <label class="checkbox-answer">
+                        <input type="checkbox" name="checkbox" checked="@CheckboxIsChecked(answer.FlowAnswerValue)" @onchange="@((e) => CheckboxChanged(answer.FlowAnswerValue, e))" />
+                        @answer.FlowAnswerTextEn
+                    </label>
+                }
+            }
         }
     </div>
 </EditForm>
@@ -101,12 +115,36 @@ else
         NavigationManager.NavigateTo("/");
     }
 
+    // To reconsider page life cycle due to non-populating bug on next
+    bool CheckboxIsChecked(string flowAnswerValue) {
+        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
+            return userFlowAnswer.UserFlowAnswerValue.Contains(flowAnswerValue);
+        }
+
+        return false;
+    }
+
+    // To be improved
+    void CheckboxChanged(string checkboxValue, ChangeEventArgs e) {
+        PageModel.MultiChoiceValues ??= new HashSet<string>();
+        var isChecked = (bool)e.Value;
+
+        if (isChecked && !PageModel.MultiChoiceValues.Contains(checkboxValue)) {
+            PageModel.MultiChoiceValues.Add(checkboxValue);
+        }
+        else if (!isChecked && PageModel.MultiChoiceValues.Contains(checkboxValue)) {
+            PageModel.MultiChoiceValues.Remove(checkboxValue);
+        }
+    }
+
     void SaveAnswer()
     {
+        // To be improved
         string[] newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue ?? "" },
-            FlowNodeType.numberCompare => new string[] { PageModel.NumberValue.ToString() ?? "" },
+            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue!},
+            FlowNodeType.numberCompare => new string[] { PageModel.NumberValue.ToString()!},
+            FlowNodeType.multiChoice => PageModel.MultiChoiceValues.ToArray(),
             _ => new string[0]
         };
 
@@ -146,19 +184,25 @@ else
             // To be improved
             foreach (var link in CurrentLinks) {
                 if (CurrentNodeType == FlowNodeType.singleChoice) {
-                    if (link.FlowCondition!.Evaluate(new string[] { PageModel.SingleChoiceValue ?? string.Empty })) {
+                    if (link.FlowCondition?.Evaluate(PageModel.SingleChoiceValue) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
                 else if (CurrentNodeType == FlowNodeType.numberCompare) {
-                    if (link.FlowCondition!.Evaluate(PageModel.NumberValue ?? default(decimal))) {
+                    if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true) {
+                        availableLinks.Add(link);
+                    }
+                }
+                else if (CurrentNodeType == FlowNodeType.multiChoice) {
+                    if (link.FlowCondition?.Evaluate(PageModel.MultiChoiceValues) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
             }
 
             if (availableLinks.Count > 1) {
-                throw new NotImplementedException();
+                // Go to link with condition since no condition is catch-all
+                CurrentNode = availableLinks.First(l => l.FlowCondition != null).Target;
             }
             else {
                 CurrentNode = availableLinks[0].Target;
@@ -171,6 +215,8 @@ else
         public string? SingleChoiceValue { get; set; }
 
         public decimal? NumberValue { get; set; }
+
+        public HashSet<string>? MultiChoiceValues { get;set; } // To change to HashSet<string>
     }
 }
 
