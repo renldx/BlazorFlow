@@ -1,8 +1,8 @@
 ﻿@page "/application"
 
 @using BlazorFlow.Data
+@using BlazorFlow.Helpers
 @using BlazorFlow.Shared.Components
-@using System.ComponentModel.DataAnnotations
 
 @inject FlowService FlowService
 @inject NavigationManager NavigationManager
@@ -63,11 +63,12 @@ else
     FlowNode? CurrentNode;
     FlowNodeType? CurrentNodeType => CurrentNode?.FlowNodeType;
     FlowLink[]? CurrentLinks => CurrentFlow.OutEdges(CurrentNode!).ToArray();
-    UserFlow UserFlow = null!;
-    LinkedList<LinkedListNode<UserFlowAnswer>> UserFlowAnswers => UserFlow.UserFlowAnswers;
 
-    bool isFirstNode => false;
-    bool isLastNode => false;
+    UserFlow CurrentUserFlow = null!;
+    LinkedListNode<UserFlowAnswer>? CurrentUserFlowAnswer;
+
+    bool isFirstNode => CurrentFlow.Edges.All(l => l.Target != CurrentNode);
+    bool isLastNode => CurrentFlow.IsOutEdgesEmpty(CurrentNode!);
 
     Model PageModel = new Model();
 
@@ -75,8 +76,8 @@ else
     {
         var flowVersion = 1;
         CurrentFlow = await FlowService.GetFlow(flowVersion);
-        CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START");
-        UserFlow = new UserFlow(1, flowVersion, 1);
+        CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
+        CurrentUserFlow = new UserFlow(1, flowVersion, 1);
     }
 
     void Next()
@@ -87,11 +88,12 @@ else
 
     void Previous()
     {
-        var prevUserFlowAnswer = UserFlowAnswers.Where(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId).FirstOrDefault();
+        // User has answered this question before, so there should be an answer that targets this node
+        var prevUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
+        // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer
+        prevUserFlowAnswer ??= CurrentUserFlow.UserFlowAnswers.Last?.Value.FlowNodeId;
 
-        if (prevUserFlowAnswer is { Value: var userFlowAnswer } existing) {
-            CurrentNode = CurrentFlow.Vertices.Where(n => n.FlowNodeId == userFlowAnswer.FlowNodeId).FirstOrDefault();
-        }
+        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswer);
     }
 
     void Submit()
@@ -108,18 +110,26 @@ else
             _ => new string[0]
         };
 
-        var userFlowAnswer = UserFlowAnswers.Where(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId).FirstOrDefault();
+        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
 
-        if (userFlowAnswer is {} existing)
+        if (CurrentUserFlowAnswer is {} existing)
         {
+            // First answer keeps updating
             if (existing.Value.UserFlowAnswerValue != newAnswerValue()) {
-                userFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
+                CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
             }
         }
         else
         {
-            userFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, newAnswerValue()));
-            UserFlowAnswers.AddLast(userFlowAnswer);
+            CurrentUserFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, newAnswerValue()));
+
+            if (CurrentUserFlow.UserFlowAnswers.Any()) {
+                var lastUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Last!;
+                CurrentUserFlow.UserFlowAnswers.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswer);
+            }
+            else {
+                CurrentUserFlow.UserFlowAnswers.AddFirst(CurrentUserFlowAnswer);
+            }
         }
     }
 
@@ -151,7 +161,6 @@ else
                 throw new NotImplementedException();
             }
             else {
-                // To add next / prev to user node
                 CurrentNode = availableLinks[0].Target;
             }
         }
