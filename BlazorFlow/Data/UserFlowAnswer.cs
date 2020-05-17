@@ -10,6 +10,7 @@ namespace BlazorFlow.Data
         int UserFlowAnswerId;
         public int FlowNodeId { get; }
         public string[]? UserFlowAnswerValue { get; set; }
+        public bool isStale { get; set; } = false;
 
         public UserFlowAnswer(int userFlowAnswerId, int flowNodeId, string[]? userFlowAnswerValue = null)
         {

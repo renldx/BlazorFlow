@@ -1,12 +1,11 @@
 ﻿@page "/application"
 
 @using BlazorFlow.Data
-@using System.ComponentModel.DataAnnotations
 @using BlazorFlow.Helpers
 @using BlazorFlow.Shared.Components
 
-@inject FlowService FlowService
 @inject NavigationManager NavigationManager
+@inject FlowService FlowService
 
 <h1>Flow</h1>
 
@@ -16,7 +15,7 @@
 }
 else
 {
-<EditForm Model="PageModel">
+<EditForm Model="@PageModel">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -92,22 +91,26 @@ else
         CurrentFlow = await FlowService.GetFlow(flowVersion);
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
         CurrentUserFlow = new UserFlow(1, flowVersion, 1);
+        SetUserAnswer();
     }
 
     void Next()
     {
         SaveAnswer();
-        EvaluateLinks();
+        var appointedLink = EvaluateLinks();
+        CurrentNode = appointedLink.Target;
+        SetUserAnswer();
     }
 
     void Previous()
     {
         // User has answered this question before, so there should be an answer that targets this node
-        var prevUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
-        // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer
-        prevUserFlowAnswer ??= CurrentUserFlow.UserFlowAnswers.Last?.Value.FlowNodeId;
+        var prevUserFlowAnswerId = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
+        // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
+        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.isStale == false).Last().Value.FlowNodeId;
 
-        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswer);
+        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
+        SetUserAnswer();
     }
 
     void Submit()
@@ -115,13 +118,8 @@ else
         NavigationManager.NavigateTo("/");
     }
 
-    // To reconsider page life cycle due to non-populating bug on next
     bool CheckboxIsChecked(string flowAnswerValue) {
-        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
-            return userFlowAnswer.UserFlowAnswerValue.Contains(flowAnswerValue);
-        }
-
-        return false;
+        return PageModel.MultiChoiceValues?.Contains(flowAnswerValue) ?? false;
     }
 
     // To be improved
@@ -148,13 +146,19 @@ else
             _ => new string[0]
         };
 
-        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
-
         if (CurrentUserFlowAnswer is {} existing)
         {
-            // First answer keeps updating
             if (existing.Value.UserFlowAnswerValue != newAnswerValue()) {
                 CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
+                CurrentUserFlowAnswer.Value.isStale = false;
+            }
+
+            // Set all subsequent userFlowAnswers as stale
+            var nextUserFlowAnswer = CurrentUserFlowAnswer.Next;
+
+            while (nextUserFlowAnswer is {} alsoExisting) {
+                nextUserFlowAnswer.Value.isStale = true;
+                nextUserFlowAnswer = nextUserFlowAnswer.Next;
             }
         }
         else
@@ -171,18 +175,21 @@ else
         }
     }
 
-    void EvaluateLinks()
+    FlowLink EvaluateLinks()
     {
-        if (CurrentLinks?.Length == 1)
-        {
-            CurrentNode = CurrentLinks[0].Target;
+        if (CurrentLinks?.Length == 0) {
+            throw new NotImplementedException();
         }
-        else if (CurrentLinks?.Length >= 2)
+        else if (CurrentLinks?.Length == 1)
+        {
+            return CurrentLinks.First();
+        }
+        else
         {
             var availableLinks = new List<FlowLink>();
 
             // To be improved
-            foreach (var link in CurrentLinks) {
+            foreach (var link in CurrentLinks!) {
                 if (CurrentNodeType == FlowNodeType.singleChoice) {
                     if (link.FlowCondition?.Evaluate(PageModel.SingleChoiceValue) ?? true) {
                         availableLinks.Add(link);
@@ -202,21 +209,44 @@ else
 
             if (availableLinks.Count > 1) {
                 // Go to link with condition since no condition is catch-all
-                CurrentNode = availableLinks.First(l => l.FlowCondition != null).Target;
+                return availableLinks.First(l => l.FlowCondition != null);
             }
             else {
-                CurrentNode = availableLinks[0].Target;
+                return availableLinks.First();
             }
         }
     }
 
+    // To be improved
+    void SetUserAnswer() {
+        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
+
+        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
+            if (CurrentNodeType == FlowNodeType.singleChoice) {
+                PageModel.SingleChoiceValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
+            }
+            else if (CurrentNodeType == FlowNodeType.numberCompare) {
+                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out decimal result);
+
+                if (parsed) {
+                    PageModel.NumberValue = result;
+                }
+            }
+            else if (CurrentNodeType == FlowNodeType.multiChoice) {
+                var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
+                PageModel.MultiChoiceValues = hashSet;
+            }
+        }
+    }
+
+    // To add validation
     public class Model
     {
         public string? SingleChoiceValue { get; set; }
 
         public decimal? NumberValue { get; set; }
 
-        public HashSet<string>? MultiChoiceValues { get;set; } // To change to HashSet<string>
+        public HashSet<string>? MultiChoiceValues { get;set; }
     }
 }
 
