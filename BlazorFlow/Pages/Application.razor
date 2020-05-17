@@ -37,9 +37,9 @@ else
                 }
             }
         }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.numberCompare)
+        else if (CurrentNode.FlowNodeType == FlowNodeType.number)
         {
-            <InputNumber TValue="decimal?" @bind-Value="PageModel.NumberValue" />
+            <InputNumber @bind-Value="PageModel.NumberValue" />
         }
         else if (CurrentNode.FlowNodeType == FlowNodeType.multiChoice)
         {
@@ -53,6 +53,9 @@ else
                     </label>
                 }
             }
+        }
+        else if (CurrentNodeType == FlowNodeType.datetime) {
+            <InputDate @bind-Value="PageModel.DateTimeValue" />
         }
     </div>
 </EditForm>
@@ -140,9 +143,10 @@ else
         // To be improved
         string[] newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue!},
-            FlowNodeType.numberCompare => new string[] { PageModel.NumberValue.ToString()!},
+            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue! },
+            FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
             FlowNodeType.multiChoice => PageModel.MultiChoiceValues.ToArray(),
+            FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
             _ => new string[0]
         };
 
@@ -188,20 +192,25 @@ else
         {
             var availableLinks = new List<FlowLink>();
 
-            // To be improved
+            // To be improved; no condition means automatic pass
             foreach (var link in CurrentLinks!) {
                 if (CurrentNodeType == FlowNodeType.singleChoice) {
                     if (link.FlowCondition?.Evaluate(PageModel.SingleChoiceValue) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.numberCompare) {
+                else if (CurrentNodeType == FlowNodeType.number) {
                     if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
                 else if (CurrentNodeType == FlowNodeType.multiChoice) {
                     if (link.FlowCondition?.Evaluate(PageModel.MultiChoiceValues) ?? true) {
+                        availableLinks.Add(link);
+                    }
+                }
+                else if (CurrentNodeType == FlowNodeType.datetime) {
+                    if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
@@ -225,8 +234,8 @@ else
             if (CurrentNodeType == FlowNodeType.singleChoice) {
                 PageModel.SingleChoiceValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
             }
-            else if (CurrentNodeType == FlowNodeType.numberCompare) {
-                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out decimal result);
+            else if (CurrentNodeType == FlowNodeType.number) {
+                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
 
                 if (parsed) {
                     PageModel.NumberValue = result;
@@ -235,6 +244,13 @@ else
             else if (CurrentNodeType == FlowNodeType.multiChoice) {
                 var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
                 PageModel.MultiChoiceValues = hashSet;
+            }
+            else if (CurrentNodeType == FlowNodeType.datetime) {
+                var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
+
+                if (parsed) {
+                    PageModel.DateTimeValue = result;
+                }
             }
         }
     }
@@ -247,6 +263,9 @@ else
         public decimal? NumberValue { get; set; }
 
         public HashSet<string>? MultiChoiceValues { get;set; }
+
+        // Nullable DateTimes not supported; broken in Safari
+        public DateTime DateTimeValue { get;set; }
     }
 }
 
@@ -259,7 +278,7 @@ else
         min-height: 120px;
     }
 
-    .radio-answer {
+    .radio-answer, .checkbox-answer {
         display: block;
     }
 </style>

@@ -28,7 +28,8 @@ namespace BlazorFlow.Data
     {
         none,
         singleChoice,
+        number,
         multiChoice,
-        numberCompare
+        datetime
     }
 }
