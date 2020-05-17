@@ -7,14 +7,13 @@ namespace BlazorFlow.Data
 {
     public class UserFlowAnswer
     {
-        int UserFlowAnswerId;
+        //int UserFlowAnswerId;
         public int FlowNodeId { get; }
         public string[]? UserFlowAnswerValue { get; set; }
         public bool isStale { get; set; } = false;
 
-        public UserFlowAnswer(int userFlowAnswerId, int flowNodeId, string[]? userFlowAnswerValue = null)
+        public UserFlowAnswer(int flowNodeId, string[]? userFlowAnswerValue = null)
         {
-            UserFlowAnswerId = userFlowAnswerId;
             FlowNodeId = flowNodeId;
             UserFlowAnswerValue = userFlowAnswerValue;
         }

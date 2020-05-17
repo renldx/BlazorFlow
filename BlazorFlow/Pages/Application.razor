@@ -109,8 +109,8 @@ else
         var flowVersion = 1;
         CurrentFlow = await FlowService.GetFlow(flowVersion);
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
-        CurrentUserFlow = new UserFlow(1, flowVersion, 1);
-        SetUserAnswer();
+        CurrentUserFlow = new UserFlow(flowVersion, 1);
+        SetModel();
     }
 
     void Next()
@@ -118,8 +118,7 @@ else
         SaveAnswer();
         var appointedLink = EvaluateLinks();
         CurrentNode = appointedLink.Target;
-        SetUserAnswer();
-        ClearModel();
+        SetModel();
     }
 
     void Previous()
@@ -130,7 +129,7 @@ else
         prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.isStale == false).Last().Value.FlowNodeId;
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
-        SetUserAnswer();
+        SetModel();
     }
 
     void Submit()
@@ -185,7 +184,7 @@ else
         }
         else
         {
-            CurrentUserFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(0, CurrentNode!.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(CurrentNode!.FlowNodeId, newAnswerValue()));
 
             if (CurrentUserFlow.UserFlowAnswers.Any()) {
                 var lastUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Last!;
@@ -245,15 +244,15 @@ else
     }
 
     // To be improved
-    void SetUserAnswer() {
+    void SetModel() {
         CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
 
         if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
             if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
+                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }
             else if (CurrentNodeType == FlowNodeType.number) {
-                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
+                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
                 if (parsed) {
                     PageModel.NumberValue = result;
@@ -264,12 +263,15 @@ else
                 PageModel.CheckboxValues = hashSet;
             }
             else if (CurrentNodeType == FlowNodeType.datetime) {
-                var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
+                var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
                 if (parsed) {
                     PageModel.DateTimeValue = result;
                 }
             }
+        }
+        else {
+            ClearModel();
         }
     }
 

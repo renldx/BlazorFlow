@@ -8,7 +8,7 @@ namespace BlazorFlow.Data
 {
     public class FlowNode
     {
-        public int FlowNodeId { get; }
+        public int FlowNodeId;
         public double FlowNodeVersion { get; }
         public FlowNodeType FlowNodeType { get; }
         public FlowQuestion FlowQuestion { get; }
@@ -30,6 +30,7 @@ namespace BlazorFlow.Data
         radio,
         select,
         number,
+        range,
         checkbox,
         datetime,
         text,

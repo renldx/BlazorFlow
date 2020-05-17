@@ -8,13 +8,12 @@ namespace BlazorFlow.Data
 {
     public class FlowLink : Edge<FlowNode>
     {
-        int FlowLinkId;
-        public double FlowLinkVersion { get; set; }
+        //int FlowLinkId;
+        public double FlowLinkVersion { get; }
         public FlowCondition? FlowCondition { get; }
 
-        public FlowLink(int flowLinkId, double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
+        public FlowLink(double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
         {
-            FlowLinkId = flowLinkId;
             FlowLinkVersion = flowLinkVersion;
             FlowCondition = flowCondition;
         }

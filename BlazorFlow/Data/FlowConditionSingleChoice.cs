@@ -4,7 +4,7 @@ namespace BlazorFlow.Data
 {
     public partial class FlowCondition
     {
-        private string? requiredString {get;set;}
+        private string? requiredString;
 
         public FlowCondition(string requiredString) {
             this.requiredString = requiredString;

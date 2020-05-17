@@ -5,7 +5,7 @@ namespace BlazorFlow.Data
 {
     public partial class FlowCondition
     {
-        private HashSet<string>? requiredStrings {get;set;}
+        private HashSet<string>? requiredStrings;
 
         public FlowCondition(HashSet<string> requiredStrings) {
             this.requiredStrings = requiredStrings;

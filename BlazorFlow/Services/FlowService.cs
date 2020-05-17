@@ -18,7 +18,7 @@ namespace BlazorFlow.Data
             var flowQuestions = BuildFlowQuestions();
             var flowAnswers = BuildFlowAnswers();
 
-            Flow flow = new Flow(1, flowVersion);
+            Flow flow = new Flow(flowVersion);
 
             var node1 = new FlowNode(1, 1, flowQuestions.First(x => x.FlowQuestionCode == "START"), FlowNodeType.none);
             var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "RUREADY"), FlowNodeType.radio, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
@@ -34,21 +34,20 @@ namespace BlazorFlow.Data
 
             var cond1 = new FlowCondition("NO");
             var cond2 = new FlowCondition("YES");
-            var cond3 = new FlowCondition(OperationHelper.LessThan<decimal>(), 9000);
-            var cond4 = new FlowCondition(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000);
+            var cond4 = new FlowCondition(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000, OperationHelper.LessThanOrEqualTo<decimal>(), 10000);
             var cond5 = new FlowCondition(new HashSet<string> { "GOOD", "GREAT", "AMAZING" });
             var cond6 = new FlowCondition(OperationHelper.GreaterThan<DateTime>(), DateTime.Now);
 
-            var link1 = new FlowLink(1, 1, node1, node2);
-            var link2 = new FlowLink(2, 1, node2, node3, cond1);
-            var link3 = new FlowLink(3, 1, node2, node4, cond2);
-            var link4 = new FlowLink(4, 1, node4, node5, cond3);
-            var link5 = new FlowLink(5, 1, node4, node6, cond4);
-            var link6 = new FlowLink(6, 1, node6, node7);
-            var link7 = new FlowLink(7, 1, node6, node8, cond5);
-            var link8 = new FlowLink(8, 1, node8, node9);
-            var link9 = new FlowLink(9, 1, node8, node10, cond6);
-            var link10 = new FlowLink(10, 1, node10, node11);
+            var link1 = new FlowLink(1, node1, node2);
+            var link2 = new FlowLink(1, node2, node3, cond1);
+            var link3 = new FlowLink(1, node2, node4, cond2);
+            var link4 = new FlowLink(1, node4, node5);
+            var link5 = new FlowLink(1, node4, node6, cond4);
+            var link6 = new FlowLink(1, node6, node7);
+            var link7 = new FlowLink(1, node6, node8, cond5);
+            var link8 = new FlowLink(1, node8, node9);
+            var link9 = new FlowLink(1, node8, node10, cond6);
+            var link10 = new FlowLink(1, node10, node11);
 
             flow.AddVertex(node1);
             flow.AddVertex(node2);
@@ -80,17 +79,17 @@ namespace BlazorFlow.Data
         {
             return new FlowQuestion[]
             {
-                new FlowQuestion(1, "START", "Welcome! You're starting a new application.", ""),
-                new FlowQuestion(2, "RUREADY", "Are you ready to rumble?", ""),
-                new FlowQuestion(3, "NOTREADY", "You must be able ready to rumble to continue.", ""),
-                new FlowQuestion(4, "2RUMBLE", "How many times have you rumbled?", ""),
-                new FlowQuestion(5, "NOTENOUGH", "You must have rumbled at least 9000 times to continue.", ""),
-                new FlowQuestion(6, "HOW2RUMBLE", "What are your favorite ways to rumble?", ""),
-                new FlowQuestion(7, "CANTRUMBLE", "You're not rumbling properly...", ""),
-                new FlowQuestion(8, "SINCEWHEN", "Since when can you rumble?", ""),
-                new FlowQuestion(9, "YOUNGRUMBLER", "You haven't been rumbling long enough.", ""),
-                new FlowQuestion(10, "FEEDBACK", "Please leave any feedback below.", ""),
-                new FlowQuestion(11, "END", "Done! Now go away.", "")
+                new FlowQuestion("START", "Welcome! You're starting a new application.", ""),
+                new FlowQuestion("RUREADY", "Are you ready to rumble?", ""),
+                new FlowQuestion("NOTREADY", "You must be able ready to rumble to continue.", ""),
+                new FlowQuestion("2RUMBLE", "How many times have you rumbled?", ""),
+                new FlowQuestion("NOTENOUGH", "You must have rumbled at least 9000 times and less than 10000 times to continue.", ""),
+                new FlowQuestion("HOW2RUMBLE", "What are your favorite ways to rumble?", ""),
+                new FlowQuestion("CANTRUMBLE", "You're not rumbling properly...", ""),
+                new FlowQuestion("SINCEWHEN", "Since when can you rumble?", ""),
+                new FlowQuestion("YOUNGRUMBLER", "You haven't been rumbling long enough.", ""),
+                new FlowQuestion("FEEDBACK", "Please leave any feedback below.", ""),
+                new FlowQuestion("END", "Done! Now go away.", "")
             };
         }
 
@@ -98,13 +97,13 @@ namespace BlazorFlow.Data
         {
             return new FlowAnswer[]
             {
-                new FlowAnswer(1, "YES", "YES", "Yes", "Oui"),
-                new FlowAnswer(2, "NO", "NO", "No", "Non"),
+                new FlowAnswer("YES", "YES", "Yes", "Oui"),
+                new FlowAnswer("NO", "NO", "No", "Non"),
 
-                new FlowAnswer(3, "GOOD", "GOOD", "Good", "Bien"),
-                new FlowAnswer(4, "GREAT", "GREAT", "Great", "Super"),
-                new FlowAnswer(5, "AMAZING", "AMAZING", "Amazing", "Extraordinaire"),
-                new FlowAnswer(6, "BAD", "BAD", "Bad", "Mauvais"),
+                new FlowAnswer("GOOD", "GOOD", "Good", "Bien"),
+                new FlowAnswer("GREAT", "GREAT", "Great", "Super"),
+                new FlowAnswer("AMAZING", "AMAZING", "Amazing", "Extraordinaire"),
+                new FlowAnswer("BAD", "BAD", "Bad", "Mauvais"),
             };
         }
     }
