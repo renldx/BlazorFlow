@@ -24,7 +24,7 @@ else
     </div>
 
     <div id="answer">
-        @if (CurrentNode.FlowNodeType == FlowNodeType.singleChoice)
+        @if (CurrentNode.FlowNodeType == FlowNodeType.radio)
         {
             if (CurrentNode.FlowAnswers is { } flowAnswers)
             {
@@ -37,11 +37,21 @@ else
                 }
             }
         }
+        else if (CurrentNodeType == FlowNodeType.select) {
+            if (CurrentNode.FlowAnswers is { } flowAnswers) {
+                <InputSelect @bind-Value="PageModel.SingleChoiceValue">
+                    <option value="">Select...</option>
+                    @foreach (var answer in flowAnswers) {
+                        <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
+                    }
+                </InputSelect>
+            }
+        }
         else if (CurrentNode.FlowNodeType == FlowNodeType.number)
         {
             <InputNumber @bind-Value="PageModel.NumberValue" />
         }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.multiChoice)
+        else if (CurrentNode.FlowNodeType == FlowNodeType.checkbox)
         {
             if (CurrentNode.FlowAnswers is { } flowAnswers)
             {
@@ -143,9 +153,10 @@ else
         // To be improved
         string[] newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.singleChoice => new string[] { PageModel.SingleChoiceValue! },
+            FlowNodeType.radio => new string[] { PageModel.SingleChoiceValue! },
+            FlowNodeType.select => new string[] { PageModel.SingleChoiceValue! },
             FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
-            FlowNodeType.multiChoice => PageModel.MultiChoiceValues.ToArray(),
+            FlowNodeType.checkbox => PageModel.MultiChoiceValues.ToArray(),
             FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
             _ => new string[0]
         };
@@ -194,7 +205,7 @@ else
 
             // To be improved; no condition means automatic pass
             foreach (var link in CurrentLinks!) {
-                if (CurrentNodeType == FlowNodeType.singleChoice) {
+                if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
                     if (link.FlowCondition?.Evaluate(PageModel.SingleChoiceValue) ?? true) {
                         availableLinks.Add(link);
                     }
@@ -204,7 +215,7 @@ else
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.multiChoice) {
+                else if (CurrentNodeType == FlowNodeType.checkbox) {
                     if (link.FlowCondition?.Evaluate(PageModel.MultiChoiceValues) ?? true) {
                         availableLinks.Add(link);
                     }
@@ -231,7 +242,7 @@ else
         CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
 
         if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
-            if (CurrentNodeType == FlowNodeType.singleChoice) {
+            if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
                 PageModel.SingleChoiceValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
             }
             else if (CurrentNodeType == FlowNodeType.number) {
@@ -241,7 +252,7 @@ else
                     PageModel.NumberValue = result;
                 }
             }
-            else if (CurrentNodeType == FlowNodeType.multiChoice) {
+            else if (CurrentNodeType == FlowNodeType.checkbox) {
                 var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
                 PageModel.MultiChoiceValues = hashSet;
             }

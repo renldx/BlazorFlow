@@ -27,9 +27,10 @@ namespace BlazorFlow.Data
     public enum FlowNodeType
     {
         none,
-        singleChoice,
+        radio,
+        select,
         number,
-        multiChoice,
+        checkbox,
         datetime
     }
 }

@@ -21,11 +21,11 @@ namespace BlazorFlow.Data
             Flow flow = new Flow(1, flowVersion);
 
             var node1 = new FlowNode(1, 1, flowQuestions.First(x => x.FlowQuestionCode == "START"), FlowNodeType.none);
-            var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "RUREADY"), FlowNodeType.singleChoice, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
+            var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "RUREADY"), FlowNodeType.radio, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
             var node3 = new FlowNode(3, 1, flowQuestions.First(x => x.FlowQuestionCode == "NOTREADY"), FlowNodeType.none);
             var node4 = new FlowNode(4, 1, flowQuestions.First(x => x.FlowQuestionCode == "2RUMBLE"), FlowNodeType.number);
             var node5 = new FlowNode(5, 1, flowQuestions.First(x => x.FlowQuestionCode == "NOTENOUGH"), FlowNodeType.none);
-            var node6 = new FlowNode(6, 1, flowQuestions.First(x => x.FlowQuestionCode == "HOW2RUMBLE"), FlowNodeType.multiChoice, new FlowAnswer[] { flowAnswers[2], flowAnswers[3], flowAnswers[4], flowAnswers[5] });
+            var node6 = new FlowNode(6, 1, flowQuestions.First(x => x.FlowQuestionCode == "HOW2RUMBLE"), FlowNodeType.checkbox, new FlowAnswer[] { flowAnswers[2], flowAnswers[3], flowAnswers[4], flowAnswers[5] });
             var node7 = new FlowNode(7, 1, flowQuestions.First(x => x.FlowQuestionCode == "CANTRUMBLE"), FlowNodeType.none);
             var node8 = new FlowNode(8, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINCEWHEN"), FlowNodeType.datetime);
             var node9 = new FlowNode(9, 1, flowQuestions.First(x => x.FlowQuestionCode == "YOUNGRUMBLER"), FlowNodeType.none);
