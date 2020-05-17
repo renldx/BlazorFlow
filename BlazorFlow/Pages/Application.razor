@@ -164,6 +164,8 @@ else
             FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
             FlowNodeType.checkbox => PageModel.CheckboxValues.ToArray(),
             FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
+            FlowNodeType.text => new string[] { PageModel.StringValue! },
+            FlowNodeType.textarea => new string[] { PageModel.StringValue! },
             _ => new string[0]
         };
 
@@ -268,6 +270,9 @@ else
                 if (parsed) {
                     PageModel.DateTimeValue = result;
                 }
+            }
+            else if (CurrentNodeType == FlowNodeType.text || CurrentNodeType == FlowNodeType.textarea) {
+                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }
         }
         else {
