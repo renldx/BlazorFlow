@@ -31,6 +31,8 @@ namespace BlazorFlow.Data
         select,
         number,
         checkbox,
-        datetime
+        datetime,
+        text,
+        textarea
     }
 }

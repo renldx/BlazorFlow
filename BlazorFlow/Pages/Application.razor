@@ -31,7 +31,7 @@ else
                 @foreach (var answer in flowAnswers)
                 {
                     <label class="radio-answer">
-                        <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.SingleChoiceValue" />
+                        <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.StringValue" />
                         @answer.FlowAnswerTextEn
                     </label>
                 }
@@ -39,7 +39,7 @@ else
         }
         else if (CurrentNodeType == FlowNodeType.select) {
             if (CurrentNode.FlowAnswers is { } flowAnswers) {
-                <InputSelect @bind-Value="PageModel.SingleChoiceValue">
+                <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
                     @foreach (var answer in flowAnswers) {
                         <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
@@ -66,6 +66,12 @@ else
         }
         else if (CurrentNodeType == FlowNodeType.datetime) {
             <InputDate @bind-Value="PageModel.DateTimeValue" />
+        }
+        else if (CurrentNodeType == FlowNodeType.text) {
+            <InputText @bind-Value="PageModel.StringValue" />
+        }
+        else if (CurrentNodeType == FlowNodeType.textarea) {
+            <InputTextArea @bind-Value="PageModel.StringValue" />
         }
     </div>
 </EditForm>
@@ -113,6 +119,7 @@ else
         var appointedLink = EvaluateLinks();
         CurrentNode = appointedLink.Target;
         SetUserAnswer();
+        ClearModel();
     }
 
     void Previous()
@@ -132,19 +139,19 @@ else
     }
 
     bool CheckboxIsChecked(string flowAnswerValue) {
-        return PageModel.MultiChoiceValues?.Contains(flowAnswerValue) ?? false;
+        return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
     }
 
     // To be improved
     void CheckboxChanged(string checkboxValue, ChangeEventArgs e) {
-        PageModel.MultiChoiceValues ??= new HashSet<string>();
+        PageModel.CheckboxValues ??= new HashSet<string>();
         var isChecked = (bool)e.Value;
 
-        if (isChecked && !PageModel.MultiChoiceValues.Contains(checkboxValue)) {
-            PageModel.MultiChoiceValues.Add(checkboxValue);
+        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue)) {
+            PageModel.CheckboxValues.Add(checkboxValue);
         }
-        else if (!isChecked && PageModel.MultiChoiceValues.Contains(checkboxValue)) {
-            PageModel.MultiChoiceValues.Remove(checkboxValue);
+        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue)) {
+            PageModel.CheckboxValues.Remove(checkboxValue);
         }
     }
 
@@ -153,10 +160,10 @@ else
         // To be improved
         string[] newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.radio => new string[] { PageModel.SingleChoiceValue! },
-            FlowNodeType.select => new string[] { PageModel.SingleChoiceValue! },
+            FlowNodeType.radio => new string[] { PageModel.StringValue! },
+            FlowNodeType.select => new string[] { PageModel.StringValue! },
             FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
-            FlowNodeType.checkbox => PageModel.MultiChoiceValues.ToArray(),
+            FlowNodeType.checkbox => PageModel.CheckboxValues.ToArray(),
             FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
             _ => new string[0]
         };
@@ -206,7 +213,7 @@ else
             // To be improved; no condition means automatic pass
             foreach (var link in CurrentLinks!) {
                 if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                    if (link.FlowCondition?.Evaluate(PageModel.SingleChoiceValue) ?? true) {
+                    if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
@@ -216,7 +223,7 @@ else
                     }
                 }
                 else if (CurrentNodeType == FlowNodeType.checkbox) {
-                    if (link.FlowCondition?.Evaluate(PageModel.MultiChoiceValues) ?? true) {
+                    if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true) {
                         availableLinks.Add(link);
                     }
                 }
@@ -243,7 +250,7 @@ else
 
         if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
             if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                PageModel.SingleChoiceValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
+                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.First() ?? string.Empty;
             }
             else if (CurrentNodeType == FlowNodeType.number) {
                 var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
@@ -254,7 +261,7 @@ else
             }
             else if (CurrentNodeType == FlowNodeType.checkbox) {
                 var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
-                PageModel.MultiChoiceValues = hashSet;
+                PageModel.CheckboxValues = hashSet;
             }
             else if (CurrentNodeType == FlowNodeType.datetime) {
                 var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.First(), out var result);
@@ -266,14 +273,21 @@ else
         }
     }
 
+    void ClearModel() {
+        PageModel.StringValue = string.Empty;
+        PageModel.NumberValue = default(decimal);
+        PageModel.CheckboxValues?.Clear();
+        PageModel.DateTimeValue = default(DateTime);
+    }
+
     // To add validation
     public class Model
     {
-        public string? SingleChoiceValue { get; set; }
+        public string? StringValue { get; set; }
 
         public decimal? NumberValue { get; set; }
 
-        public HashSet<string>? MultiChoiceValues { get;set; }
+        public HashSet<string>? CheckboxValues { get;set; }
 
         // Nullable DateTimes not supported; broken in Safari
         public DateTime DateTimeValue { get;set; }

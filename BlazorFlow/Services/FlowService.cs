@@ -29,7 +29,8 @@ namespace BlazorFlow.Data
             var node7 = new FlowNode(7, 1, flowQuestions.First(x => x.FlowQuestionCode == "CANTRUMBLE"), FlowNodeType.none);
             var node8 = new FlowNode(8, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINCEWHEN"), FlowNodeType.datetime);
             var node9 = new FlowNode(9, 1, flowQuestions.First(x => x.FlowQuestionCode == "YOUNGRUMBLER"), FlowNodeType.none);
-            var node10 = new FlowNode(10, 1, flowQuestions.First(x => x.FlowQuestionCode == "END"), FlowNodeType.none);
+            var node10 = new FlowNode(10, 1, flowQuestions.First(x => x.FlowQuestionCode == "FEEDBACK"), FlowNodeType.textarea);
+            var node11 = new FlowNode(11, 1, flowQuestions.First(x => x.FlowQuestionCode == "END"), FlowNodeType.none);
 
             var cond1 = new FlowCondition("NO");
             var cond2 = new FlowCondition("YES");
@@ -47,6 +48,7 @@ namespace BlazorFlow.Data
             var link7 = new FlowLink(7, 1, node6, node8, cond5);
             var link8 = new FlowLink(8, 1, node8, node9);
             var link9 = new FlowLink(9, 1, node8, node10, cond6);
+            var link10 = new FlowLink(10, 1, node10, node11);
 
             flow.AddVertex(node1);
             flow.AddVertex(node2);
@@ -58,6 +60,7 @@ namespace BlazorFlow.Data
             flow.AddVertex(node8);
             flow.AddVertex(node9);
             flow.AddVertex(node10);
+            flow.AddVertex(node11);
 
             flow.AddEdge(link1);
             flow.AddEdge(link2);
@@ -68,6 +71,7 @@ namespace BlazorFlow.Data
             flow.AddEdge(link7);
             flow.AddEdge(link8);
             flow.AddEdge(link9);
+            flow.AddEdge(link10);
 
             return flow;
         }
@@ -85,7 +89,8 @@ namespace BlazorFlow.Data
                 new FlowQuestion(7, "CANTRUMBLE", "You're not rumbling properly...", ""),
                 new FlowQuestion(8, "SINCEWHEN", "Since when can you rumble?", ""),
                 new FlowQuestion(9, "YOUNGRUMBLER", "You haven't been rumbling long enough.", ""),
-                new FlowQuestion(10, "END", "Done! Now go away.", "")
+                new FlowQuestion(10, "FEEDBACK", "Please leave any feedback below.", ""),
+                new FlowQuestion(11, "END", "Done! Now go away.", "")
             };
         }
 
