@@ -11,9 +11,9 @@ namespace BlazorFlow.Data
         public string FlowAnswerCode { get; }
         public string FlowAnswerValue { get; }
         public string FlowAnswerTextEn { get; }
-        public string FlowAnswerTextFr { get; }
+        public string? FlowAnswerTextFr { get; }
 
-        public FlowAnswer(string flowAnswerCode, string flowAnswerValue, string flowAnswerTextEn, string flowAnswerTextFr)
+        public FlowAnswer(string flowAnswerCode, string flowAnswerValue, string flowAnswerTextEn, string? flowAnswerTextFr = null)
         {
             FlowAnswerCode = flowAnswerCode;
             FlowAnswerValue = flowAnswerValue;

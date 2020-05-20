@@ -10,9 +10,9 @@ namespace BlazorFlow.Data
         //int FlowQuestionId;
         public string FlowQuestionCode { get; }
         public string FlowQuestionTextEn { get; }
-        public string FlowQuestionTextFr { get; }
+        public string? FlowQuestionTextFr { get; }
 
-        public FlowQuestion(string flowQuestionCode, string flowQuestionTextEn, string flowQuestionTextFr)
+        public FlowQuestion(string flowQuestionCode, string flowQuestionTextEn, string? flowQuestionTextFr = null)
         {
             FlowQuestionCode = flowQuestionCode;
             FlowQuestionTextEn = flowQuestionTextEn;
