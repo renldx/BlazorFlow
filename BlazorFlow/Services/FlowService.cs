@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorFlow.Data;
+using BlazorFlow.Enums;
 using BlazorFlow.Helpers;
 
-namespace BlazorFlow.Data
+namespace BlazorFlow.Services
 {
     public class FlowService
     {
@@ -20,19 +22,19 @@ namespace BlazorFlow.Data
 
             Flow flow = new Flow(flowVersion);
 
-            var node1 = new FlowNode(1, 1, flowQuestions.First(x => x.FlowQuestionCode == "START"), FlowNodeType.none);
-            var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINGLERADIO"), FlowNodeType.radio, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
-            var node3 = new FlowNode(3, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINGLESELECT"), FlowNodeType.select, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
-            var node4 = new FlowNode(4, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADSINGLE"), FlowNodeType.none);
+            var node1 = new FlowNode(1, 1, flowQuestions.First(x => x.FlowQuestionCode == "START"));
+            var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINGLERADIO"), FlowNodeType.radio, FlowNodeEntity.none, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });
+            var node3 = new FlowNode(3, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINGLESELECT"), FlowNodeType.select, FlowNodeEntity.contact);
+            var node4 = new FlowNode(4, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADSINGLE"));
             var node5 = new FlowNode(5, 1, flowQuestions.First(x => x.FlowQuestionCode == "NUMBER"), FlowNodeType.number);
-            var node6 = new FlowNode(6, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADNUMBER"), FlowNodeType.none);
-            var node7 = new FlowNode(7, 1, flowQuestions.First(x => x.FlowQuestionCode == "MULTI"), FlowNodeType.checkbox, new FlowAnswer[] { flowAnswers[2], flowAnswers[3], flowAnswers[4], flowAnswers[5] });
-            var node8 = new FlowNode(8, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADMULTI"), FlowNodeType.none);
+            var node6 = new FlowNode(6, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADNUMBER"));
+            var node7 = new FlowNode(7, 1, flowQuestions.First(x => x.FlowQuestionCode == "MULTI"), FlowNodeType.checkbox, FlowNodeEntity.none, new FlowAnswer[] { flowAnswers[2], flowAnswers[3], flowAnswers[4], flowAnswers[5] });
+            var node8 = new FlowNode(8, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADMULTI"));
             var node9 = new FlowNode(9, 1, flowQuestions.First(x => x.FlowQuestionCode == "DATE"), FlowNodeType.datetime);
-            var node10 = new FlowNode(10, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADDATE"), FlowNodeType.none);
+            var node10 = new FlowNode(10, 1, flowQuestions.First(x => x.FlowQuestionCode == "BADDATE"));
             var node11 = new FlowNode(11, 1, flowQuestions.First(x => x.FlowQuestionCode == "TEXT"), FlowNodeType.text);
             var node12 = new FlowNode(12, 1, flowQuestions.First(x => x.FlowQuestionCode == "TEXTAREA"), FlowNodeType.textarea);
-            var node13 = new FlowNode(13, 1, flowQuestions.First(x => x.FlowQuestionCode == "END"), FlowNodeType.none);
+            var node13 = new FlowNode(13, 1, flowQuestions.First(x => x.FlowQuestionCode == "END"));
 
             var cond1 = new FlowCondition("YES");
             var cond2 = new FlowCondition(OperationHelper.GreaterThanOrEqualTo<decimal>(), 9000, OperationHelper.LessThanOrEqualTo<decimal>(), 10000);
@@ -42,16 +44,15 @@ namespace BlazorFlow.Data
             var link1 = new FlowLink(1, node1, node2);
             var link2 = new FlowLink(1, node2, node3, cond1);
             var link3 = new FlowLink(1, node2, node4);
-            var link4 = new FlowLink(1, node3, node5, cond1);
-            var link5 = new FlowLink(1, node3, node4);
-            var link6 = new FlowLink(1, node5, node7, cond2);
-            var link7 = new FlowLink(1, node5, node6);
-            var link8 = new FlowLink(1, node7, node9, cond3);
-            var link9 = new FlowLink(1, node7, node8);
-            var link10 = new FlowLink(1, node9, node11, cond4);
-            var link11 = new FlowLink(1, node9, node10);
-            var link12 = new FlowLink(1, node11, node12);
-            var link13 = new FlowLink(1, node12, node13);
+            var link4 = new FlowLink(1, node3, node5);
+            var link5 = new FlowLink(1, node5, node7, cond2);
+            var link6 = new FlowLink(1, node5, node6);
+            var link7 = new FlowLink(1, node7, node9, cond3);
+            var link8 = new FlowLink(1, node7, node8);
+            var link9 = new FlowLink(1, node9, node11, cond4);
+            var link10 = new FlowLink(1, node9, node10);
+            var link11 = new FlowLink(1, node11, node12);
+            var link12 = new FlowLink(1, node12, node13);
 
             flow.AddVertex(node1);
             flow.AddVertex(node2);
@@ -79,7 +80,6 @@ namespace BlazorFlow.Data
             flow.AddEdge(link10);
             flow.AddEdge(link11);
             flow.AddEdge(link12);
-            flow.AddEdge(link13);
 
             return flow;
         }
@@ -89,8 +89,8 @@ namespace BlazorFlow.Data
             return new FlowQuestion[]
             {
                 new FlowQuestion("START", "Welcome! You're starting a new application."),
-                new FlowQuestion("SINGLERADIO", "This is a single-choice question, in the form of radio buttons."),
-                new FlowQuestion("SINGLESELECT", "This is another single-choice question, in the form of a drop-down list."),
+                new FlowQuestion("SINGLERADIO", "This is a single-choice question, in the form of radio buttons, representing primitive values."),
+                new FlowQuestion("SINGLESELECT", "This is a single-choice question, in the form of a drop-down list, representing a lookup to an associated entity."),
                 new FlowQuestion("BADSINGLE", "Invalid selection, try again."),
                 new FlowQuestion("NUMBER", "This is a number range check, which needs to be in between 9000 and 10000."),
                 new FlowQuestion("BADNUMBER", "Invalid number, try again."),

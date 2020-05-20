@@ -1,7 +1,9 @@
 ﻿@page "/application"
 
 @using BlazorFlow.Data
+@using BlazorFlow.Enums
 @using BlazorFlow.Helpers
+@using BlazorFlow.Services
 @using BlazorFlow.Shared.Components
 
 @inject NavigationManager NavigationManager
@@ -26,7 +28,7 @@ else
     <div id="answer">
         @if (CurrentNode.FlowNodeType == FlowNodeType.radio)
         {
-            if (CurrentNode.FlowAnswers is { } flowAnswers)
+            if (CurrentNode.FlowAnswers is {} flowAnswers)
             {
                 @foreach (var answer in flowAnswers)
                 {
@@ -38,11 +40,19 @@ else
             }
         }
         else if (CurrentNodeType == FlowNodeType.select) {
-            if (CurrentNode.FlowAnswers is { } flowAnswers) {
+            if (CurrentNode.FlowAnswers is {} flowAnswers) {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
                     @foreach (var answer in flowAnswers) {
                         <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
+                    }
+                </InputSelect>
+            }
+            else if (CurrentNode.FlowNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup) {
+                <InputSelect @bind-Value="PageModel.StringValue">
+                    <option value="">Select...</option>
+                    @foreach (var value in lookup) {
+                        <option value="@value.Key">@value.Value</option>
                     }
                 </InputSelect>
             }
@@ -53,7 +63,7 @@ else
         }
         else if (CurrentNode.FlowNodeType == FlowNodeType.checkbox)
         {
-            if (CurrentNode.FlowAnswers is { } flowAnswers)
+            if (CurrentNode.FlowAnswers is {} flowAnswers)
             {
                 @foreach (var answer in flowAnswers)
                 {
@@ -94,6 +104,7 @@ else
     Flow CurrentFlow = null!;
     FlowNode? CurrentNode;
     FlowNodeType? CurrentNodeType => CurrentNode?.FlowNodeType;
+    FlowNodeEntity? CurrentNodeEntity => CurrentNode?.FlowNodeEntity;
     FlowLink[]? CurrentLinks => CurrentFlow.OutEdges(CurrentNode!).ToArray();
 
     UserFlow CurrentUserFlow = null!;
@@ -247,6 +258,13 @@ else
 
     // To be improved
     void SetModel() {
+        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.none) {
+            PageModel.LookupValues = LookupService.GetLookup(entity);
+        }
+        else {
+            PageModel.LookupValues?.Clear();
+        }
+
         CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
 
         if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
@@ -276,15 +294,11 @@ else
             }
         }
         else {
-            ClearModel();
+            PageModel.StringValue = string.Empty;
+            PageModel.NumberValue = default(decimal);
+            PageModel.CheckboxValues?.Clear();
+            PageModel.DateTimeValue = default(DateTime);
         }
-    }
-
-    void ClearModel() {
-        PageModel.StringValue = string.Empty;
-        PageModel.NumberValue = default(decimal);
-        PageModel.CheckboxValues?.Clear();
-        PageModel.DateTimeValue = default(DateTime);
     }
 
     // To add validation
@@ -294,10 +308,12 @@ else
 
         public decimal? NumberValue { get; set; }
 
-        public HashSet<string>? CheckboxValues { get;set; }
+        public HashSet<string>? CheckboxValues { get; set; }
 
         // Nullable DateTimes not supported; broken in Safari
-        public DateTime DateTimeValue { get;set; }
+        public DateTime DateTimeValue { get; set; }
+
+        public Dictionary<string, string>? LookupValues { get; set; }
     }
 }
 
