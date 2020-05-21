@@ -4,7 +4,8 @@ namespace BlazorFlow.Entities
 {
     public class Contact
     {
-        public Contact(int contactId, string name, DateTime dateOfBirth) {
+        public Contact(int contactId, string name, DateTime dateOfBirth)
+        {
             ContactId = contactId;
             Name = name;
             DateOfBirth = dateOfBirth;

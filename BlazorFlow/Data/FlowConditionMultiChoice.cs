@@ -7,15 +7,19 @@ namespace BlazorFlow.Data
     {
         private HashSet<string>? requiredStrings;
 
-        public FlowCondition(HashSet<string> requiredStrings) {
+        public FlowCondition(HashSet<string> requiredStrings)
+        {
             this.requiredStrings = requiredStrings;
         }
 
-        public bool Evaluate(HashSet<string>? userStrings) {
-            if (userStrings is {} us && requiredStrings is {} rs) {
+        public bool Evaluate(HashSet<string>? userStrings)
+        {
+            if (userStrings is {} us && requiredStrings is {} rs)
+            {
                 return us.SetEquals(rs);
             }
-            else {
+            else
+            {
                 return false;
             }
         }

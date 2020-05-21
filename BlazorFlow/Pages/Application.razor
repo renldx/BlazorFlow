@@ -1,5 +1,6 @@
 ﻿@page "/application"
 
+@using System.ComponentModel.DataAnnotations
 @using BlazorFlow.Data
 @using BlazorFlow.Enums
 @using BlazorFlow.Helpers
@@ -17,7 +18,7 @@
 }
 else
 {
-<EditForm Model="@PageModel">
+<EditForm Model="@PageModel" OnValidSubmit="Next">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -84,20 +85,12 @@ else
             <InputTextArea @bind-Value="PageModel.StringValue" />
         }
     </div>
+
+    <div id="navigation" class="row">
+        <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
+        <button class="btn btn-primary" type="submit">Next</button>
+    </div>
 </EditForm>
-
-<div id="navigation" class="row">
-    <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
-
-    @if (CurrentLinks?.Length == 0)
-    {
-        <button class="btn btn-primary" @onclick="Submit">Submit</button>
-    }
-    else
-    {
-        <button class="btn btn-primary" @onclick="Next">Next</button>
-    }
-</div>
 }
 
 @code {
@@ -128,6 +121,8 @@ else
     {
         SaveAnswer();
         var appointedLink = EvaluateLinks();
+        // if no links, we're at the end
+        // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
         SetModel();
     }
@@ -141,19 +136,17 @@ else
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
         SetModel();
+        StateHasChanged();
     }
 
-    void Submit()
+    bool CheckboxIsChecked(string flowAnswerValue)
     {
-        NavigationManager.NavigateTo("/");
-    }
-
-    bool CheckboxIsChecked(string flowAnswerValue) {
         return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
     }
 
     // To be improved
-    void CheckboxChanged(string checkboxValue, ChangeEventArgs e) {
+    void CheckboxChanged(string checkboxValue, ChangeEventArgs e)
+    {
         PageModel.CheckboxValues ??= new HashSet<string>();
         var isChecked = (bool)e.Value;
 
@@ -182,7 +175,8 @@ else
 
         if (CurrentUserFlowAnswer is {} existing)
         {
-            if (existing.Value.UserFlowAnswerValue != newAnswerValue()) {
+            if (existing.Value.UserFlowAnswerValue != newAnswerValue())
+            {
                 CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
                 CurrentUserFlowAnswer.Value.isStale = false;
             }
@@ -190,7 +184,8 @@ else
             // Set all subsequent userFlowAnswers as stale
             var nextUserFlowAnswer = CurrentUserFlowAnswer.Next;
 
-            while (nextUserFlowAnswer is {} alsoExisting) {
+            while (nextUserFlowAnswer is {} alsoExisting)
+            {
                 nextUserFlowAnswer.Value.isStale = true;
                 nextUserFlowAnswer = nextUserFlowAnswer.Next;
             }
@@ -199,11 +194,13 @@ else
         {
             CurrentUserFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(CurrentNode!.FlowNodeId, newAnswerValue()));
 
-            if (CurrentUserFlow.UserFlowAnswers.Any()) {
+            if (CurrentUserFlow.UserFlowAnswers.Any())
+            {
                 var lastUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Last!;
                 CurrentUserFlow.UserFlowAnswers.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswer);
             }
-            else {
+            else
+            {
                 CurrentUserFlow.UserFlowAnswers.AddFirst(CurrentUserFlowAnswer);
             }
         }
@@ -211,7 +208,8 @@ else
 
     FlowLink EvaluateLinks()
     {
-        if (CurrentLinks?.Length == 0) {
+        if (CurrentLinks?.Length == 0)
+        {
             throw new NotImplementedException();
         }
         else if (CurrentLinks?.Length == 1)
@@ -223,77 +221,100 @@ else
             var availableLinks = new List<FlowLink>();
 
             // To be improved; no condition means automatic pass
-            foreach (var link in CurrentLinks!) {
-                if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                    if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true) {
+            foreach (var link in CurrentLinks!)
+            {
+                if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select)
+                {
+                    if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true)
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.number) {
-                    if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true) {
+                else if (CurrentNodeType == FlowNodeType.number)
+                {
+                    if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true)
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.checkbox) {
-                    if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true) {
+                else if (CurrentNodeType == FlowNodeType.checkbox)
+                {
+                    if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true)
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.datetime) {
-                    if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true) {
+                else if (CurrentNodeType == FlowNodeType.datetime)
+                {
+                    if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true)
+                    {
                         availableLinks.Add(link);
                     }
                 }
             }
 
-            if (availableLinks.Count > 1) {
+            if (availableLinks.Count > 1)
+            {
                 // Go to link with condition since no condition is catch-all
                 return availableLinks.First(l => l.FlowCondition != null);
             }
-            else {
+            else
+            {
                 return availableLinks.First();
             }
         }
     }
 
     // To be improved
-    void SetModel() {
-        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.none) {
+    void SetModel()
+    {
+        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.none)
+        {
             PageModel.LookupValues = LookupService.GetLookup(entity);
         }
-        else {
+        else
+        {
             PageModel.LookupValues?.Clear();
         }
 
         CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
 
-        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
-            if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
+        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing)
+        {
+            if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select)
+            {
                 PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }
-            else if (CurrentNodeType == FlowNodeType.number) {
+            else if (CurrentNodeType == FlowNodeType.number)
+            {
                 var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
-                if (parsed) {
+                if (parsed)
+                {
                     PageModel.NumberValue = result;
                 }
             }
-            else if (CurrentNodeType == FlowNodeType.checkbox) {
+            else if (CurrentNodeType == FlowNodeType.checkbox)
+            {
                 var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
                 PageModel.CheckboxValues = hashSet;
             }
-            else if (CurrentNodeType == FlowNodeType.datetime) {
+            else if (CurrentNodeType == FlowNodeType.datetime)
+            {
                 var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
-                if (parsed) {
+                if (parsed)
+                {
                     PageModel.DateTimeValue = result;
                 }
             }
-            else if (CurrentNodeType == FlowNodeType.text || CurrentNodeType == FlowNodeType.textarea) {
+            else if (CurrentNodeType == FlowNodeType.text || CurrentNodeType == FlowNodeType.textarea)
+            {
                 PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }
         }
-        else {
+        else
+        {
             PageModel.StringValue = string.Empty;
             PageModel.NumberValue = default(decimal);
             PageModel.CheckboxValues?.Clear();

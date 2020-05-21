@@ -6,12 +6,15 @@ namespace BlazorFlow.Data
     {
         private string? requiredString;
 
-        public FlowCondition(string requiredString) {
+        public FlowCondition(string requiredString)
+        {
             this.requiredString = requiredString;
         }
 
-        public bool Evaluate(string? userString) {
-            if (userString is {} us && requiredString is {} rs) {
+        public bool Evaluate(string? userString)
+        {
+            if (userString is {} us && requiredString is {} rs)
+            {
                 return us == rs;
             }
 
