@@ -5,12 +5,12 @@ namespace BlazorFlow.Data
 {
     public partial class FlowCondition
     {
-        private Func<DateTime, DateTime, bool>? dateTimeOperation;
-        private DateTime? requiredDateTime;
+        private readonly Func<DateTime, DateTime, bool>? dateTimeOperation;
+        private readonly DateTime? requiredDateTime;
 
         // Second set of optional parameters used for ranges
-        private Func<DateTime, DateTime, bool>? optionalDateTimeOperation;
-        private DateTime? optionalDateTime;
+        private readonly Func<DateTime, DateTime, bool>? optionalDateTimeOperation;
+        private readonly DateTime? optionalDateTime;
 
         public FlowCondition(Func<DateTime, DateTime, bool> dateTimeOperation, DateTime requiredDateTime, Func<DateTime, DateTime, bool>? optionalDateTimeOperation = null, DateTime? optionalDateTime = null)
         {

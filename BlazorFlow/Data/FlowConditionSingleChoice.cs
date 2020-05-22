@@ -4,7 +4,7 @@ namespace BlazorFlow.Data
 {
     public partial class FlowCondition
     {
-        private string? requiredString;
+        private readonly string? requiredString;
 
         public FlowCondition(string requiredString)
         {

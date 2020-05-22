@@ -132,7 +132,7 @@ else
         // User has answered this question before, so there should be an answer that targets this node
         var prevUserFlowAnswerId = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
         // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
-        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.isStale == false).Last().Value.FlowNodeId;
+        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
         SetModel();
@@ -178,7 +178,7 @@ else
             if (existing.Value.UserFlowAnswerValue != newAnswerValue())
             {
                 CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
-                CurrentUserFlowAnswer.Value.isStale = false;
+                CurrentUserFlowAnswer.Value.IsStale = false;
             }
 
             // Set all subsequent userFlowAnswers as stale
@@ -186,7 +186,7 @@ else
 
             while (nextUserFlowAnswer is {} alsoExisting)
             {
-                nextUserFlowAnswer.Value.isStale = true;
+                nextUserFlowAnswer.Value.IsStale = true;
                 nextUserFlowAnswer = nextUserFlowAnswer.Next;
             }
         }
