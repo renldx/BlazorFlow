@@ -1,12 +1,9 @@
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorFlow.Data
 {
     public class FlowContext : DbContext
     {
-        public FlowContext() : base(nameOrConnectionString: "PostgreSQL")
-        {
-
-        }
+        public DbSet<Flow> Flows { get; set; } = null!;
     }
 }

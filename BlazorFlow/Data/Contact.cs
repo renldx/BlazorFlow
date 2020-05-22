@@ -1,6 +1,6 @@
 using System;
 
-namespace BlazorFlow.Entities
+namespace BlazorFlow.Data
 {
     public class Contact
     {

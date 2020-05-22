@@ -8,14 +8,20 @@ using BlazorFlow.Helpers;
 
 namespace BlazorFlow.Services
 {
-    public class FlowService
+    public class FlowService : IFlowService
     {
-        public Task<Flow> GetFlow(int flowVersion)
+        public async Task<Flow> GetFlow(double flowVersion)
         {
-            return Task.FromResult(BuildFlow(flowVersion));
+            return BuildFlow(flowVersion);
+
+            //using var context = new FlowContext();
+            //return await context.Flows.FirstAsync();
+
+            //var flows = await _context.Flows.ToListAsync();
+            //return flows.FirstOrDefault(f => f.FlowVersion == flowVersion);
         }
 
-        Flow BuildFlow(int flowVersion)
+        Flow BuildFlow(double flowVersion)
         {
             var flowQuestions = BuildFlowQuestions();
             var flowAnswers = BuildFlowAnswers();

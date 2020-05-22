@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BlazorFlow.Data;
 using BlazorFlow.Services;
 
-namespace BlazorFlow
-{
+namespace BlazorFlow {
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -30,6 +24,9 @@ namespace BlazorFlow
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<FlowService>();
+
+            services.AddDbContext<FlowContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
