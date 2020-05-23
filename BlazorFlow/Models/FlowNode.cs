@@ -1,6 +1,6 @@
 ﻿using BlazorFlow.Enums;
 
-namespace BlazorFlow.Data
+namespace BlazorFlow.Models
 {
     public class FlowNode
     {

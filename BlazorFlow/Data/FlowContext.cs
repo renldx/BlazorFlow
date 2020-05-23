@@ -4,6 +4,6 @@ namespace BlazorFlow.Data
 {
     public class FlowContext : DbContext
     {
-        public DbSet<Flow> Flows { get; set; } = null!;
+        public FlowContext(DbContextOptions<FlowContext> options) : base(options) {}
     }
 }

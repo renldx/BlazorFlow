@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BlazorFlow.Data
+namespace BlazorFlow.Models
 {
     public partial class FlowCondition
     {

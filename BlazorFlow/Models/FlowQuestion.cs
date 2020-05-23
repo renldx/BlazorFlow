@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazorFlow.Data
+namespace BlazorFlow.Models
 {
     public class FlowQuestion
     {
