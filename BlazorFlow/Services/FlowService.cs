@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+using BlazorFlow.Data;
 using BlazorFlow.Models;
 using BlazorFlow.Enums;
 using BlazorFlow.Helpers;
@@ -10,23 +13,26 @@ namespace BlazorFlow.Services
 {
     public class FlowService : IFlowService
     {
-        public async Task<Flow> GetFlow(double flowVersion)
-        {
-            return BuildFlow(flowVersion);
+        private readonly FlowContext context;
+        private readonly IMapper mapper;
 
-            //using var context = new FlowContext();
-            //return await context.Flows.FirstAsync();
-
-            //var flows = await _context.Flows.ToListAsync();
-            //return flows.FirstOrDefault(f => f.FlowVersion == flowVersion);
+        public FlowService(FlowContext context, IMapper mapper) {
+            this.context = context;
+            this.mapper = mapper;
         }
 
-        Flow BuildFlow(double flowVersion)
+        public async Task<Models.Flow> GetFlow(int flowId)
+        {
+            var flow = await context.Flows.FindAsync(flowId);
+            return mapper.Map<Models.Flow>(flow);
+        }
+
+        Models.Flow BuildFlow(double flowVersion)
         {
             var flowQuestions = BuildFlowQuestions();
             var flowAnswers = BuildFlowAnswers();
 
-            Flow flow = new Flow(flowVersion);
+            Models.Flow flow = new Models.Flow(flowVersion);
 
             var node1 = new FlowNode(1, 1, flowQuestions.First(x => x.FlowQuestionCode == "START"));
             var node2 = new FlowNode(2, 1, flowQuestions.First(x => x.FlowQuestionCode == "SINGLERADIO"), FlowNodeType.radio, FlowNodeEntity.none, new FlowAnswer[] { flowAnswers[0], flowAnswers[1] });

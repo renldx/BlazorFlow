@@ -110,10 +110,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var flowVersion = 1;
-        CurrentFlow = await FlowService.GetFlow(flowVersion);
+        CurrentFlow = await FlowService.GetFlow(1);
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
-        CurrentUserFlow = new UserFlow(flowVersion, 1);
+        CurrentUserFlow = new UserFlow(1, 1);
         SetModel();
     }
 

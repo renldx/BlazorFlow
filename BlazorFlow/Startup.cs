@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BlazorFlow.Data;
 using BlazorFlow.Services;
+using AutoMapper;
 
 namespace BlazorFlow {
     public class Startup
@@ -23,10 +24,13 @@ namespace BlazorFlow {
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<FlowService>();
+            services.AddScoped<FlowService>();
 
             services.AddDbContext<FlowContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));
+        
+            services.AddAutoMapper(typeof(Startup));
+            services.AddControllersWithViews(); // Not sure if needed
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

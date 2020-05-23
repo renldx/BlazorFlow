@@ -5,6 +5,6 @@ namespace BlazorFlow.Services
 {
     public interface IFlowService
     {
-        Task<Flow> GetFlow(double flowVersion);
+        Task<Flow> GetFlow(int flowId);
     }
 }
