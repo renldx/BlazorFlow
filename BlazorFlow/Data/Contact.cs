@@ -1,6 +1,6 @@
 using System;
 
-namespace BlazorFlow.Models
+namespace BlazorFlow.Data
 {
     public class Contact
     {
@@ -13,7 +13,6 @@ namespace BlazorFlow.Models
         public int ContactId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Name => FirstName + " " + LastName;
         public DateTime DateOfBirth { get; set; }
     }
 }

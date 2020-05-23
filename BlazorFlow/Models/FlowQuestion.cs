@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BlazorFlow.Models
+﻿namespace BlazorFlow.Models
 {
     public class FlowQuestion
     {
-        //int FlowQuestionId;
-        public string FlowQuestionCode { get; }
-        public string FlowQuestionTextEn { get; }
-        public string? FlowQuestionTextFr { get; }
-
         public FlowQuestion(string flowQuestionCode, string flowQuestionTextEn, string? flowQuestionTextFr = null)
         {
             FlowQuestionCode = flowQuestionCode;
             FlowQuestionTextEn = flowQuestionTextEn;
             FlowQuestionTextFr = flowQuestionTextFr;
         }
+
+        public int FlowQuestionId { get; }
+        public string FlowQuestionCode { get; }
+        public string FlowQuestionTextEn { get; }
+        public string? FlowQuestionTextFr { get; }
     }
 }
