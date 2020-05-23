@@ -12,9 +12,9 @@ namespace BlazorFlow.Services
         public static IEnumerable<Contact> GetContacts()
         {
             return new List<Contact>() {
-                new Contact(1, "John Doe", DateTime.Now),
-                new Contact(2, "Eddie Murphy", DateTime.Now),
-                new Contact(3, "Jim Carrey", DateTime.Now)
+                new Contact("John", "Doe"),
+                new Contact("Eddie", "Murphy"),
+                new Contact("Jim", "Carrey")
             };
         }
     }

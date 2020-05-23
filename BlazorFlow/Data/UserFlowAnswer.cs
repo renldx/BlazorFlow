@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace BlazorFlow.Data
 {
     public class UserFlowAnswer
@@ -7,5 +9,6 @@ namespace BlazorFlow.Data
 
         public UserFlow UserFlow { get; set; } = null!;
         public FlowNode FlowNode { get; set; } = null!;
+        public List<UserFlowAnswerValue> UserFlowAnswerValues { get; set; } = null!;
     }
 }

@@ -112,7 +112,7 @@ else
     {
         CurrentFlow = await FlowService.GetFlow(1);
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
-        CurrentUserFlow = new UserFlow(1, 1);
+        CurrentUserFlow = new UserFlow();
         SetModel();
     }
 
