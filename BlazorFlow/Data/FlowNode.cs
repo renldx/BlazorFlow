@@ -8,9 +8,9 @@ namespace BlazorFlow.Data
         public double FlowNodeVersion { get; set; }
 
         public Flow Flow { get; set; } = null!;
-        // FlowNodeType
+        public FlowNodeType FlowNodeType { get; set; }
+        public FlowNodeEntity FlowNodeEntity { get; set; }
         public FlowQuestion FlowQuestion { get; set; } = null!;
         public List<FlowAnswer> FlowAnswers { get; set; } = null!;
-        // FlowNodeEntity
     }
 }
