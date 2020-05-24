@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorFlow.Data
@@ -35,7 +36,14 @@ namespace BlazorFlow.Data
                 .HasConversion(
                     v => v.ToString(),
                     v => (FlowNodeEntity)Enum.Parse(typeof(FlowNodeEntity), v));
-        
+
+            modelBuilder
+                .Entity<FlowConditionValue>()
+                .Property(n => n.FlowConditionValueOperator)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (FlowConditionValueOperator)Enum.Parse(typeof(FlowConditionValueOperator), v));
+
             // Seed Data
 
             modelBuilder
@@ -203,6 +211,60 @@ namespace BlazorFlow.Data
                     new FlowNodeAnswer() { FlowNodeAnswerId = 4, FlowNodeId = 7, FlowAnswerId = 4 },
                     new FlowNodeAnswer() { FlowNodeAnswerId = 5, FlowNodeId = 7, FlowAnswerId = 5 },
                     new FlowNodeAnswer() { FlowNodeAnswerId = 6, FlowNodeId = 7, FlowAnswerId = 6 }
+                });
+
+            modelBuilder
+                .Entity<FlowCondition>()
+                .HasData(new FlowCondition[]
+                {
+                    new FlowCondition() {
+                        FlowConditionId = 1,
+                        FlowConditionValues = new List<FlowConditionValue>()
+                        {
+                            new FlowConditionValue("YES") {
+                                FlowConditionValueId = 1
+                            }
+                        }
+                    },
+                    new FlowCondition() {
+                        FlowConditionId = 2,
+                        FlowConditionValues = new List<FlowConditionValue>()
+                        {
+                            new FlowConditionValue("GOOD") {
+                                FlowConditionValueId = 2
+                            },
+                            new FlowConditionValue("GREAT") {
+                                FlowConditionValueId = 3
+                            },
+                            new FlowConditionValue("AMAZING") {
+                                FlowConditionValueId = 4
+                            }
+                        }
+                    },
+                    new FlowCondition() {
+                        FlowConditionId = 3,
+                        FlowConditionValues = new List<FlowConditionValue>()
+                        {
+                            new FlowConditionValue("9000") {
+                                FlowConditionValueId = 5,
+                                FlowConditionValueOperator = FlowConditionValueOperator.GreaterThan
+                            },
+                            new FlowConditionValue("10000") {
+                                FlowConditionValueId = 6,
+                                FlowConditionValueOperator = FlowConditionValueOperator.LessThan
+                            }
+                        }
+                    },
+                    new FlowCondition() {
+                        FlowConditionId = 4,
+                        FlowConditionValues = new List<FlowConditionValue>()
+                        {
+                            new FlowConditionValue("2025-01-01") {
+                                FlowConditionValueId = 7,
+                                FlowConditionValueOperator = FlowConditionValueOperator.GreaterThanOrEqualTo
+                            }
+                        }
+                    }
                 });
         }
     }
