@@ -506,6 +506,30 @@ namespace BlazorFlow.Data
                         FlowNodeNextId = 13
                     }
                 });
+
+            modelBuilder
+                .Entity<Contact>()
+                .HasData(new Contact[]
+                {
+                    new Contact() {
+                        ContactId = 1,
+                        FirstName = "John",
+                        LastName = "Doe",
+                        DateOfBirth = DateTime.Now
+                    },
+                    new Contact() {
+                        ContactId = 2,
+                        FirstName = "Eddie",
+                        LastName = "Murphy",
+                        DateOfBirth = DateTime.Now
+                    },
+                    new Contact() {
+                        ContactId = 3,
+                        FirstName = "Jim",
+                        LastName = "Carrey",
+                        DateOfBirth = DateTime.Now
+                    }
+                });
         }
     }
 }
