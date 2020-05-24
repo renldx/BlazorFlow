@@ -44,6 +44,10 @@ namespace BlazorFlow.Data
                     v => v.ToString(),
                     v => (FlowConditionValueOperator)Enum.Parse(typeof(FlowConditionValueOperator), v));
 
+            modelBuilder
+                .Entity<FlowNodeAnswer>()
+                .HasKey(fna => new { fna.FlowNodeId, fna.FlowAnswerId });
+
             // Seed Data
 
             modelBuilder
