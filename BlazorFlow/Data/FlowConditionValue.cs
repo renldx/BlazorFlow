@@ -1,5 +1,3 @@
-using BlazorFlow.Enums;
-
 namespace BlazorFlow.Data
 {
     public class FlowConditionValue
