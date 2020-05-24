@@ -60,6 +60,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 1,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("START", "Welcome! You're starting a new application.", "")
@@ -70,6 +71,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 2,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.radio,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("SINGLERADIO", "This is a single-choice question, in the form of radio buttons, representing primitive values.", "")
@@ -80,6 +82,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 3,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.select,
                         FlowNodeEntity = FlowNodeEntity.contact,
                         FlowQuestion = new FlowQuestion("SINGLESELECT", "This is a single-choice question, in the form of a drop-down list, representing a lookup to an associated entity.", "")
@@ -90,6 +93,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 4,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("BADSINGLE", "Invalid selection, try again.", "")
@@ -100,6 +104,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 5,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.number,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("NUMBER", "This is a number range check, which needs to be in between 9000 and 10000.", "")
@@ -110,6 +115,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 6,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("BADNUMBER", "Invalid number, try again.", "")
@@ -120,6 +126,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 7,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.checkbox,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("MULTI", "This is a multi-choice question, in the form of checkboxes.", "")
@@ -130,6 +137,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 8,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("BADMULTI", "Invalid selections, try again.", "")
@@ -140,6 +148,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 9,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.datetime,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("DATE", "This is a date check, which needs to be in the future from now.", "")
@@ -150,6 +159,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 10,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("BADDATE", "Invalid date, try again.", "")
@@ -160,6 +170,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 11,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.text,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("TEXT", "This is a text input box.", "")
@@ -170,6 +181,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 12,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.textarea,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("TEXTAREA", "This is a paragraph input box.", "")
@@ -180,6 +192,7 @@ namespace BlazorFlow.Data
                     new FlowNode() {
                         FlowNodeId = 13,
                         FlowNodeVersion = 1,
+                        Flow = new Flow() { FlowId = 1 },
                         FlowNodeType = FlowNodeType.none,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestion = new FlowQuestion("END", "You've completed the application. Thanks!", "")
@@ -264,6 +277,63 @@ namespace BlazorFlow.Data
                                 FlowConditionValueOperator = FlowConditionValueOperator.GreaterThanOrEqualTo
                             }
                         }
+                    }
+                });
+
+            modelBuilder
+                .Entity<FlowLink>()
+                .HasData(new FlowLink[] {
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 1 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 2 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 2 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 3 },
+                        FlowCondition = new FlowCondition() { FlowConditionId = 1 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 2 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 4 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 3},
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 5 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 5 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 7 },
+                        FlowCondition = new FlowCondition() { FlowConditionId = 2 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 5 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 6 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 7 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 9 },
+                        FlowCondition = new FlowCondition() { FlowConditionId = 3 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 7 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 8 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 9 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 11 },
+                        FlowCondition = new FlowCondition() { FlowConditionId = 4 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 9 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 10 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 11 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 12 }
+                    },
+                    new FlowLink() {
+                        FlowNodePrevious = new FlowNode() { FlowNodeId = 12 },
+                        FlowNodeNext = new FlowNode() { FlowNodeId = 13 }
                     }
                 });
         }

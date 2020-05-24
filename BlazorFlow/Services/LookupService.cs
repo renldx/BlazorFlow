@@ -8,7 +8,7 @@ namespace BlazorFlow.Services
     {
         public static Dictionary<string, string> GetLookup(FlowNodeEntity entity) => entity switch
         {
-            FlowNodeEntity.contact => GetContactLookup(),
+            FlowNodeEntity.Contact => GetContactLookup(),
             _ => throw new NotImplementedException()
         };
 

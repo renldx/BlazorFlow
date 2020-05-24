@@ -27,7 +27,7 @@ else
     </div>
 
     <div id="answer">
-        @if (CurrentNode.FlowNodeType == FlowNodeType.radio)
+        @if (CurrentNode.FlowNodeType == FlowNodeType.Radio)
         {
             if (CurrentNode.FlowAnswers is {} flowAnswers)
             {
@@ -40,7 +40,7 @@ else
                 }
             }
         }
-        else if (CurrentNodeType == FlowNodeType.select) {
+        else if (CurrentNodeType == FlowNodeType.Select) {
             if (CurrentNode.FlowAnswers is {} flowAnswers) {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
@@ -58,11 +58,11 @@ else
                 </InputSelect>
             }
         }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.number)
+        else if (CurrentNode.FlowNodeType == FlowNodeType.Number)
         {
             <InputNumber @bind-Value="PageModel.NumberValue" />
         }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.checkbox)
+        else if (CurrentNode.FlowNodeType == FlowNodeType.Checkbox)
         {
             if (CurrentNode.FlowAnswers is {} flowAnswers)
             {
@@ -75,13 +75,13 @@ else
                 }
             }
         }
-        else if (CurrentNodeType == FlowNodeType.datetime) {
+        else if (CurrentNodeType == FlowNodeType.DateTime) {
             <InputDate @bind-Value="PageModel.DateTimeValue" />
         }
-        else if (CurrentNodeType == FlowNodeType.text) {
+        else if (CurrentNodeType == FlowNodeType.Text) {
             <InputText @bind-Value="PageModel.StringValue" />
         }
-        else if (CurrentNodeType == FlowNodeType.textarea) {
+        else if (CurrentNodeType == FlowNodeType.TextArea) {
             <InputTextArea @bind-Value="PageModel.StringValue" />
         }
     </div>
@@ -162,13 +162,13 @@ else
         // To be improved
         string[] newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.radio => new string[] { PageModel.StringValue! },
-            FlowNodeType.select => new string[] { PageModel.StringValue! },
-            FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
-            FlowNodeType.checkbox => PageModel.CheckboxValues.ToArray(),
-            FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
-            FlowNodeType.text => new string[] { PageModel.StringValue! },
-            FlowNodeType.textarea => new string[] { PageModel.StringValue! },
+            FlowNodeType.Radio => new string[] { PageModel.StringValue! },
+            FlowNodeType.Select => new string[] { PageModel.StringValue! },
+            FlowNodeType.Number => new string[] { PageModel.NumberValue.ToString()! },
+            FlowNodeType.Checkbox => PageModel.CheckboxValues.ToArray(),
+            FlowNodeType.DateTime => new string[] { PageModel.DateTimeValue.ToString()! },
+            FlowNodeType.Text => new string[] { PageModel.StringValue! },
+            FlowNodeType.TextArea => new string[] { PageModel.StringValue! },
             _ => new string[0]
         };
 
@@ -222,28 +222,28 @@ else
             // To be improved; no condition means automatic pass
             foreach (var link in CurrentLinks!)
             {
-                if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select)
+                if (CurrentNodeType == FlowNodeType.Radio || CurrentNodeType == FlowNodeType.Select)
                 {
                     if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true)
                     {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.number)
+                else if (CurrentNodeType == FlowNodeType.Number)
                 {
                     if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true)
                     {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.checkbox)
+                else if (CurrentNodeType == FlowNodeType.Checkbox)
                 {
                     if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true)
                     {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.datetime)
+                else if (CurrentNodeType == FlowNodeType.DateTime)
                 {
                     if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true)
                     {
@@ -267,7 +267,7 @@ else
     // To be improved
     void SetModel()
     {
-        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.none)
+        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.None)
         {
             PageModel.LookupValues = LookupService.GetLookup(entity);
         }
@@ -280,11 +280,11 @@ else
 
         if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing)
         {
-            if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select)
+            if (CurrentNodeType == FlowNodeType.Radio || CurrentNodeType == FlowNodeType.Select)
             {
                 PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }
-            else if (CurrentNodeType == FlowNodeType.number)
+            else if (CurrentNodeType == FlowNodeType.Number)
             {
                 var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
@@ -293,12 +293,12 @@ else
                     PageModel.NumberValue = result;
                 }
             }
-            else if (CurrentNodeType == FlowNodeType.checkbox)
+            else if (CurrentNodeType == FlowNodeType.Checkbox)
             {
                 var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
                 PageModel.CheckboxValues = hashSet;
             }
-            else if (CurrentNodeType == FlowNodeType.datetime)
+            else if (CurrentNodeType == FlowNodeType.DateTime)
             {
                 var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
 
@@ -307,7 +307,7 @@ else
                     PageModel.DateTimeValue = result;
                 }
             }
-            else if (CurrentNodeType == FlowNodeType.text || CurrentNodeType == FlowNodeType.textarea)
+            else if (CurrentNodeType == FlowNodeType.Text || CurrentNodeType == FlowNodeType.TextArea)
             {
                 PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
             }

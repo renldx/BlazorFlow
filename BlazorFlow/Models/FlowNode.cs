@@ -4,7 +4,7 @@ namespace BlazorFlow.Models
 {
     public class FlowNode
     {
-        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowNodeType flowNodeType = FlowNodeType.none, FlowNodeEntity flowNodeEntity = FlowNodeEntity.none, FlowAnswer[]? flowAnswers = null)
+        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowNodeType flowNodeType = FlowNodeType.None, FlowNodeEntity flowNodeEntity = FlowNodeEntity.None, FlowAnswer[]? flowAnswers = null)
         {
             FlowNodeId = flowNodeId;
             FlowNodeVersion = flowNodeVersion;
