@@ -1,3 +1,4 @@
+using System.Linq;
 using AutoMapper;
 
 namespace BlazorFlow.Mappers
@@ -7,7 +8,12 @@ namespace BlazorFlow.Mappers
         public FlowProfile()
         {
             CreateMap<Data.Flow, Models.Flow>();
-            CreateMap<Data.FlowNode, Models.FlowNode>();
+
+            CreateMap<Data.FlowNode, Models.FlowNode>()
+                .ForMember(fnm => fnm.FlowAnswers, opt => opt
+                .MapFrom(fnd => fnd.FlowNodeAnswers
+                .Select(fna => fna.FlowAnswer.FlowAnswerValue)
+                .ToArray()));
         }
     }
 }

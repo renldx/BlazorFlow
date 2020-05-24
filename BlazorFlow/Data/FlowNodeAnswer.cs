@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace BlazorFlow.Data
 {
     public class FlowNodeAnswer
