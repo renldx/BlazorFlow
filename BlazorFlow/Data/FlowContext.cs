@@ -23,18 +23,6 @@ namespace BlazorFlow.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .Entity<Flow>()
-                .HasMany(f => f.FlowNodes)
-                .WithOne(n => n.Flow)
-                .IsRequired(false);
-
-            modelBuilder
-                .Entity<Flow>()
-                .HasMany(f => f.FlowLinks)
-                .WithOne(n => n.Flow)
-                .IsRequired(false);
-
-            modelBuilder
                 .Entity<FlowNode>()
                 .Property(n => n.FlowNodeType)
                 .HasConversion(

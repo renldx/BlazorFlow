@@ -3,15 +3,17 @@ using System;
 using BlazorFlow.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BlazorFlow.Migrations
 {
     [DbContext(typeof(FlowContext))]
-    partial class FlowContextModelSnapshot : ModelSnapshot
+    [Migration("20200524021733_change to required fields")]
+    partial class changetorequiredfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
