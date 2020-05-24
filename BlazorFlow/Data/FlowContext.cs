@@ -9,11 +9,12 @@ namespace BlazorFlow.Data
     
         public DbSet<Flow> Flows { get; set; } = null!;
         public DbSet<FlowNode> FlowNodes { get; set; } = null!;
-        public DbSet<FlowLink> FlowLink { get; set; } = null!;
+        public DbSet<FlowLink> FlowLinks { get; set; } = null!;
         public DbSet<FlowCondition> FlowConditions { get; set; } = null!;
         public DbSet<FlowConditionValue> FlowConditionValues { get; set; } = null!;
         public DbSet<FlowQuestion> FlowQuestions { get; set; } = null!;
         public DbSet<FlowAnswer> FlowAnswers { get; set; } = null!;
+        public DbSet<FlowNodeAnswer> FlowNodeAnswers { get; set; } = null!;
         public DbSet<UserFlow> UserFlows { get; set; } = null!;
         public DbSet<UserFlowAnswer> UserFlowAnswers { get; set; } = null!;
         public DbSet<UserFlowAnswerValue> UserFlowAnswerValues { get; set; } = null!;
@@ -21,17 +22,17 @@ namespace BlazorFlow.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // modelBuilder
-            //     .Entity<Flow>()
-            //     .HasMany(f => f.FlowNodes)
-            //     .WithOne(n => n.Flow)
-            //     .IsRequired(false);
+            modelBuilder
+                .Entity<Flow>()
+                .HasMany(f => f.FlowNodes)
+                .WithOne(n => n.Flow)
+                .IsRequired(false);
 
-            // modelBuilder
-            //     .Entity<Flow>()
-            //     .HasMany(f => f.FlowNodes)
-            //     .WithOne(n => n.Flow)
-            //     .IsRequired(false);
+            modelBuilder
+                .Entity<Flow>()
+                .HasMany(f => f.FlowLinks)
+                .WithOne(n => n.Flow)
+                .IsRequired(false);
 
             modelBuilder
                 .Entity<FlowNode>()

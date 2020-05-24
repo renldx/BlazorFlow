@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace BlazorFlow.Data
 {
     public class FlowNode
@@ -11,6 +9,5 @@ namespace BlazorFlow.Data
         public FlowNodeType FlowNodeType { get; set; }
         public FlowNodeEntity FlowNodeEntity { get; set; }
         public FlowQuestion FlowQuestion { get; set; } = null!;
-        public List<FlowAnswer> FlowAnswers { get; set; } = null!;
     }
 }

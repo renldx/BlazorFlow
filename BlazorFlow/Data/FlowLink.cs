@@ -8,6 +8,6 @@ namespace BlazorFlow.Data
         public Flow Flow { get; set; } = null!;
         public FlowNode FlowNodePrevious { get; set; } = null!;
         public FlowNode FlowNodeNext { get; set; } = null!;
-        public FlowCondition FlowCondition { get; set; } = null!;
+        public FlowCondition? FlowCondition { get; set; }
     }
 }

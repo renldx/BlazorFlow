@@ -3,15 +3,17 @@ using System;
 using BlazorFlow.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BlazorFlow.Migrations
 {
     [DbContext(typeof(FlowContext))]
-    partial class FlowContextModelSnapshot : ModelSnapshot
+    [Migration("20200524012131_optional test")]
+    partial class optionaltest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,7 +82,12 @@ namespace BlazorFlow.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("FlowNodeId")
+                        .HasColumnType("integer");
+
                     b.HasKey("FlowAnswerId");
+
+                    b.HasIndex("FlowNodeId");
 
                     b.ToTable("FlowAnswers");
                 });
@@ -125,7 +132,7 @@ namespace BlazorFlow.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int?>("FlowConditionId")
+                    b.Property<int>("FlowConditionId")
                         .HasColumnType("integer");
 
                     b.Property<int>("FlowId")
@@ -184,28 +191,6 @@ namespace BlazorFlow.Migrations
                     b.HasIndex("FlowQuestionId");
 
                     b.ToTable("FlowNodes");
-                });
-
-            modelBuilder.Entity("BlazorFlow.Data.FlowNodeAnswer", b =>
-                {
-                    b.Property<int>("FlowNodeAnswerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("FlowAnswerId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("FlowNodeId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("FlowNodeAnswerId");
-
-                    b.HasIndex("FlowAnswerId");
-
-                    b.HasIndex("FlowNodeId");
-
-                    b.ToTable("FlowNodeAnswers");
                 });
 
             modelBuilder.Entity("BlazorFlow.Data.FlowQuestion", b =>
@@ -298,6 +283,15 @@ namespace BlazorFlow.Migrations
                     b.ToTable("UserFlowAnswerValues");
                 });
 
+            modelBuilder.Entity("BlazorFlow.Data.FlowAnswer", b =>
+                {
+                    b.HasOne("BlazorFlow.Data.FlowNode", "FlowNode")
+                        .WithMany("FlowAnswers")
+                        .HasForeignKey("FlowNodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BlazorFlow.Data.FlowConditionValue", b =>
                 {
                     b.HasOne("BlazorFlow.Data.FlowCondition", "FlowCondition")
@@ -310,8 +304,10 @@ namespace BlazorFlow.Migrations
             modelBuilder.Entity("BlazorFlow.Data.FlowLink", b =>
                 {
                     b.HasOne("BlazorFlow.Data.FlowCondition", "FlowCondition")
-                        .WithMany()
-                        .HasForeignKey("FlowConditionId");
+                        .WithMany("FlowLinks")
+                        .HasForeignKey("FlowConditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BlazorFlow.Data.Flow", "Flow")
                         .WithMany("FlowLinks")
@@ -339,21 +335,6 @@ namespace BlazorFlow.Migrations
                     b.HasOne("BlazorFlow.Data.FlowQuestion", "FlowQuestion")
                         .WithMany("FlowNodes")
                         .HasForeignKey("FlowQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BlazorFlow.Data.FlowNodeAnswer", b =>
-                {
-                    b.HasOne("BlazorFlow.Data.FlowAnswer", "FlowAnswer")
-                        .WithMany()
-                        .HasForeignKey("FlowAnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlazorFlow.Data.FlowNode", "FlowNode")
-                        .WithMany()
-                        .HasForeignKey("FlowNodeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
