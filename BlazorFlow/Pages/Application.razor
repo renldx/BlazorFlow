@@ -39,19 +39,24 @@ else
                 }
             }
         }
-        else if (CurrentNodeType == FlowNodeType.Select) {
-            if (CurrentNode.FlowAnswers is {} flowAnswers) {
+        else if (CurrentNodeType == FlowNodeType.Select)
+        {
+            if (CurrentNode.FlowAnswers is {} flowAnswers)
+            {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
-                    @foreach (var answer in flowAnswers) {
+                    @foreach (var answer in flowAnswers)
+                    {
                         <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
                     }
                 </InputSelect>
             }
-            else if (CurrentNode.FlowNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup) {
+            else if (CurrentNode.FlowNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup)
+            {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
-                    @foreach (var value in lookup) {
+                    @foreach (var value in lookup)
+                    {
                         <option value="@value.Key">@value.Value</option>
                     }
                 </InputSelect>
@@ -74,13 +79,16 @@ else
                 }
             }
         }
-        else if (CurrentNodeType == FlowNodeType.DateTime) {
+        else if (CurrentNodeType == FlowNodeType.DateTime)
+        {
             <InputDate @bind-Value="PageModel.DateTimeValue" />
         }
-        else if (CurrentNodeType == FlowNodeType.Text) {
+        else if (CurrentNodeType == FlowNodeType.Text)
+        {
             <InputText @bind-Value="PageModel.StringValue" />
         }
-        else if (CurrentNodeType == FlowNodeType.TextArea) {
+        else if (CurrentNodeType == FlowNodeType.TextArea)
+        {
             <InputTextArea @bind-Value="PageModel.StringValue" />
         }
     </div>
@@ -148,10 +156,12 @@ else
         PageModel.CheckboxValues ??= new HashSet<string>();
         var isChecked = (bool)e.Value;
 
-        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue)) {
+        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue))
+        {
             PageModel.CheckboxValues.Add(checkboxValue);
         }
-        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue)) {
+        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue))
+        {
             PageModel.CheckboxValues.Remove(checkboxValue);
         }
     }

@@ -11,7 +11,8 @@ namespace BlazorFlow.Services
     {
         public static IEnumerable<Contact> GetContacts()
         {
-            return new List<Contact>() {
+            return new List<Contact>()
+            {
                 new Contact("John", "Doe"),
                 new Contact("Eddie", "Murphy"),
                 new Contact("Jim", "Carrey")

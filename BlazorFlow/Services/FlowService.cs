@@ -1,7 +1,7 @@
 ﻿
 using System.Threading.Tasks;
-using AutoMapper;
 using BlazorFlow.Data;
+using AutoMapper;
 
 namespace BlazorFlow.Services
 {
@@ -10,7 +10,8 @@ namespace BlazorFlow.Services
         private readonly FlowContext context;
         private readonly IMapper mapper;
 
-        public FlowService(FlowContext context, IMapper mapper) {
+        public FlowService(FlowContext context, IMapper mapper)
+        {
             this.context = context;
             this.mapper = mapper;
         }

@@ -10,10 +10,10 @@
             FlowAnswerTextFr = flowAnswerTextFr;
         }
 
-        public int FlowAnswerId { get; }
-        public string FlowAnswerCode { get; }
-        public string FlowAnswerValue { get; }
-        public string FlowAnswerTextEn { get; }
-        public string? FlowAnswerTextFr { get; }
+        public int FlowAnswerId { get; set; }
+        public string FlowAnswerCode { get; set; }
+        public string FlowAnswerValue { get; set; }
+        public string FlowAnswerTextEn { get; set; }
+        public string? FlowAnswerTextFr { get; set; }
     }
 }

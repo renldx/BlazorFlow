@@ -4,8 +4,10 @@ namespace BlazorFlow.Mappers
 {
     public class FlowProfile : Profile
     {
-        public FlowProfile() {
+        public FlowProfile()
+        {
             CreateMap<Data.Flow, Models.Flow>();
+            CreateMap<Data.FlowNode, Models.FlowNode>();
         }
     }
 }

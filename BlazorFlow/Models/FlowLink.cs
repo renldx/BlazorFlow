@@ -11,7 +11,7 @@ namespace BlazorFlow.Models
         }
 
         public int FlowLinkId { get; set; }
-        public double FlowLinkVersion { get; }
-        public FlowCondition? FlowCondition { get; }
+        public double FlowLinkVersion { get; set; }
+        public FlowCondition? FlowCondition { get; set; }
     }
 }

@@ -14,7 +14,7 @@ namespace BlazorFlow.Models
         }
         
         public int UserFlowAnswerId { get; set; }
-        public int FlowNodeId { get; }
+        public int FlowNodeId { get; set; }
         public string[]? UserFlowAnswerValue { get; set; }
         public bool IsStale { get; set; } = false;
     }

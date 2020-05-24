@@ -164,7 +164,8 @@ namespace BlazorFlow.Data
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 1
                     },
-                    new FlowNode() {
+                    new FlowNode()
+                    {
                         FlowNodeId = 2,
                         FlowNodeVersion = 1,
                         FlowId = 1,
@@ -190,7 +191,8 @@ namespace BlazorFlow.Data
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 4
                     },
-                    new FlowNode() {
+                    new FlowNode()
+                    {
                         FlowNodeId = 5,
                         FlowNodeVersion = 1,
                         FlowId = 1,
@@ -358,34 +360,40 @@ namespace BlazorFlow.Data
                         FlowConditionValueString = "YES",
                         FlowConditionId = 1
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 2,
                         FlowConditionValueString = "GOOD",
                         FlowConditionId = 2
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 3,
                         FlowConditionValueString = "GREAT",
                         FlowConditionId = 2
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 4,
                         FlowConditionValueString = "AMAZING",
                         FlowConditionId = 2
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 5,
                         FlowConditionValueString = "9000",
                         FlowConditionId = 3,
                         FlowConditionValueOperator = FlowConditionValueOperator.GreaterThan
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 6,
                         FlowConditionValueString = "10000",
                         FlowConditionId = 3,
                         FlowConditionValueOperator = FlowConditionValueOperator.LessThan
                     },
-                    new FlowConditionValue() {
+                    new FlowConditionValue()
+                    {
                         FlowConditionValueId = 7,
                         FlowConditionValueString = "2025-01-01",
                         FlowConditionId = 4,
