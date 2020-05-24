@@ -9,5 +9,7 @@ namespace BlazorFlow.Data
 
         public int FlowConditionValueId { get; set; }
         public string FlowConditionValueString { get; set; }
+
+        public FlowCondition FlowCondition { get; set; } = null!;
     }
 }

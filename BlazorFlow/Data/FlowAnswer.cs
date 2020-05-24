@@ -15,5 +15,7 @@ namespace BlazorFlow.Data
         public string FlowAnswerValue { get; set; }
         public string FlowAnswerTextEn { get; set; }
         public string FlowAnswerTextFr { get; set; }
+
+        public FlowNode FlowNode { get; set; } = null!;
     }
 }
