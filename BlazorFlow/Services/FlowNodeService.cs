@@ -28,8 +28,6 @@ namespace BlazorFlow.Services
         {
             var nodes = await context.FlowNodes
                 .Where(n => n.FlowId == flowId)
-                .Include(n => n.FlowNodeAnswers)
-                .ThenInclude(n => n.FlowAnswer)
                 .ToListAsync();
             return mapper.Map<List<Models.FlowNode>>(nodes);
         }
