@@ -14,6 +14,8 @@ namespace BlazorFlow.Mappers
                 .MapFrom(fnd => fnd.FlowNodeAnswers
                 .Select(fna => fna.FlowAnswer.FlowAnswerValue)
                 .ToArray()));
+
+            CreateMap<Data.FlowLink, Models.FlowLink>();
         }
     }
 }

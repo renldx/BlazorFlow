@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using BlazorFlow.Data;
@@ -6,7 +7,7 @@ using AutoMapper;
 
 namespace BlazorFlow.Services
 {
-    public class FlowNodeService : IFlowNodeService
+    public class FlowNodeService
     {
         private readonly FlowContext context;
         private readonly IMapper mapper;
@@ -17,29 +18,20 @@ namespace BlazorFlow.Services
             this.mapper = mapper;
         }
 
-        public async Task<List<Models.FlowNode>> GetFlowNodes()
-        {
-            var nodes = await context.FlowNodes
-                .ToListAsync();
-            return mapper.Map<List<Models.FlowNode>>(nodes);
-        }
-
         public async Task<Models.FlowNode> GetFlowNode(int flowNodeId)
         {
-            var node = await context.FlowNodes
-                .Include(n => n.FlowNodeAnswers)
-                .ThenInclude(n => n.FlowAnswer)
-                .FirstOrDefaultAsync(n => n.FlowNodeId == flowNodeId);
+            var node = await context.FlowNodes.FindAsync(flowNodeId);
             return mapper.Map<Models.FlowNode>(node);
         }
 
-        public async Task<Models.FlowNode> GetStartingFlowNode(int flowId)
+        public async Task<List<Models.FlowNode>> GetFlowNodes(int flowId)
         {
-            var node = await context.FlowNodes
+            var nodes = await context.FlowNodes
+                .Where(n => n.FlowId == flowId)
                 .Include(n => n.FlowNodeAnswers)
                 .ThenInclude(n => n.FlowAnswer)
-                .SingleOrDefaultAsync(n => n.FlowId == flowId);
-            return mapper.Map<Models.FlowNode>(node);
+                .ToListAsync();
+            return mapper.Map<List<Models.FlowNode>>(nodes);
         }
     }
 }

@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BlazorFlow.Models;
 
 namespace BlazorFlow.Services
 {
     public interface IFlowNodeService
     {
-        Task<List<FlowNode>> GetFlowNodes();
+        Task<Models.FlowNode> GetFlowNode(int flowNodeId);
 
-        Task<FlowNode> GetFlowNode(int nodeId);
-
-        Task<FlowNode> GetStartingFlowNode(int flowId);
+        Task<List<Models.FlowNode>> GetFlowNodes(int flowId);
     }
 }
