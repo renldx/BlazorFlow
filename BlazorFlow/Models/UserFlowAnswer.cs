@@ -7,7 +7,7 @@ namespace BlazorFlow.Models
 {
     public class UserFlowAnswer
     {
-        public UserFlowAnswer(int flowNodeId, string[]? userFlowAnswerValue = null)
+        public UserFlowAnswer(int flowNodeId, List<string> userFlowAnswerValue = null)
         {
             FlowNodeId = flowNodeId;
             UserFlowAnswerValue = userFlowAnswerValue;
@@ -15,7 +15,7 @@ namespace BlazorFlow.Models
         
         public int UserFlowAnswerId { get; set; }
         public int FlowNodeId { get; set; }
-        public string[]? UserFlowAnswerValue { get; set; }
+        public List<string> UserFlowAnswerValue { get; set; }
         public bool IsStale { get; set; } = false;
     }
 }

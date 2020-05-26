@@ -28,6 +28,7 @@ namespace BlazorFlow.Services
         {
             var links = await context.FlowLinks
                 .Where(l => l.FlowId == flowId)
+                .Include(l => l.FlowLinkCondition)
                 .ToListAsync();
             return mapper.Map<List<Models.FlowLink>>(links);
         }

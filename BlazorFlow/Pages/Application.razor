@@ -120,7 +120,7 @@ else
     {
         var flow = await FlowService.GetFlow(1);
         var flowId = flow.FlowId;
-        var nodes = await FlowNodeService.GetFlowNodes(flowId); // questions and answers not populating
+        var nodes = await FlowNodeService.GetFlowNodes(flowId);
         var links = await FlowLinkService.GetFlowLinks(flowId); // conditions not populating
 
         if (flow is {} existingFlow) {
@@ -193,16 +193,16 @@ else
     void SaveAnswer()
     {
         // To be improved
-        string[] newAnswerValue() => CurrentNodeType switch
+        List<string> newAnswerValue() => CurrentNodeType switch
         {
-            FlowNodeType.Radio => new string[] { PageModel.StringValue! },
-            FlowNodeType.Select => new string[] { PageModel.StringValue! },
-            FlowNodeType.Number => new string[] { PageModel.NumberValue.ToString()! },
-            FlowNodeType.Checkbox => PageModel.CheckboxValues.ToArray(),
-            FlowNodeType.DateTime => new string[] { PageModel.DateTimeValue.ToString()! },
-            FlowNodeType.Text => new string[] { PageModel.StringValue! },
-            FlowNodeType.TextArea => new string[] { PageModel.StringValue! },
-            _ => new string[0]
+            FlowNodeType.Radio => new List<string> { PageModel.StringValue! },
+            FlowNodeType.Select => new List<string> { PageModel.StringValue! },
+            FlowNodeType.Number => new List<string> { PageModel.NumberValue.ToString()! },
+            FlowNodeType.Checkbox => PageModel.CheckboxValues.ToList(),
+            FlowNodeType.DateTime => new List<string> { PageModel.DateTimeValue.ToString()! },
+            FlowNodeType.Text => new List<string> { PageModel.StringValue! },
+            FlowNodeType.TextArea => new List<string> { PageModel.StringValue! },
+            _ => new List<string>()
         };
 
         if (CurrentUserFlowAnswer is {} existing)

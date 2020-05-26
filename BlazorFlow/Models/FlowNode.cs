@@ -1,8 +1,10 @@
-﻿namespace BlazorFlow.Models
+﻿using System.Collections.Generic;
+
+namespace BlazorFlow.Models
 {
     public class FlowNode
     {
-        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowNodeType flowNodeType = FlowNodeType.None, FlowNodeEntity flowNodeEntity = FlowNodeEntity.None, FlowAnswer[]? flowAnswers = null)
+        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowNodeType flowNodeType = FlowNodeType.None, FlowNodeEntity flowNodeEntity = FlowNodeEntity.None, List<FlowAnswer> flowAnswers = null)
         {
             FlowNodeId = flowNodeId;
             FlowNodeVersion = flowNodeVersion;
@@ -17,6 +19,6 @@
         public FlowNodeType FlowNodeType { get; set; }
         public FlowNodeEntity FlowNodeEntity { get; set; }
         public FlowQuestion FlowQuestion { get; set; }
-        public FlowAnswer[]? FlowAnswers { get; set; }
+        public List<FlowAnswer> FlowAnswers { get; set; }
     }
 }
