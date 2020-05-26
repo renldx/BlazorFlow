@@ -25,6 +25,8 @@ namespace BlazorFlow {
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<FlowService>();
+            services.AddScoped<FlowNodeService>();
+            services.AddScoped<FlowLinkService>();
 
             services.AddDbContext<FlowContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")));

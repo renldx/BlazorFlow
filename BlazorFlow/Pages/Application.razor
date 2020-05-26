@@ -8,6 +8,8 @@
 
 @inject NavigationManager NavigationManager
 @inject FlowService FlowService
+@inject FlowNodeService FlowNodeService
+@inject FlowLinkService FlowLinkService
 
 <h1>Flow</h1>
 
@@ -105,8 +107,7 @@ else
     FlowNode? CurrentNode;
     FlowNodeType? CurrentNodeType => CurrentNode?.FlowNodeType;
     FlowNodeEntity? CurrentNodeEntity => CurrentNode?.FlowNodeEntity;
-    FlowLink[]? CurrentLinks => CurrentFlow.OutEdges(CurrentNode!).ToArray();
-
+    FlowLink[]? CurrentLinks => CurrentNode is null ? new FlowLink[0] : CurrentFlow.OutEdges(CurrentNode!).ToArray();
     UserFlow CurrentUserFlow = null!;
     LinkedListNode<UserFlowAnswer>? CurrentUserFlowAnswer;
 
@@ -117,9 +118,32 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        CurrentFlow = await FlowService.GetFlow(1);
+        var flow = await FlowService.GetFlow(1);
+        var flowId = flow.FlowId;
+        var nodes = await FlowNodeService.GetFlowNodes(flowId); // questions and answers not populating
+        var links = await FlowLinkService.GetFlowLinks(flowId); // conditions not populating
+
+        if (flow is {} existingFlow) {
+            CurrentFlow = existingFlow;
+        }
+        else {
+            throw new Exception();
+        }
+
+        if (nodes is {} existingNodes && existingNodes.Any())
+        {
+            CurrentFlow.AddVertexRange(existingNodes);
+        }
+
+        if (links is {} existingLinks && existingLinks.Any())
+        {
+            CurrentFlow.AddEdgeRange(existingLinks);
+        }
+
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
+
         CurrentUserFlow = new UserFlow();
+
         SetModel();
     }
 
