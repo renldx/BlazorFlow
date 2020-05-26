@@ -11,7 +11,7 @@ namespace BlazorFlow.Data
         public Flow Flow { get; set; } = null!;
         public int FlowQuestionId { get; set; }
         public FlowQuestion FlowQuestion { get; set; } = null!;
-        public FlowNodeType FlowNodeType { get; set; }
+        public FlowValueType FlowNodeType { get; set; }
         public FlowNodeEntity FlowNodeEntity { get; set; }
         public List<FlowNodeAnswer> FlowNodeAnswers { get; set; } = null!;
     }

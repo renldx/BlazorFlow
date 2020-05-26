@@ -1,6 +1,6 @@
 namespace BlazorFlow.Data
 {
-    public enum FlowNodeType
+    public enum FlowValueType
     {
         none,
         radio,
