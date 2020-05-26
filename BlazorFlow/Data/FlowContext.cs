@@ -12,7 +12,7 @@ namespace BlazorFlow.Data
         public DbSet<FlowNode> FlowNodes { get; set; } = null!;
         public DbSet<FlowLink> FlowLinks { get; set; } = null!;
         public DbSet<FlowLinkCondition> FlowLinkConditions { get; set; } = null!;
-        public DbSet<FlowConditionValue> FlowConditionValues { get; set; } = null!;
+        public DbSet<FlowCondition> FlowConditions { get; set; } = null!;
         public DbSet<FlowQuestion> FlowQuestions { get; set; } = null!;
         public DbSet<FlowAnswer> FlowAnswers { get; set; } = null!;
         public DbSet<FlowNodeAnswer> FlowNodeAnswers { get; set; } = null!;
@@ -38,11 +38,11 @@ namespace BlazorFlow.Data
                     v => (FlowNodeEntity)Enum.Parse(typeof(FlowNodeEntity), v));
 
             modelBuilder
-                .Entity<FlowConditionValue>()
-                .Property(n => n.FlowConditionValueOperator)
+                .Entity<FlowCondition>()
+                .Property(n => n.FlowConditionOperator)
                 .HasConversion(
                     v => v.ToString(),
-                    v => (FlowConditionValueOperator)Enum.Parse(typeof(FlowConditionValueOperator), v));
+                    v => (FlowConditionOperator)Enum.Parse(typeof(FlowConditionOperator), v));
 
             modelBuilder
                 .Entity<FlowNodeAnswer>()
@@ -355,53 +355,53 @@ namespace BlazorFlow.Data
                 });
 
             modelBuilder
-                .Entity<FlowConditionValue>()
-                .HasData(new FlowConditionValue[]
+                .Entity<FlowCondition>()
+                .HasData(new FlowCondition[]
                 {
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 1,
-                        FlowConditionValueString = "YES",
+                        FlowConditionId = 1,
+                        FlowConditionValue = "YES",
                         FlowLinkConditionId = 1
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 2,
-                        FlowConditionValueString = "GOOD",
+                        FlowConditionId = 2,
+                        FlowConditionValue = "GOOD",
                         FlowLinkConditionId = 2
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 3,
-                        FlowConditionValueString = "GREAT",
+                        FlowConditionId = 3,
+                        FlowConditionValue = "GREAT",
                         FlowLinkConditionId = 2
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 4,
-                        FlowConditionValueString = "AMAZING",
+                        FlowConditionId = 4,
+                        FlowConditionValue = "AMAZING",
                         FlowLinkConditionId = 2
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 5,
-                        FlowConditionValueString = "9000",
+                        FlowConditionId = 5,
+                        FlowConditionValue = "9000",
                         FlowLinkConditionId = 3,
-                        FlowConditionValueOperator = FlowConditionValueOperator.GreaterThan
+                        FlowConditionOperator = FlowConditionOperator.GreaterThan
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 6,
-                        FlowConditionValueString = "10000",
+                        FlowConditionId = 6,
+                        FlowConditionValue = "10000",
                         FlowLinkConditionId = 3,
-                        FlowConditionValueOperator = FlowConditionValueOperator.LessThan
+                        FlowConditionOperator = FlowConditionOperator.LessThan
                     },
-                    new FlowConditionValue()
+                    new FlowCondition()
                     {
-                        FlowConditionValueId = 7,
-                        FlowConditionValueString = "2025-01-01",
+                        FlowConditionId = 7,
+                        FlowConditionValue = "2025-01-01",
                         FlowLinkConditionId = 4,
-                        FlowConditionValueOperator = FlowConditionValueOperator.GreaterThanOrEqualTo
+                        FlowConditionOperator = FlowConditionOperator.GreaterThanOrEqualTo
                     }
                 });
 

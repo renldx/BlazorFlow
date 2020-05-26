@@ -1,6 +1,6 @@
 namespace BlazorFlow.Models
 {
-    public enum FlowConditionValueOperator
+    public enum FlowConditionOperator
     {
         None,
         LessThan,
