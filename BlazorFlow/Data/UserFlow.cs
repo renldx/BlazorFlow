@@ -8,6 +8,6 @@ namespace BlazorFlow.Data
         public int UserId { get; set; }
 
         public Flow Flow { get; set; } = null!;
-        public List<UserFlowAnswer> UserFlowAnswers { get; set; } = null!;
+        public List<UserFlowNode> UserFlowNodes { get; set; } = null!;
     }
 }

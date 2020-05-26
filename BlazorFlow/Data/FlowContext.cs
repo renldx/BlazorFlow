@@ -17,8 +17,8 @@ namespace BlazorFlow.Data
         public DbSet<FlowAnswer> FlowAnswers { get; set; } = null!;
         public DbSet<FlowNodeAnswer> FlowNodeAnswers { get; set; } = null!;
         public DbSet<UserFlow> UserFlows { get; set; } = null!;
+        public DbSet<UserFlowNode> UserFlowNodes { get; set; } = null!;
         public DbSet<UserFlowAnswer> UserFlowAnswers { get; set; } = null!;
-        public DbSet<UserFlowAnswerValue> UserFlowAnswerValues { get; set; } = null!;
         public DbSet<Contact> Contacts { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
