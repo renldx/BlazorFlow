@@ -11,7 +11,7 @@ namespace BlazorFlow.Data
         public FlowNode FlowNodePrevious { get; set; } = null!;
         public int FlowNodeNextId { get; set; }
         public FlowNode FlowNodeNext { get; set; } = null!;
-        public int? FlowConditionId { get; set; }
-        public FlowCondition? FlowCondition { get; set; }
+        public int? FlowLinkConditionId { get; set; }
+        public FlowLinkCondition? FlowLinkCondition { get; set; }
     }
 }
