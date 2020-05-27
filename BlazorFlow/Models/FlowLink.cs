@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using QuikGraph;
 
 namespace BlazorFlow.Models
 {
     public class FlowLink : Edge<FlowNode>
     {
-        public FlowLink(double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, List<IFlowCondition> flowConditions = null!) : base(fromFlowNode, toFlowNode)
+        public FlowLink(double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, List<FlowCondition> flowConditions = null!) : base(fromFlowNode, toFlowNode)
         {
             FlowLinkVersion = flowLinkVersion;
             FlowConditions = flowConditions;
@@ -13,12 +14,12 @@ namespace BlazorFlow.Models
 
         public int FlowLinkId { get; set; }
         public double FlowLinkVersion { get; set; }
-        public List<IFlowCondition> FlowConditions { get; set; }
+        public List<FlowCondition> FlowConditions { get; set; }
 
-        public bool IsAvailable() {
+        public bool IsAvailable(IComparable userValue) {
             foreach (var condition in FlowConditions)
             {
-                if (condition.Evaluate() == false)
+                if (condition.Evaluate(userValue) == false)
                 {
                     return false;
                 }

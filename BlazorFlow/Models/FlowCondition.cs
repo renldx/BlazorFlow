@@ -2,24 +2,18 @@ using System;
 
 namespace BlazorFlow.Models
 {
-    public interface IFlowCondition
+    public class FlowCondition
     {
-        bool Evaluate();
-    }
+        private readonly Func<IComparable, IComparable, bool> operation;
+        private readonly IComparable requiredValue;
 
-    public class FlowCondition<T, U> : IFlowCondition where T : IComparable where U : IComparable
-    {
-        private readonly Func<T, T, bool> operation;
-        private readonly T requiredValue;
-        private T userValue = default(T);
-
-        public FlowCondition(Func<T, T, bool> operation, T requiredValue)
+        public FlowCondition(Func<IComparable, IComparable, bool> operation, IComparable requiredValue)
         {
             this.operation = operation;
             this.requiredValue = requiredValue;
         }
 
-        public bool Evaluate()
+        public bool Evaluate(IComparable userValue)
         {
             if (userValue is {} uv && operation is {} op && requiredValue is {} rv)
             {

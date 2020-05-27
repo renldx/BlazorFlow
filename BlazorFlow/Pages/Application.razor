@@ -253,13 +253,12 @@ else
             var availableLinks = new List<FlowLink>();
 
             // To be improved; no condition means automatic pass
-            // To fix conditions
             foreach (var link in CurrentLinks!)
             {
                 if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
                 {
                     //if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true)
-                    if (link.FlowConditions[0].Evaluate())
+                    if (link.IsAvailable(PageModel.StringValue!))
                     {
                         availableLinks.Add(link);
                     }
@@ -267,7 +266,7 @@ else
                 else if (CurrentNodeType == FlowValueType.Number)
                 {
                     //if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true)
-                    if (link.FlowConditions[0].Evaluate())
+                    if (link.IsAvailable(PageModel.NumberValue!))
                     {
                         availableLinks.Add(link);
                     }
@@ -275,15 +274,14 @@ else
                 else if (CurrentNodeType == FlowValueType.Checkbox)
                 {
                     //if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true)
-                    if (link.FlowConditions[0].Evaluate())
-                    {
-                        availableLinks.Add(link);
-                    }
+                    //{
+                        //availableLinks.Add(link);
+                    //}
                 }
                 else if (CurrentNodeType == FlowValueType.DateTime)
                 {
                     //if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true)
-                    if (link.FlowConditions[0].Evaluate())
+                    if (link.IsAvailable(PageModel.DateTimeValue))
                     {
                         availableLinks.Add(link);
                     }
@@ -293,7 +291,6 @@ else
             if (availableLinks.Count > 1)
             {
                 // Go to link with condition since no condition is catch-all
-                //return availableLinks.First(l => l.FlowCondition != null);
                 return availableLinks.First(l => l.FlowConditions != null);
             }
             else
