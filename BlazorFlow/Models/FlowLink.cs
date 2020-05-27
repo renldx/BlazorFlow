@@ -14,5 +14,17 @@ namespace BlazorFlow.Models
         public int FlowLinkId { get; set; }
         public double FlowLinkVersion { get; set; }
         public List<IFlowCondition> FlowConditions { get; set; }
+
+        public bool IsAvailable() {
+            foreach (var condition in FlowConditions)
+            {
+                if (condition.Evaluate() == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

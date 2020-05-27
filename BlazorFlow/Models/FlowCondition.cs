@@ -7,22 +7,16 @@ namespace BlazorFlow.Models
         bool Evaluate();
     }
 
-    public class FlowCondition<T> : IFlowCondition where T : IComparable
+    public class FlowCondition<T, U> : IFlowCondition where T : IComparable where U : IComparable
     {
         private readonly Func<T, T, bool> operation;
         private readonly T requiredValue;
-        private T userValue;
+        private T userValue = default(T);
 
         public FlowCondition(Func<T, T, bool> operation, T requiredValue)
         {
             this.operation = operation;
             this.requiredValue = requiredValue;
-            userValue = default(T);
-        }
-
-        public void SetUserValue(T userValue)
-        {
-            this.userValue = userValue;
         }
 
         public bool Evaluate()
