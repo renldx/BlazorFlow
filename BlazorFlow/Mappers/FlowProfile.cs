@@ -12,17 +12,29 @@ namespace BlazorFlow.Mappers
             CreateMap<Data.FlowAnswer, Models.FlowAnswer>();
 
             CreateMap<Data.FlowNode, Models.FlowNode>()
-                .ForMember(fnm => fnm.FlowQuestion, opt => opt
-                .MapFrom(s => s.FlowQuestion))
+                .ForMember(m => m.FlowQuestion, opt => opt
+                .MapFrom(d => d.FlowQuestion))
                 
-                .ForMember(fnm => fnm.FlowAnswers, opt => opt
-                .MapFrom(fnd => fnd.FlowNodeAnswers
-                .Select(x => x.FlowAnswer)));
+                .ForMember(m => m.FlowAnswers, opt => opt
+                .MapFrom(d => d.FlowNodeAnswers
+                .Select(s => s.FlowAnswer)));
+
+            // convert operators
+            // convert values depending on type
+
+            CreateMap<Data.FlowCondition, Models.FlowCondition>()
+                .ConstructUsing((d, c) => new Models.FlowCondition());
 
             CreateMap<Data.FlowLink, Models.FlowLink>()
                 .ConstructUsing((l, c) => new Models.FlowLink(l.FlowLinkVersion,
                     c.Mapper.Map<Models.FlowNode>(l.FlowNodePrevious),
-                    c.Mapper.Map<Models.FlowNode>(l.FlowNodeNext)));
+                    c.Mapper.Map<Models.FlowNode>(l.FlowNodeNext)))
+
+                .ForMember(m => m.Source, opt => opt
+                .MapFrom(d => d.FlowNodePrevious))
+
+                .ForMember(m => m.Target, opt => opt
+                .MapFrom(d => d.FlowNodeNext));
         }
     }
 }

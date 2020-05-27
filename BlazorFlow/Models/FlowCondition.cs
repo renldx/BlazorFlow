@@ -13,6 +13,8 @@ namespace BlazorFlow.Models
             this.requiredValue = requiredValue;
         }
 
+        public int FlowConditionId { get; set; }
+
         public bool Evaluate(IComparable userValue)
         {
             if (userValue is {} uv && operation is {} op && requiredValue is {} rv)
