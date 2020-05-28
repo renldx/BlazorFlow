@@ -1,5 +1,7 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using BlazorFlow.Data;
 using AutoMapper;
 
@@ -19,6 +21,24 @@ namespace BlazorFlow.Services
         public async Task<Models.Flow> GetFlow(int flowId)
         {
             var flow = await context.Flows.FindAsync(flowId);
+            var flowModel = mapper.Map<Models.Flow>(flow);
+            
+            var nodes = await context.FlowNodes
+                .Where(n => n.FlowId == flowId)
+                .ToListAsync();
+
+            var nodeModels = mapper.Map<List<Models.FlowNode>>(nodes);
+
+            flowModel.AddVertexRange(nodeModels);
+
+            var links = await context.FlowLinks
+                .Where(n => n.FlowId == flow.FlowId)
+                .ToListAsync();
+
+            var linkModels = mapper.Map<List<Models.FlowLink>>(links);
+
+            flowModel.AddEdgeRange(linkModels);
+
             return mapper.Map<Models.Flow>(flow);
         }
     }

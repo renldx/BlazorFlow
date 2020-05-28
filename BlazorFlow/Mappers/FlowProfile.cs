@@ -19,11 +19,8 @@ namespace BlazorFlow.Mappers
                 .MapFrom(d => d.FlowNodeAnswers
                 .Select(s => s.FlowAnswer)));
 
-            // convert operators
-            // convert values depending on type
-
             CreateMap<Data.FlowCondition, Models.FlowCondition>()
-                .ConstructUsing((d, c) => new Models.FlowCondition());
+                .ConvertUsing<FlowConditionConverter>();
 
             CreateMap<Data.FlowLink, Models.FlowLink>()
                 .ConstructUsing((l, c) => new Models.FlowLink(l.FlowLinkVersion,

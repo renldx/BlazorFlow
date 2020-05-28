@@ -8,8 +8,6 @@
 
 @inject NavigationManager NavigationManager
 @inject FlowService FlowService
-@inject FlowNodeService FlowNodeService
-@inject FlowLinkService FlowLinkService
 
 <h1>Flow</h1>
 
@@ -119,31 +117,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         var flow = await FlowService.GetFlow(1);
-        var flowId = flow.FlowId;
-        var nodes = await FlowNodeService.GetFlowNodes(flowId);
-        var links = await FlowLinkService.GetFlowLinks(flowId); // conditions not populating
-
-        if (flow is {} existingFlow) {
-            CurrentFlow = existingFlow;
-        }
-        else {
-            throw new Exception();
-        }
-
-        if (nodes is {} existingNodes && existingNodes.Any())
-        {
-            CurrentFlow.AddVertexRange(existingNodes);
-        }
-
-        if (links is {} existingLinks && existingLinks.Any())
-        {
-            CurrentFlow.AddEdgeRange(existingLinks);
-        }
-
         CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
-
         CurrentUserFlow = new UserFlow();
-
         SetModel();
     }
 
@@ -291,7 +266,7 @@ else
             if (availableLinks.Count > 1)
             {
                 // Go to link with condition since no condition is catch-all
-                return availableLinks.First(l => l.FlowConditions != null);
+                return availableLinks.First(l => l.HasCondition());
             }
             else
             {

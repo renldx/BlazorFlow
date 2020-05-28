@@ -14,7 +14,7 @@ namespace BlazorFlow.Models
 
         public int FlowLinkId { get; set; }
         public double FlowLinkVersion { get; set; }
-        public List<FlowCondition> FlowConditions { get; set; }
+        List<FlowCondition> FlowConditions { get; set; }
 
         public bool IsAvailable(IComparable userValue) {
             foreach (var condition in FlowConditions)
@@ -26,6 +26,11 @@ namespace BlazorFlow.Models
             }
 
             return true;
+        }
+
+        public bool HasCondition()
+        {
+            return FlowConditions.Count > 0;
         }
     }
 }
