@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace BlazorFlow.Data
 {
     public class FlowLink
@@ -11,7 +13,7 @@ namespace BlazorFlow.Data
         public FlowNode FlowNodePrevious { get; set; } = null!;
         public int FlowNodeNextId { get; set; }
         public FlowNode FlowNodeNext { get; set; } = null!;
-        public int? FlowLinkConditionId { get; set; }
-        public FlowLinkCondition? FlowLinkCondition { get; set; }
+        
+        public List<FlowLinkCondition> FlowLinkCondition { get; set; } = null!;
     }
 }

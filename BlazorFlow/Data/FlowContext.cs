@@ -354,10 +354,13 @@ namespace BlazorFlow.Data
                 .Entity<FlowLinkCondition>()
                 .HasData(new FlowLinkCondition[]
                 {
-                    new FlowLinkCondition() { FlowLinkConditionId = 1 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 2 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 3 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 4 }
+                    new FlowLinkCondition() { FlowLinkConditionId = 1, FlowLinkId = 2, FlowConditionId = 1},
+                    new FlowLinkCondition() { FlowLinkConditionId = 2, FlowLinkId = 5, FlowConditionId = 2 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 3, FlowLinkId = 5, FlowConditionId = 3 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 4, FlowLinkId = 5, FlowConditionId = 4 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 5, FlowLinkId = 7, FlowConditionId = 5 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 6, FlowLinkId = 7, FlowConditionId = 6 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 7, FlowLinkId = 9, FlowConditionId = 7 }
                 });
 
             modelBuilder
@@ -368,36 +371,31 @@ namespace BlazorFlow.Data
                     {
                         FlowConditionId = 1,
                         FlowConditionValue = "YES",
-                        FlowConditionType = FlowValueType.radio,
-                        FlowLinkConditionId = 1
+                        FlowConditionType = FlowValueType.radio
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 2,
                         FlowConditionValue = "GOOD",
-                        FlowConditionType = FlowValueType.checkbox,
-                        FlowLinkConditionId = 2
+                        FlowConditionType = FlowValueType.checkbox
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 3,
                         FlowConditionValue = "GREAT",
-                        FlowConditionType = FlowValueType.checkbox,
-                        FlowLinkConditionId = 2
+                        FlowConditionType = FlowValueType.checkbox
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 4,
                         FlowConditionValue = "AMAZING",
-                        FlowConditionType = FlowValueType.checkbox,
-                        FlowLinkConditionId = 2
+                        FlowConditionType = FlowValueType.checkbox
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 5,
                         FlowConditionValue = "9000",
                         FlowConditionType = FlowValueType.number,
-                        FlowLinkConditionId = 3,
                         FlowConditionOperator = FlowConditionOperator.GreaterThan
                     },
                     new FlowCondition()
@@ -405,7 +403,6 @@ namespace BlazorFlow.Data
                         FlowConditionId = 6,
                         FlowConditionValue = "10000",
                         FlowConditionType = FlowValueType.number,
-                        FlowLinkConditionId = 3,
                         FlowConditionOperator = FlowConditionOperator.LessThan
                     },
                     new FlowCondition()
@@ -413,7 +410,6 @@ namespace BlazorFlow.Data
                         FlowConditionId = 7,
                         FlowConditionValue = "2025-01-01",
                         FlowConditionType = FlowValueType.datetime,
-                        FlowLinkConditionId = 4,
                         FlowConditionOperator = FlowConditionOperator.GreaterThanOrEqualTo
                     }
                 });
@@ -436,8 +432,7 @@ namespace BlazorFlow.Data
                         FlowLinkVersion = 1,
                         FlowId = 1,
                         FlowNodePreviousId = 2,
-                        FlowNodeNextId = 3,
-                        FlowLinkConditionId = 1
+                        FlowNodeNextId = 3
                     },
                     new FlowLink()
                     {
@@ -461,8 +456,7 @@ namespace BlazorFlow.Data
                         FlowLinkVersion = 1,
                         FlowId = 1,
                         FlowNodePreviousId = 5,
-                        FlowNodeNextId = 7,
-                        FlowLinkConditionId = 2
+                        FlowNodeNextId = 7
                     },
                     new FlowLink()
                     {
@@ -478,8 +472,7 @@ namespace BlazorFlow.Data
                         FlowLinkVersion = 1,
                         FlowId = 1,
                         FlowNodePreviousId = 7,
-                        FlowNodeNextId = 9,
-                        FlowLinkConditionId = 3
+                        FlowNodeNextId = 9
                     },
                     new FlowLink() 
                     {
@@ -495,8 +488,7 @@ namespace BlazorFlow.Data
                         FlowLinkVersion = 1,
                         FlowId = 1,
                         FlowNodePreviousId = 9,
-                        FlowNodeNextId = 11,
-                        FlowLinkConditionId = 4
+                        FlowNodeNextId = 11
                     },
                     new FlowLink()
                     {

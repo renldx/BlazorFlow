@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace BlazorFlow.Data
 {
     public class FlowCondition
@@ -7,7 +9,6 @@ namespace BlazorFlow.Data
         public FlowConditionOperator FlowConditionOperator { get; set; }
         public FlowValueType FlowConditionType { get; set; }
         
-        public int FlowLinkConditionId { get; set; }
         public FlowLinkCondition FlowLinkCondition { get; set; } = null!;
     }
 }
