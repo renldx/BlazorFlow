@@ -7,7 +7,7 @@ namespace BlazorFlow.Models
 {
     public class UserFlowAnswer
     {
-        public UserFlowAnswer(int flowNodeId, List<string> userFlowAnswerValue = null)
+        public UserFlowAnswer(int flowNodeId, List<string> userFlowAnswerValue)
         {
             FlowNodeId = flowNodeId;
             UserFlowAnswerValue = userFlowAnswerValue;

@@ -23,21 +23,23 @@ namespace BlazorFlow.Services
             var flow = await context.Flows.FindAsync(flowId);
             var flowModel = mapper.Map<Models.Flow>(flow);
             
-            var nodes = await context.FlowNodes
-                .Where(n => n.FlowId == flowId)
-                .ToListAsync();
+            // var nodes = await context.FlowNodes
+            //     .Where(n => n.FlowId == flowId)
+            //     .ToListAsync();
 
-            var nodeModels = mapper.Map<List<Models.FlowNode>>(nodes);
+            // var nodeModels = mapper.Map<List<Models.FlowNode>>(nodes);
 
-            flowModel.AddVertexRange(nodeModels);
+            // flowModel.AddVertexRange(nodeModels);
 
             var links = await context.FlowLinks
+                .Include(n => n.FlowNodePrevious)
+                .Include(n => n.FlowNodeNext)
                 .Where(n => n.FlowId == flow.FlowId)
                 .ToListAsync();
 
             var linkModels = mapper.Map<List<Models.FlowLink>>(links);
 
-            flowModel.AddEdgeRange(linkModels);
+            flowModel.AddVerticesAndEdgeRange(linkModels);
 
             return mapper.Map<Models.Flow>(flow);
         }
