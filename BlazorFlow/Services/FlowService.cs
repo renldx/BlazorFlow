@@ -29,19 +29,23 @@ namespace BlazorFlow.Services
 
             // var nodeModels = mapper.Map<List<Models.FlowNode>>(nodes);
 
-            // flowModel.AddVertexRange(nodeModels);
+            //flowModel.AddVertexRange(nodeModels);
 
+            // To optimize
             var links = await context.FlowLinks
                 .Include(n => n.FlowNodePrevious)
                 .Include(n => n.FlowNodeNext)
+                .Include(n => n.FlowLinkConditions)
+                .ThenInclude(x => x.FlowCondition)
                 .Where(n => n.FlowId == flow.FlowId)
                 .ToListAsync();
 
             var linkModels = mapper.Map<List<Models.FlowLink>>(links);
 
+            // Nodes are being duplicated
             flowModel.AddVerticesAndEdgeRange(linkModels);
 
-            return mapper.Map<Models.Flow>(flow);
+            return flowModel;
         }
     }
 }

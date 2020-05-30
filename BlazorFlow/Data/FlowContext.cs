@@ -371,25 +371,29 @@ namespace BlazorFlow.Data
                     {
                         FlowConditionId = 1,
                         FlowConditionValue = "YES",
-                        FlowConditionType = FlowValueType.radio
+                        FlowConditionType = FlowValueType.radio,
+                        FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 2,
                         FlowConditionValue = "GOOD",
-                        FlowConditionType = FlowValueType.checkbox
+                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 3,
                         FlowConditionValue = "GREAT",
-                        FlowConditionType = FlowValueType.checkbox
+                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 4,
                         FlowConditionValue = "AMAZING",
-                        FlowConditionType = FlowValueType.checkbox
+                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {

@@ -20,9 +20,13 @@ namespace BlazorFlow.Mappers
                 .ConvertUsing<FlowConditionConverter>();
 
             CreateMap<Data.FlowLink, Models.FlowLink>()
-                .ConstructUsing((l, c) => new Models.FlowLink(l.FlowLinkVersion,
-                    c.Mapper.Map<Models.FlowNode>(l.FlowNodePrevious),
-                    c.Mapper.Map<Models.FlowNode>(l.FlowNodeNext)));
+                .ForCtorParam("fromFlowNode", opt => opt
+                    .MapFrom(l => l.FlowNodePrevious))
+                .ForCtorParam("toFlowNode", opt => opt
+                    .MapFrom(l => l.FlowNodeNext))
+                .ForCtorParam("flowConditions", opt => opt
+                    .MapFrom(l => l.FlowLinkConditions
+                    .Select(s => s.FlowCondition)));
         }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using BlazorFlow.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BlazorFlow.Migrations
 {
     [DbContext(typeof(FlowContext))]
-    partial class FlowContextModelSnapshot : ModelSnapshot
+    [Migration("20200530134328_renamed column")]
+    partial class renamedcolumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,21 +47,21 @@ namespace BlazorFlow.Migrations
                         new
                         {
                             ContactId = 1,
-                            DateOfBirth = new DateTime(2020, 5, 30, 10, 40, 26, 815, DateTimeKind.Local).AddTicks(4650),
+                            DateOfBirth = new DateTime(2020, 5, 30, 9, 43, 27, 568, DateTimeKind.Local).AddTicks(3700),
                             FirstName = "John",
                             LastName = "Doe"
                         },
                         new
                         {
                             ContactId = 2,
-                            DateOfBirth = new DateTime(2020, 5, 30, 10, 40, 26, 823, DateTimeKind.Local).AddTicks(6290),
+                            DateOfBirth = new DateTime(2020, 5, 30, 9, 43, 27, 576, DateTimeKind.Local).AddTicks(6420),
                             FirstName = "Eddie",
                             LastName = "Murphy"
                         },
                         new
                         {
                             ContactId = 3,
-                            DateOfBirth = new DateTime(2020, 5, 30, 10, 40, 26, 823, DateTimeKind.Local).AddTicks(6330),
+                            DateOfBirth = new DateTime(2020, 5, 30, 9, 43, 27, 576, DateTimeKind.Local).AddTicks(6470),
                             FirstName = "Jim",
                             LastName = "Carrey"
                         });
@@ -192,28 +194,28 @@ namespace BlazorFlow.Migrations
                         new
                         {
                             FlowConditionId = 1,
-                            FlowConditionOperator = "EqualTo",
+                            FlowConditionOperator = "None",
                             FlowConditionType = "radio",
                             FlowConditionValue = "YES"
                         },
                         new
                         {
                             FlowConditionId = 2,
-                            FlowConditionOperator = "EqualTo",
+                            FlowConditionOperator = "None",
                             FlowConditionType = "checkbox",
                             FlowConditionValue = "GOOD"
                         },
                         new
                         {
                             FlowConditionId = 3,
-                            FlowConditionOperator = "EqualTo",
+                            FlowConditionOperator = "None",
                             FlowConditionType = "checkbox",
                             FlowConditionValue = "GREAT"
                         },
                         new
                         {
                             FlowConditionId = 4,
-                            FlowConditionOperator = "EqualTo",
+                            FlowConditionOperator = "None",
                             FlowConditionType = "checkbox",
                             FlowConditionValue = "AMAZING"
                         },

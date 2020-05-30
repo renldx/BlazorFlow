@@ -12,7 +12,7 @@ namespace BlazorFlow.Mappers
             var operation = EnumToOperation(source.FlowConditionOperator);
             var value = StringToIComparable(source.FlowConditionType, source.FlowConditionValue);
 
-            return new Models.FlowCondition(operation, value);
+            return new Models.FlowCondition(operation, value) { FlowConditionId = source.FlowConditionId };
         }
 
         public Func<IComparable, IComparable, bool> EnumToOperation(FlowConditionOperator operation) => operation switch
@@ -27,9 +27,14 @@ namespace BlazorFlow.Mappers
 
         public IComparable StringToIComparable(FlowValueType valueType, string value) => valueType switch
         {
+            FlowValueType.none => value,
             FlowValueType.radio => value,
+            FlowValueType.select => value,
+            FlowValueType.text => value,
+            FlowValueType.textarea => value,
             FlowValueType.number => decimal.Parse(value),
             FlowValueType.datetime => DateTime.Parse(value),
+            FlowValueType.checkbox => value, // TO FIX
             _ => throw new Exception()
         };
     }
