@@ -112,7 +112,7 @@ else
     FlowQuestion CurrentQuestion = null!;
     List<FlowAnswer>? CurrentAnswers;
     UserFlow CurrentUserFlow = null!;
-    LinkedListNode<UserFlowNode>? CurrentUserFlowAnswer;
+    LinkedListNode<UserFlowNode>? CurrentUserFlowNode;
 
     bool isFirstNode => CurrentFlow.Edges.All(l => l.Target != CurrentNode);
     bool isLastNode => CurrentFlow.IsOutEdgesEmpty(CurrentNode);
@@ -142,17 +142,17 @@ else
             PageModel.LookupValues?.Clear();
         }
 
-        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
+        CurrentUserFlowNode = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
 
-        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing)
+        if (CurrentUserFlowNode is { Value: var userFlowNode } existing)
         {
             if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
             {
-                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
+                PageModel.StringValue = userFlowNode?.UserFlowAnswers?.FirstOrDefault() ?? string.Empty;
             }
             else if (CurrentNodeType == FlowValueType.Number)
             {
-                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
+                var parsed = Decimal.TryParse(userFlowNode?.UserFlowAnswers?.FirstOrDefault(), out var result);
 
                 if (parsed)
                 {
@@ -161,12 +161,12 @@ else
             }
             else if (CurrentNodeType == FlowValueType.Checkbox)
             {
-                var hashSet = new HashSetComparable<string>(userFlowAnswer.UserFlowAnswerValue!);
+                var hashSet = new HashSetComparable<string>(userFlowNode.UserFlowAnswers!);
                 PageModel.CheckboxValues = hashSet;
             }
             else if (CurrentNodeType == FlowValueType.DateTime)
             {
-                var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
+                var parsed = DateTime.TryParse(userFlowNode?.UserFlowAnswers?.FirstOrDefault(), out var result);
 
                 if (parsed)
                 {
@@ -175,7 +175,7 @@ else
             }
             else if (CurrentNodeType == FlowValueType.Text || CurrentNodeType == FlowValueType.TextArea)
             {
-                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
+                PageModel.StringValue = userFlowNode?.UserFlowAnswers?.FirstOrDefault() ?? string.Empty;
             }
         }
         else
@@ -190,11 +190,11 @@ else
     void Previous()
     {
         // User has answered this question before, so there should be an answer that targets this node
-        var prevUserFlowAnswerId = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
+        var prevUserFlowNodeId = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
         // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
-        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowNodes.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
+        prevUserFlowNodeId ??= CurrentUserFlow.UserFlowNodes.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
 
-        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
+        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowNodeId);
         SetModel();
         StateHasChanged(); // Not sure if needed
     }
@@ -246,16 +246,16 @@ else
             _ => new List<string>()
         };
 
-        if (CurrentUserFlowAnswer is {} existing)
+        if (CurrentUserFlowNode is {} existing)
         {
-            if (existing.Value.UserFlowAnswerValue != newAnswerValue())
+            if (existing.Value.UserFlowAnswers != newAnswerValue())
             {
-                CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
-                CurrentUserFlowAnswer.Value.IsStale = false;
+                CurrentUserFlowNode.Value.UserFlowAnswers = newAnswerValue();
+                CurrentUserFlowNode.Value.IsStale = false;
             }
 
-            // Set all subsequent userFlowAnswers as stale
-            var nextUserFlowAnswer = CurrentUserFlowAnswer.Next;
+            // Set all subsequent userFlowNodes as stale
+            var nextUserFlowAnswer = CurrentUserFlowNode.Next;
 
             while (nextUserFlowAnswer is {} alsoExisting)
             {
@@ -263,23 +263,23 @@ else
                 nextUserFlowAnswer = nextUserFlowAnswer.Next;
             }
 
-            await UserFlowService.UpdateUserFlowAnswer(CurrentUserFlowAnswer.Value);
+            await UserFlowService.UpdateUserFlowAnswer(CurrentUserFlowNode.Value);
         }
         else
         {
-            CurrentUserFlowAnswer = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentNode.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentNode.FlowNodeId, newAnswerValue()));
 
             if (CurrentUserFlow.UserFlowNodes.Any())
             {
                 var lastUserFlowAnswer = CurrentUserFlow.UserFlowNodes.Last!;
-                CurrentUserFlow.UserFlowNodes.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswer);
+                CurrentUserFlow.UserFlowNodes.AddAfter(lastUserFlowAnswer, CurrentUserFlowNode);
             }
             else
             {
-                CurrentUserFlow.UserFlowNodes.AddFirst(CurrentUserFlowAnswer);
+                CurrentUserFlow.UserFlowNodes.AddFirst(CurrentUserFlowNode);
             }
 
-            await UserFlowService.AddUserFlowAnswer(CurrentUserFlowAnswer.Value);
+            await UserFlowService.AddUserFlowAnswer(CurrentUserFlowNode.Value);
         }
     }
 

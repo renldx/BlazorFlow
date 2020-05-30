@@ -12,7 +12,7 @@ namespace BlazorFlow.Mappers
                 .MapFrom(d => d.UserFlowNodes));
 
             CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
-                .ForMember(m => m.UserFlowAnswerValue, opt => opt
+                .ForMember(m => m.UserFlowAnswers, opt => opt
                 .MapFrom(d => d.UserFlowAnswers
                 .Select(s => s.UserFlowAnswerValue)));
 
