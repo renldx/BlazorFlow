@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace BlazorFlow.Models
 {
-    public class UserFlowAnswer
+    public class UserFlowNode
     {
-        public UserFlowAnswer(int flowNodeId, List<string> userFlowAnswerValue)
+        public UserFlowNode(int flowNodeId, List<string> userFlowAnswerValue)
         {
             FlowNodeId = flowNodeId;
             UserFlowAnswerValue = userFlowAnswerValue;

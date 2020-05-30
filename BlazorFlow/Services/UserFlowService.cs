@@ -23,18 +23,28 @@ namespace BlazorFlow.Services
             var userFlow = await context.UserFlows.FindAsync(userFlowId) ?? new UserFlow();
             var userFlowModel = mapper.Map<Models.UserFlow>(userFlow);
 
-            var userAnswers = await context.UserFlowNodes
+            var userNodes = await context.UserFlowNodes
                 .Where(n => n.UserFlowId == userFlowId)
                 .ToListAsync();
 
-            var userAnswerModels = mapper.Map<List<Models.UserFlowAnswer>>(userAnswers);
+            var userNodeModels = mapper.Map<List<Models.UserFlowNode>>(userNodes);
 
-            foreach(var userAnswerModel in userAnswerModels)
+            foreach(var userNodeModel in userNodeModels)
             {
-                userFlowModel.UserFlowAnswers.Append(userAnswerModel);
+                userFlowModel.UserFlowNodes.Append(userNodeModel);
             }
 
             return userFlowModel;
+        }
+
+        public async Task AddUserFlowAnswer(Models.UserFlowNode userNode)
+        {
+
+        }
+
+        public async Task UpdateUserFlowAnswer(Models.UserFlowNode userNode)
+        {
+
         }
     }
 }

@@ -112,7 +112,7 @@ else
     FlowQuestion CurrentQuestion = null!;
     List<FlowAnswer>? CurrentAnswers;
     UserFlow CurrentUserFlow = null!;
-    LinkedListNode<UserFlowAnswer>? CurrentUserFlowAnswers;
+    LinkedListNode<UserFlowNode>? CurrentUserFlowAnswer;
 
     bool isFirstNode => CurrentFlow.Edges.All(l => l.Target != CurrentNode);
     bool isLastNode => CurrentFlow.IsOutEdgesEmpty(CurrentNode);
@@ -142,9 +142,9 @@ else
             PageModel.LookupValues?.Clear();
         }
 
-        CurrentUserFlowAnswers = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
+        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
 
-        if (CurrentUserFlowAnswers is { Value: var userFlowAnswer } existing)
+        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing)
         {
             if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
             {
@@ -190,9 +190,9 @@ else
     void Previous()
     {
         // User has answered this question before, so there should be an answer that targets this node
-        var prevUserFlowAnswerId = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
+        var prevUserFlowAnswerId = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
         // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
-        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
+        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowNodes.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
         SetModel();
@@ -207,6 +207,7 @@ else
         // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
         SetModel();
+        StateHasChanged(); // Not sure if needed
     }
 
     bool CheckboxIsChecked(string flowAnswerValue)
@@ -230,7 +231,7 @@ else
         }
     }
 
-    void SaveAnswer()
+    async void SaveAnswer()
     {
         // To be improved
         List<string> newAnswerValue() => CurrentNodeType switch
@@ -245,36 +246,40 @@ else
             _ => new List<string>()
         };
 
-        if (CurrentUserFlowAnswers is {} existing)
+        if (CurrentUserFlowAnswer is {} existing)
         {
             if (existing.Value.UserFlowAnswerValue != newAnswerValue())
             {
-                CurrentUserFlowAnswers.Value.UserFlowAnswerValue = newAnswerValue();
-                CurrentUserFlowAnswers.Value.IsStale = false;
+                CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
+                CurrentUserFlowAnswer.Value.IsStale = false;
             }
 
             // Set all subsequent userFlowAnswers as stale
-            var nextUserFlowAnswer = CurrentUserFlowAnswers.Next;
+            var nextUserFlowAnswer = CurrentUserFlowAnswer.Next;
 
             while (nextUserFlowAnswer is {} alsoExisting)
             {
                 nextUserFlowAnswer.Value.IsStale = true;
                 nextUserFlowAnswer = nextUserFlowAnswer.Next;
             }
+
+            await UserFlowService.UpdateUserFlowAnswer(CurrentUserFlowAnswer.Value);
         }
         else
         {
-            CurrentUserFlowAnswers = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(CurrentNode!.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowAnswer = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentNode.FlowNodeId, newAnswerValue()));
 
-            if (CurrentUserFlow.UserFlowAnswers.Any())
+            if (CurrentUserFlow.UserFlowNodes.Any())
             {
-                var lastUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Last!;
-                CurrentUserFlow.UserFlowAnswers.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswers);
+                var lastUserFlowAnswer = CurrentUserFlow.UserFlowNodes.Last!;
+                CurrentUserFlow.UserFlowNodes.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswer);
             }
             else
             {
-                CurrentUserFlow.UserFlowAnswers.AddFirst(CurrentUserFlowAnswers);
+                CurrentUserFlow.UserFlowNodes.AddFirst(CurrentUserFlowAnswer);
             }
+
+            await UserFlowService.AddUserFlowAnswer(CurrentUserFlowAnswer.Value);
         }
     }
 
