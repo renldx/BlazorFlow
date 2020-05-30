@@ -20,5 +20,23 @@ namespace BlazorFlow.Models
         public FlowNodeEntity FlowNodeEntity { get; set; }
         public FlowQuestion FlowQuestion { get; set; }
         public List<FlowAnswer> FlowAnswers { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is {} existing && existing is FlowNode)
+            {
+                FlowNode n = (FlowNode)obj;
+                return n.FlowNodeId == FlowNodeId;
+            }
+            else 
+            {
+                return false;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return FlowNodeId;
+        }
     }
 }

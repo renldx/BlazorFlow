@@ -22,14 +22,6 @@ namespace BlazorFlow.Services
         {
             var flow = await context.Flows.FindAsync(flowId);
             var flowModel = mapper.Map<Models.Flow>(flow);
-            
-            // var nodes = await context.FlowNodes
-            //     .Where(n => n.FlowId == flowId)
-            //     .ToListAsync();
-
-            // var nodeModels = mapper.Map<List<Models.FlowNode>>(nodes);
-
-            //flowModel.AddVertexRange(nodeModels);
 
             // To optimize
             var links = await context.FlowLinks
@@ -42,7 +34,6 @@ namespace BlazorFlow.Services
 
             var linkModels = mapper.Map<List<Models.FlowLink>>(links);
 
-            // Nodes are being duplicated
             flowModel.AddVerticesAndEdgeRange(linkModels);
 
             return flowModel;
