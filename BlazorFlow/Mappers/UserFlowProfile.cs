@@ -16,8 +16,14 @@ namespace BlazorFlow.Mappers
                 .MapFrom(d => d.UserFlowAnswers
                 .Select(s => s.UserFlowAnswerValue)));
 
-            CreateMap<Models.UserFlowNode, Data.UserFlowNode>()
-                .ConvertUsing<UserFlowNodeConverter>();
+            CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
+                .ForMember(m => m.UserFlowAnswers, opt => opt
+                .MapFrom(d => d.UserFlowAnswers
+                .Select(s => s.UserFlowAnswerValue)))
+                .ReverseMap();
+
+            //CreateMap<Models.UserFlowNode, Data.UserFlowNode>()
+            //    .ConvertUsing<UserFlowNodeConverter>();
         }
     }
 }

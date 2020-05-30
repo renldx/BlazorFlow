@@ -39,12 +39,15 @@ namespace BlazorFlow.Services
 
         public async Task AddUserFlowAnswer(Models.UserFlowNode userNode)
         {
-
+            var userNodeData = mapper.Map<UserFlowNode>(userNode);
+            await context.UserFlowNodes.AddAsync(userNodeData);
         }
 
         public async Task UpdateUserFlowAnswer(Models.UserFlowNode userNode)
         {
-
+            var userNodeData = mapper.Map<UserFlowNode>(userNode);
+            context.Entry(userNodeData).State = EntityState.Modified;
+            await context.SaveChangesAsync();
         }
     }
 }
