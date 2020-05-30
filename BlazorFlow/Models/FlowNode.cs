@@ -18,6 +18,7 @@ namespace BlazorFlow.Models
         public double FlowNodeVersion { get; set; }
         public FlowValueType FlowNodeType { get; set; }
         public FlowNodeEntity FlowNodeEntity { get; set; }
+        public int FlowQuestionId { get; set; }
         public FlowQuestion FlowQuestion { get; set; }
         public List<FlowAnswer> FlowAnswers { get; set; }
 

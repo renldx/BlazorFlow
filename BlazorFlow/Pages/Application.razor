@@ -10,6 +10,7 @@
 
 @inject NavigationManager NavigationManager
 @inject FlowService FlowService
+@inject UserFlowService UserFlowService
 
 <h1>Flow</h1>
 
@@ -24,13 +25,13 @@ else
     <ValidationSummary />
 
     <div id="question">
-        <p>@CurrentNode.FlowQuestion.FlowQuestionTextEn</p>
+        <p>@CurrentQuestion.FlowQuestionTextEn</p>
     </div>
 
     <div id="answer">
-        @if (CurrentNode.FlowNodeType == FlowValueType.Radio)
+        @if (CurrentNodeType == FlowValueType.Radio)
         {
-            if (CurrentNode.FlowAnswers is {} flowAnswers)
+            if (CurrentAnswers is {} flowAnswers)
             {
                 @foreach (var answer in flowAnswers)
                 {
@@ -43,7 +44,7 @@ else
         }
         else if (CurrentNodeType == FlowValueType.Select)
         {
-            if (CurrentNode.FlowAnswers is {} flowAnswers)
+            if (CurrentAnswers is {} flowAnswers)
             {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
@@ -53,7 +54,7 @@ else
                     }
                 </InputSelect>
             }
-            else if (CurrentNode.FlowNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup)
+            else if (CurrentNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup)
             {
                 <InputSelect @bind-Value="PageModel.StringValue">
                     <option value="">Select...</option>
@@ -64,13 +65,13 @@ else
                 </InputSelect>
             }
         }
-        else if (CurrentNode.FlowNodeType == FlowValueType.Number)
+        else if (CurrentNodeType == FlowValueType.Number)
         {
             <InputNumber @bind-Value="PageModel.NumberValue" />
         }
-        else if (CurrentNode.FlowNodeType == FlowValueType.Checkbox)
+        else if (CurrentNodeType == FlowValueType.Checkbox)
         {
-            if (CurrentNode.FlowAnswers is {} flowAnswers)
+            if (CurrentAnswers is {} flowAnswers)
             {
                 @foreach (var answer in flowAnswers)
                 {
@@ -109,7 +110,7 @@ else
     FlowNodeEntity CurrentNodeEntity => CurrentNode.FlowNodeEntity;
     FlowLink[]? CurrentLinks => CurrentNode is null ? new FlowLink[0] : CurrentFlow.OutEdges(CurrentNode).ToArray();
     FlowQuestion CurrentQuestion = null!;
-    FlowAnswer[]? CurrentAnswers;
+    List<FlowAnswer>? CurrentAnswers;
     UserFlow CurrentUserFlow = null!;
     LinkedListNode<UserFlowAnswer>? CurrentUserFlowAnswers;
 
@@ -121,8 +122,11 @@ else
     protected override async Task OnInitializedAsync()
     {
         CurrentFlow = await FlowService.GetFlow(1);
-        CurrentUserFlow = new UserFlow();
+        CurrentUserFlow = await UserFlowService.GetUserFlow(1);
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == 1); // To improve
+        // To move out into SetModel
+        CurrentQuestion = await FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
+        CurrentAnswers = await FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
         SetModel();
     }
 
@@ -192,7 +196,7 @@ else
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
         SetModel();
-        StateHasChanged();
+        StateHasChanged(); // Not sure if needed
     }
 
     void Next()
