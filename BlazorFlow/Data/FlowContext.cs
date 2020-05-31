@@ -54,6 +54,13 @@ namespace BlazorFlow.Data
                 .Entity<FlowNodeAnswer>()
                 .HasKey(fna => new { fna.FlowNodeId, fna.FlowAnswerId });
 
+            modelBuilder
+                .Entity<UserFlowAnswer>()
+                .Property(u => u.UserFlowAnswerType)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (FlowValueType)Enum.Parse(typeof(FlowValueType), v));
+
             // Seed Data
 
             modelBuilder
@@ -170,7 +177,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 1,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 1
                     },
@@ -179,7 +186,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 2,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.radio,
+                        FlowNodeType = FlowValueType.Radio,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 2
                     },
@@ -188,7 +195,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 3,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.select,
+                        FlowNodeType = FlowValueType.Select,
                         FlowNodeEntity = FlowNodeEntity.contact,
                         FlowQuestionId = 3
                     },
@@ -197,7 +204,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 4,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 4
                     },
@@ -206,7 +213,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 5,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.number,
+                        FlowNodeType = FlowValueType.Number,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 5
                     },
@@ -215,7 +222,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 6,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 6
                     },
@@ -224,7 +231,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 7,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.checkbox,
+                        FlowNodeType = FlowValueType.Checkbox,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 7
                     },
@@ -233,7 +240,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 8,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 8
                     },
@@ -242,7 +249,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 9,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.datetime,
+                        FlowNodeType = FlowValueType.DateTime,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 9
                     },
@@ -251,7 +258,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 10,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 10
                     },
@@ -260,7 +267,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 11,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.text,
+                        FlowNodeType = FlowValueType.Text,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 11
                     },
@@ -269,7 +276,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 12,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.textarea,
+                        FlowNodeType = FlowValueType.TextArea,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 12
                     },
@@ -278,7 +285,7 @@ namespace BlazorFlow.Data
                         FlowNodeId = 13,
                         FlowNodeVersion = 1,
                         FlowId = 1,
-                        FlowNodeType = FlowValueType.none,
+                        FlowNodeType = FlowValueType.None,
                         FlowNodeEntity = FlowNodeEntity.none,
                         FlowQuestionId = 13
                     }
@@ -371,49 +378,49 @@ namespace BlazorFlow.Data
                     {
                         FlowConditionId = 1,
                         FlowConditionValue = "YES",
-                        FlowConditionType = FlowValueType.radio,
+                        FlowConditionType = FlowValueType.Radio,
                         FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 2,
                         FlowConditionValue = "GOOD",
-                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionType = FlowValueType.Checkbox,
                         FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 3,
                         FlowConditionValue = "GREAT",
-                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionType = FlowValueType.Checkbox,
                         FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 4,
                         FlowConditionValue = "AMAZING",
-                        FlowConditionType = FlowValueType.checkbox,
+                        FlowConditionType = FlowValueType.Checkbox,
                         FlowConditionOperator = FlowConditionOperator.EqualTo
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 5,
                         FlowConditionValue = "9000",
-                        FlowConditionType = FlowValueType.number,
+                        FlowConditionType = FlowValueType.Number,
                         FlowConditionOperator = FlowConditionOperator.GreaterThan
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 6,
                         FlowConditionValue = "10000",
-                        FlowConditionType = FlowValueType.number,
+                        FlowConditionType = FlowValueType.Number,
                         FlowConditionOperator = FlowConditionOperator.LessThan
                     },
                     new FlowCondition()
                     {
                         FlowConditionId = 7,
                         FlowConditionValue = "2025-01-01",
-                        FlowConditionType = FlowValueType.datetime,
+                        FlowConditionType = FlowValueType.DateTime,
                         FlowConditionOperator = FlowConditionOperator.GreaterThanOrEqualTo
                     }
                 });

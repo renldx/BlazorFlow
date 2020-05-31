@@ -1,4 +1,4 @@
-namespace BlazorFlow.Models
+namespace BlazorFlow.Enums
 {
     public enum FlowValueType
     {

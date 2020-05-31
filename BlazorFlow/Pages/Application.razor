@@ -3,6 +3,7 @@
 @using System
 @using System.Collections.Generic
 @using System.ComponentModel.DataAnnotations
+@using BlazorFlow.Enums
 @using BlazorFlow.Helpers
 @using BlazorFlow.Models
 @using BlazorFlow.Services
@@ -107,7 +108,7 @@ else
     Flow CurrentFlow = null!;
     FlowNode CurrentNode = null!;
     FlowValueType CurrentNodeType => CurrentNode.FlowNodeType;
-    FlowNodeEntity CurrentNodeEntity => CurrentNode.FlowNodeEntity;
+    FlowEntity CurrentNodeEntity => CurrentNode.FlowNodeEntity;
     FlowLink[]? CurrentLinks => CurrentNode is null ? new FlowLink[0] : CurrentFlow.OutEdges(CurrentNode).ToArray();
     FlowQuestion CurrentQuestion = null!;
     List<FlowAnswer>? CurrentAnswers;
@@ -138,7 +139,7 @@ else
         CurrentQuestion = FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
         CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
 
-        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.None)
+        if (CurrentNodeEntity is {} entity && entity != FlowEntity.None)
         {
             PageModel.LookupValues = LookupService.GetLookup(entity);
         }
@@ -153,12 +154,12 @@ else
         {
             if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
             {
-                var userString = userFlowNode?.UserFlowAnswers?.FirstOrDefault().ToString() ?? string.Empty;
+                var userString = userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue.ToString() ?? string.Empty;
                 PageModel.StringValue = userString;
             }
             else if (CurrentNodeType == FlowValueType.Number)
             {
-                var userDecimal = (decimal)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                var userDecimal = (decimal)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
                 PageModel.NumberValue = userDecimal;
             }
             else if (CurrentNodeType == FlowValueType.Checkbox)
@@ -169,12 +170,12 @@ else
             }
             else if (CurrentNodeType == FlowValueType.DateTime)
             {
-                var userDateTime  = (DateTime)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                var userDateTime  = (DateTime)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
                 PageModel.DateTimeValue = userDateTime;
             }
             else if (CurrentNodeType == FlowValueType.Text || CurrentNodeType == FlowValueType.TextArea)
             {
-                var userText = (string)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                var userText = (string)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
                 PageModel.StringValue = userText;
             }
         }
@@ -232,16 +233,16 @@ else
     async void SaveAnswer()
     {
         // To be improved
-        List<IComparable> newAnswerValue() => CurrentNodeType switch
+        List<UserFlowAnswer> newAnswerValue() => CurrentNodeType switch
         {
-            FlowValueType.Radio => new List<IComparable> { PageModel.StringValue! },
-            FlowValueType.Select => new List<IComparable> { PageModel.StringValue! },
-            FlowValueType.Number => new List<IComparable> { PageModel.NumberValue! },
-            FlowValueType.Checkbox => new List<IComparable>(PageModel.CheckboxValues.ToList()),
-            FlowValueType.DateTime => new List<IComparable> { PageModel.DateTimeValue! },
-            FlowValueType.Text => new List<IComparable> { PageModel.StringValue! },
-            FlowValueType.TextArea => new List<IComparable> { PageModel.StringValue! },
-            _ => new List<IComparable>()
+            //FlowValueType.Radio => new List<UserFlowAnswer> { PageModel.StringValue! },
+            //FlowValueType.Select => new List<UserFlowAnswer> { PageModel.StringValue! },
+            //FlowValueType.Number => new List<UserFlowAnswer> { PageModel.NumberValue! },
+            //FlowValueType.Checkbox => new List<UserFlowAnswer>(PageModel.CheckboxValues.ToList()),
+            //FlowValueType.DateTime => new List<UserFlowAnswer> { PageModel.DateTimeValue! },
+            //FlowValueType.Text => new List<UserFlowAnswer> { PageModel.StringValue! },
+            //FlowValueType.TextArea => new List<UserFlowAnswer> { PageModel.StringValue! },
+            _ => new List<UserFlowAnswer>()
         };
 
         if (CurrentUserFlowNode is {} existing)

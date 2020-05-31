@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using BlazorFlow.Models;
+using BlazorFlow.Enums;
 
 namespace BlazorFlow.Services
 {
     public static class LookupService
     {
-        public static Dictionary<string, string> GetLookup(FlowNodeEntity entity) => entity switch
+        public static Dictionary<string, string> GetLookup(FlowEntity entity) => entity switch
         {
-            FlowNodeEntity.Contact => GetContactLookup(),
+            FlowEntity.Contact => GetContactLookup(),
             _ => throw new NotImplementedException()
         };
 

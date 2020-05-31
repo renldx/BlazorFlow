@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using BlazorFlow.Enums;
 
 namespace BlazorFlow.Models
 {
     public class FlowNode
     {
-        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowValueType flowNodeType = FlowValueType.None, FlowNodeEntity flowNodeEntity = FlowNodeEntity.None, List<FlowAnswer> flowAnswers = null!)
+        public FlowNode (int flowNodeId, double flowNodeVersion, FlowQuestion flowQuestion, FlowValueType flowNodeType = FlowValueType.None, FlowEntity flowNodeEntity = FlowEntity.None, List<FlowAnswer> flowAnswers = null!)
         {
             FlowNodeId = flowNodeId;
             FlowNodeVersion = flowNodeVersion;
@@ -17,7 +18,7 @@ namespace BlazorFlow.Models
         public int FlowNodeId { get; set; }
         public double FlowNodeVersion { get; set; }
         public FlowValueType FlowNodeType { get; set; }
-        public FlowNodeEntity FlowNodeEntity { get; set; }
+        public FlowEntity FlowNodeEntity { get; set; }
         public int FlowQuestionId { get; set; }
         public FlowQuestion FlowQuestion { get; set; }
         public List<FlowAnswer> FlowAnswers { get; set; }

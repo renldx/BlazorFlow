@@ -27,14 +27,14 @@ namespace BlazorFlow.Mappers
 
         public IComparable StringToIComparable(FlowValueType valueType, string value) => valueType switch
         {
-            FlowValueType.none => value,
-            FlowValueType.radio => value,
-            FlowValueType.select => value,
-            FlowValueType.text => value,
-            FlowValueType.textarea => value,
-            FlowValueType.number => decimal.Parse(value),
-            FlowValueType.datetime => DateTime.Parse(value),
-            FlowValueType.checkbox => value, // TO FIX
+            FlowValueType.None => value,
+            FlowValueType.Radio => value,
+            FlowValueType.Select => value,
+            FlowValueType.Text => value,
+            FlowValueType.TextArea => value,
+            FlowValueType.Number => decimal.Parse(value),
+            FlowValueType.DateTime => DateTime.Parse(value),
+            FlowValueType.Checkbox => value, // TO FIX
             _ => throw new Exception()
         };
     }
