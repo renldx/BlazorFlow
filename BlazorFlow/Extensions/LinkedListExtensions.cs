@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BlazorFlow.Helpers
+namespace BlazorFlow.Extensions
 {
     public static class LinkedListExtensions
     {
