@@ -39,18 +39,18 @@ namespace BlazorFlow.Services
             return flowModel;
         }
 
-        public async Task<Models.FlowQuestion> GetFlowNodeQuestion(int questionId)
+        public Models.FlowQuestion GetFlowNodeQuestion(int questionId)
         {
-            var question = await context.FlowQuestions.FindAsync(questionId);
+            var question = context.FlowQuestions.Find(questionId);
             return mapper.Map<Models.FlowQuestion>(question);
         }
 
-        public async Task<List<Models.FlowAnswer>> GetFlowNodeAnswers(int nodeId)
+        public List<Models.FlowAnswer> GetFlowNodeAnswers(int nodeId)
         {
-            var nodeAnswers = await context.FlowNodeAnswers
+            var nodeAnswers = context.FlowNodeAnswers
                 .Where(x => x.FlowNodeId == nodeId)
                 .Select(x => x.FlowAnswer)
-                .ToListAsync();
+                .ToList();
 
             return mapper.Map<List<Models.FlowAnswer>>(nodeAnswers);
         }

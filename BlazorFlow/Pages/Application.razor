@@ -124,15 +124,15 @@ else
         CurrentFlow = await FlowService.GetFlow(1);
         CurrentUserFlow = await UserFlowService.GetUserFlow(1);
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == 1); // To improve
-        // To move out into SetModel
-        CurrentQuestion = await FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
-        CurrentAnswers = await FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
-        SetModel();
+        UpdateView();
     }
 
     // To be improved
-    void SetModel()
+    void UpdateView()
     {
+        CurrentQuestion = FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
+        CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
+
         if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.None)
         {
             PageModel.LookupValues = LookupService.GetLookup(entity);
@@ -195,8 +195,7 @@ else
         prevUserFlowNodeId ??= CurrentUserFlow.UserFlowNodes.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
 
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowNodeId);
-        SetModel();
-        StateHasChanged(); // Not sure if needed
+        UpdateView();
     }
 
     void Next()
@@ -206,8 +205,7 @@ else
         // if no links, we're at the end
         // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
-        SetModel();
-        StateHasChanged(); // Not sure if needed
+        UpdateView();
     }
 
     bool CheckboxIsChecked(string flowAnswerValue)
@@ -267,7 +265,7 @@ else
         }
         else
         {
-            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentNode.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentUserFlow.UserFlowId, CurrentNode.FlowNodeId, newAnswerValue()));
 
             if (CurrentUserFlow.UserFlowNodes.Any())
             {

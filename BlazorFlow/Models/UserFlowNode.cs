@@ -7,13 +7,15 @@ namespace BlazorFlow.Models
 {
     public class UserFlowNode
     {
-        public UserFlowNode(int flowNodeId, List<string> userFlowAnswers)
+        public UserFlowNode(int userFlowId, int flowNodeId, List<string> userFlowAnswers)
         {
+            UserFlowId = userFlowId;
             FlowNodeId = flowNodeId;
             UserFlowAnswers = userFlowAnswers;
         }
         
-        public int UserFlowAnswerId { get; set; }
+        public int UserFlowNodeId { get; set; }
+        public int UserFlowId { get; set; }
         public int FlowNodeId { get; set; }
         public List<string> UserFlowAnswers { get; set; }
         public bool IsStale { get; set; } = false;

@@ -13,7 +13,7 @@ namespace BlazorFlow.Models
         {
             if (hashSet is {} existing)
             {
-                return SetEquals(hashSet) ? 0 : -1;
+                return SetEquals(existing) ? 0 : -1;
             }
             else {
                 return -1;
