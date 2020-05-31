@@ -8,7 +8,7 @@ using AutoMapper;
 namespace BlazorFlow.Services
 {
     // To optimize
-    public class FlowService
+    public class FlowService : IFlowService
     {
         private readonly FlowContext context;
         private readonly IMapper mapper;

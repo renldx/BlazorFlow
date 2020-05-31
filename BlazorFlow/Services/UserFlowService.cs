@@ -7,7 +7,7 @@ using AutoMapper;
 
 namespace BlazorFlow.Services
 {
-    public class UserFlowService
+    public class UserFlowService : IUserFlowService
     {
         private readonly FlowContext context;
         private readonly IMapper mapper;
@@ -20,7 +20,7 @@ namespace BlazorFlow.Services
 
         public async Task<Models.UserFlow> GetUserFlow(int userFlowId)
         {
-            var userFlow = await context.UserFlows.FindAsync(userFlowId) ?? new UserFlow();
+            var userFlow = await context.UserFlows.FindAsync(userFlowId);
             var userFlowModel = mapper.Map<Models.UserFlow>(userFlow);
 
             var userNodes = await context.UserFlowNodes
@@ -37,10 +37,19 @@ namespace BlazorFlow.Services
             return userFlowModel;
         }
 
+        public async Task<Models.UserFlow> CreateUserFlow(int userId, int flowId)
+        {
+            var userFlowData = new UserFlow() { UserFlowId = 1, UserId = userId, FlowId = flowId };
+            context.UserFlows.Add(userFlowData);
+            await context.SaveChangesAsync();
+            return mapper.Map<Models.UserFlow>(userFlowData);
+        }
+
         public async Task AddUserFlowAnswer(Models.UserFlowNode userNode)
         {
             var userNodeData = mapper.Map<UserFlowNode>(userNode);
-            await context.UserFlowNodes.AddAsync(userNodeData);
+            context.UserFlowNodes.Add(userNodeData);
+            await context.SaveChangesAsync();
         }
 
         public async Task UpdateUserFlowAnswer(Models.UserFlowNode userNode)

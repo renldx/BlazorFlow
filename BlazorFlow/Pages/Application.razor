@@ -9,8 +9,8 @@
 @using BlazorFlow.Shared.Components
 
 @inject NavigationManager NavigationManager
-@inject FlowService FlowService
-@inject UserFlowService UserFlowService
+@inject IFlowService FlowService
+@inject IUserFlowService UserFlowService
 
 <h1>Flow</h1>
 
@@ -121,9 +121,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var flowId = 1;
+        var userId = 1;
+
         CurrentFlow = await FlowService.GetFlow(1);
-        CurrentUserFlow = await UserFlowService.GetUserFlow(1);
+        CurrentUserFlow = await UserFlowService.GetUserFlow(flowId);
+        CurrentUserFlow ??= await UserFlowService.CreateUserFlow(userId, CurrentFlow.FlowId);
         CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == 1); // To improve
+        
         UpdateView();
     }
 
@@ -148,34 +153,29 @@ else
         {
             if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
             {
-                PageModel.StringValue = userFlowNode?.UserFlowAnswers?.FirstOrDefault() ?? string.Empty;
+                var userString = userFlowNode?.UserFlowAnswers?.FirstOrDefault().ToString() ?? string.Empty;
+                PageModel.StringValue = userString;
             }
             else if (CurrentNodeType == FlowValueType.Number)
             {
-                var parsed = Decimal.TryParse(userFlowNode?.UserFlowAnswers?.FirstOrDefault(), out var result);
-
-                if (parsed)
-                {
-                    PageModel.NumberValue = result;
-                }
+                var userDecimal = (decimal)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                PageModel.NumberValue = userDecimal;
             }
             else if (CurrentNodeType == FlowValueType.Checkbox)
             {
-                var hashSet = new HashSetComparable<string>(userFlowNode.UserFlowAnswers!);
+                var userStrings = userFlowNode.UserFlowAnswers.ConvertAll(i => i.ToString());
+                var hashSet = new HashSetComparable<string>(userStrings!);
                 PageModel.CheckboxValues = hashSet;
             }
             else if (CurrentNodeType == FlowValueType.DateTime)
             {
-                var parsed = DateTime.TryParse(userFlowNode?.UserFlowAnswers?.FirstOrDefault(), out var result);
-
-                if (parsed)
-                {
-                    PageModel.DateTimeValue = result;
-                }
+                var userDateTime  = (DateTime)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                PageModel.DateTimeValue = userDateTime;
             }
             else if (CurrentNodeType == FlowValueType.Text || CurrentNodeType == FlowValueType.TextArea)
             {
-                PageModel.StringValue = userFlowNode?.UserFlowAnswers?.FirstOrDefault() ?? string.Empty;
+                var userText = (string)userFlowNode?.UserFlowAnswers?.FirstOrDefault()!;
+                PageModel.StringValue = userText;
             }
         }
         else
@@ -232,16 +232,16 @@ else
     async void SaveAnswer()
     {
         // To be improved
-        List<string> newAnswerValue() => CurrentNodeType switch
+        List<IComparable> newAnswerValue() => CurrentNodeType switch
         {
-            FlowValueType.Radio => new List<string> { PageModel.StringValue! },
-            FlowValueType.Select => new List<string> { PageModel.StringValue! },
-            FlowValueType.Number => new List<string> { PageModel.NumberValue.ToString()! },
-            FlowValueType.Checkbox => PageModel.CheckboxValues.ToList(),
-            FlowValueType.DateTime => new List<string> { PageModel.DateTimeValue.ToString()! },
-            FlowValueType.Text => new List<string> { PageModel.StringValue! },
-            FlowValueType.TextArea => new List<string> { PageModel.StringValue! },
-            _ => new List<string>()
+            FlowValueType.Radio => new List<IComparable> { PageModel.StringValue! },
+            FlowValueType.Select => new List<IComparable> { PageModel.StringValue! },
+            FlowValueType.Number => new List<IComparable> { PageModel.NumberValue! },
+            FlowValueType.Checkbox => new List<IComparable>(PageModel.CheckboxValues.ToList()),
+            FlowValueType.DateTime => new List<IComparable> { PageModel.DateTimeValue! },
+            FlowValueType.Text => new List<IComparable> { PageModel.StringValue! },
+            FlowValueType.TextArea => new List<IComparable> { PageModel.StringValue! },
+            _ => new List<IComparable>()
         };
 
         if (CurrentUserFlowNode is {} existing)

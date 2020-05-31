@@ -7,7 +7,7 @@ namespace BlazorFlow.Models
 {
     public class UserFlowNode
     {
-        public UserFlowNode(int userFlowId, int flowNodeId, List<string> userFlowAnswers)
+        public UserFlowNode(int userFlowId, int flowNodeId, List<IComparable> userFlowAnswers)
         {
             UserFlowId = userFlowId;
             FlowNodeId = flowNodeId;
@@ -17,7 +17,7 @@ namespace BlazorFlow.Models
         public int UserFlowNodeId { get; set; }
         public int UserFlowId { get; set; }
         public int FlowNodeId { get; set; }
-        public List<string> UserFlowAnswers { get; set; }
+        public List<IComparable> UserFlowAnswers { get; set; }
         public bool IsStale { get; set; } = false;
     }
 }

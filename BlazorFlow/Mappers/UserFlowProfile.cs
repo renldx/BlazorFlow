@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 
@@ -13,17 +15,13 @@ namespace BlazorFlow.Mappers
 
             CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
                 .ForMember(m => m.UserFlowAnswers, opt => opt
-                .MapFrom(d => d.UserFlowAnswers
-                .Select(s => s.UserFlowAnswerValue)));
+                .MapFrom<UserFlowAnswerResolver>());
 
             CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
                 .ForMember(m => m.UserFlowAnswers, opt => opt
                 .MapFrom(d => d.UserFlowAnswers
                 .Select(s => s.UserFlowAnswerValue)))
                 .ReverseMap();
-
-            //CreateMap<Models.UserFlowNode, Data.UserFlowNode>()
-            //    .ConvertUsing<UserFlowNodeConverter>();
         }
     }
 }
