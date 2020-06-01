@@ -29,7 +29,7 @@ namespace BlazorFlow.Mappers
                     _ => throw new Exception()
                 };
 
-                var userFlowAnswerModel = new Models.UserFlowAnswer() { UserFlowAnswerValue = userValue };
+                var userFlowAnswerModel = new Models.UserFlowAnswer(userValue);
                 member.Add(userFlowAnswerModel);
             }
 

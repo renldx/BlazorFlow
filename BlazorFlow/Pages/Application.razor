@@ -233,24 +233,13 @@ else
 
     async void SaveAnswer()
     {
-        // To be improved
-        List<UserFlowAnswer> newAnswerValue() => CurrentNodeType switch
-        {
-            //FlowValueType.Radio => new List<UserFlowAnswer> { PageModel.StringValue! },
-            //FlowValueType.Select => new List<UserFlowAnswer> { PageModel.StringValue! },
-            //FlowValueType.Number => new List<UserFlowAnswer> { PageModel.NumberValue! },
-            //FlowValueType.Checkbox => new List<UserFlowAnswer>(PageModel.CheckboxValues.ToList()),
-            //FlowValueType.DateTime => new List<UserFlowAnswer> { PageModel.DateTimeValue! },
-            //FlowValueType.Text => new List<UserFlowAnswer> { PageModel.StringValue! },
-            //FlowValueType.TextArea => new List<UserFlowAnswer> { PageModel.StringValue! },
-            _ => new List<UserFlowAnswer>()
-        };
+        var userFlowAnswers = AnswerValueHelper.GetUserFlowAnswers(CurrentNodeType, PageModel);
 
         if (CurrentUserFlowNode is {} existing)
         {
-            if (existing.Value.UserFlowAnswers != newAnswerValue())
+            if (existing.Value.UserFlowAnswers != userFlowAnswers)
             {
-                CurrentUserFlowNode.Value.UserFlowAnswers = newAnswerValue();
+                CurrentUserFlowNode.Value.UserFlowAnswers = userFlowAnswers;
                 CurrentUserFlowNode.Value.IsStale = false;
             }
 
@@ -267,7 +256,7 @@ else
         }
         else
         {
-            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentUserFlow.UserFlowId, CurrentNode.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentUserFlow.UserFlowId, CurrentNode.FlowNodeId, userFlowAnswers));
 
             if (CurrentUserFlow.UserFlowNodes.Any())
             {
