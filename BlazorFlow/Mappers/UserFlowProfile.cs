@@ -9,19 +9,27 @@ namespace BlazorFlow.Mappers
     {
         public UserFlowProfile()
         {
+            // Data => Models
+
             CreateMap<Data.UserFlow, Models.UserFlow>()
                 .ForMember(m => m.UserFlowNodes, opt => opt
                 .MapFrom(d => d.UserFlowNodes));
 
             CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
                 .ForMember(m => m.UserFlowAnswers, opt => opt
-                .MapFrom<UserFlowAnswerResolver>());
+                .MapFrom<UserFlowAnswerDataResolver>());
 
-            CreateMap<Data.UserFlowNode, Models.UserFlowNode>()
-                .ForMember(m => m.UserFlowAnswers, opt => opt
-                .MapFrom(d => d.UserFlowAnswers
-                .Select(s => s.UserFlowAnswerValue)))
+            // Models => Data
+
+            // To test
+            CreateMap<Data.UserFlow, Models.UserFlow>()
+                .ForMember(m => m.UserFlowNodes, opt => opt
+                .MapFrom(d => d.UserFlowNodes))
                 .ReverseMap();
+
+            CreateMap<Models.UserFlowNode, Data.UserFlowNode>()
+                .ForMember(m => m.UserFlowAnswers, opt => opt
+                .MapFrom<UserFlowAnswerModelResolver>());
         }
     }
 }

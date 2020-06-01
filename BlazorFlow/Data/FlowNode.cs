@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BlazorFlow.Enums;
 
 namespace BlazorFlow.Data
 {
@@ -12,7 +13,7 @@ namespace BlazorFlow.Data
         public int FlowQuestionId { get; set; }
         public FlowQuestion FlowQuestion { get; set; } = null!;
         public FlowValueType FlowNodeType { get; set; }
-        public FlowNodeEntity FlowNodeEntity { get; set; }
+        public FlowEntity FlowNodeEntity { get; set; }
         public List<FlowNodeAnswer> FlowNodeAnswers { get; set; } = null!;
     }
 }

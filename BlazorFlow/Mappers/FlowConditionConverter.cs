@@ -1,6 +1,7 @@
 using System;
 using AutoMapper;
 using BlazorFlow.Data;
+using BlazorFlow.Enums;
 using BlazorFlow.Helpers;
 
 namespace BlazorFlow.Mappers

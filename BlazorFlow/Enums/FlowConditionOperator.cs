@@ -1,4 +1,4 @@
-namespace BlazorFlow.Data
+namespace BlazorFlow.Enums
 {
     public enum FlowConditionOperator
     {

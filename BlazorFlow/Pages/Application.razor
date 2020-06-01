@@ -235,33 +235,35 @@ else
     {
         var userFlowAnswers = AnswerValueHelper.GetUserFlowAnswers(CurrentNodeType, PageModel);
 
-        if (CurrentUserFlowNode is {} existing)
+        // Check if user has answered this question before
+        if (CurrentUserFlowNode is {} existingUserNode)
         {
-            if (existing.Value.UserFlowAnswers != userFlowAnswers)
+            // Compare existing answer to selected answer and update if needed
+            if (existingUserNode.Value.UserFlowAnswers != userFlowAnswers)
             {
-                CurrentUserFlowNode.Value.UserFlowAnswers = userFlowAnswers;
-                CurrentUserFlowNode.Value.IsStale = false;
+                existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
+                existingUserNode.Value.IsStale = false;
             }
 
             // Set all subsequent userFlowNodes as stale
-            var nextUserFlowAnswer = CurrentUserFlowNode.Next;
+            var nextUserFlowAnswer = existingUserNode.Next;
 
-            while (nextUserFlowAnswer is {} alsoExisting)
+            while (nextUserFlowAnswer is {} existingUserAnswer)
             {
-                nextUserFlowAnswer.Value.IsStale = true;
-                nextUserFlowAnswer = nextUserFlowAnswer.Next;
+                existingUserAnswer.Value.IsStale = true;
+                existingUserAnswer = existingUserAnswer.Next;
             }
 
-            await UserFlowService.UpdateUserFlowAnswer(CurrentUserFlowNode.Value);
+            await UserFlowService.UpdateUserFlowAnswer(existingUserNode.Value);
         }
+        // User hasn't answered this question before, so create a new user node
         else
         {
             CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentUserFlow.UserFlowId, CurrentNode.FlowNodeId, userFlowAnswers));
 
-            if (CurrentUserFlow.UserFlowNodes.Any())
+            if (CurrentUserFlow.UserFlowNodes.Last is {} existingLastNode)
             {
-                var lastUserFlowAnswer = CurrentUserFlow.UserFlowNodes.Last!;
-                CurrentUserFlow.UserFlowNodes.AddAfter(lastUserFlowAnswer, CurrentUserFlowNode);
+                CurrentUserFlow.UserFlowNodes.AddAfter(existingLastNode, CurrentUserFlowNode);
             }
             else
             {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BlazorFlow.Data;
 using BlazorFlow.Enums;
 using BlazorFlow.Models;
 
@@ -7,35 +8,35 @@ namespace BlazorFlow.Helpers
 {
     public static class AnswerValueHelper
     {
-        public static List<UserFlowAnswer> GetUserFlowAnswers(FlowValueType valueType, Pages.Application.Model model) => valueType switch
+        public static List<Models.UserFlowAnswer> GetUserFlowAnswerModels(FlowValueType valueType, Pages.Application.Model model) => valueType switch
         {
             FlowValueType.None =>
-                new List<UserFlowAnswer>(),
+                new List<Models.UserFlowAnswer>(),
             FlowValueType.Radio =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
             FlowValueType.Select =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
             FlowValueType.Number =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.NumberValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.NumberValue!) },
             FlowValueType.Checkbox =>
                 HashSetToAnswers(model.CheckboxValues!),
             FlowValueType.DateTime =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.DateTimeValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.DateTimeValue!) },
             FlowValueType.Text =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
             FlowValueType.TextArea =>
-                new List<UserFlowAnswer> { new UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
             _ => throw new Exception()
         };
 
         // To improve
-        public static List<UserFlowAnswer> HashSetToAnswers(HashSetComparable<string> set)
+        public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSetComparable<string> set)
         {
-            var answerList = new List<UserFlowAnswer>();
+            var answerList = new List<Models.UserFlowAnswer>();
 
             foreach(var value in set)
             {
-                answerList.Add(new UserFlowAnswer(value));
+                answerList.Add(new Models.UserFlowAnswer(value));
             }
 
             return answerList;

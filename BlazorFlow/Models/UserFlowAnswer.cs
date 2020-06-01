@@ -1,4 +1,5 @@
 using System;
+using BlazorFlow.Enums;
 
 namespace BlazorFlow.Models
 {
@@ -12,5 +13,6 @@ namespace BlazorFlow.Models
         //public int UserFlowAnswerId { get; set; }
 
         public IComparable UserFlowAnswerValue { get; set; } = null!;
+        public FlowValueType UserFlowAnswerType { get; set; }
     }
 }

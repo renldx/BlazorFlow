@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using AutoMapper;
 using BlazorFlow.Data;
+using BlazorFlow.Enums;
 
 namespace BlazorFlow.Mappers
 {
-    public class UserFlowAnswerResolver : IValueResolver<Data.UserFlowNode, Models.UserFlowNode, List<Models.UserFlowAnswer>>
+    public class UserFlowAnswerModelResolver : IValueResolver<Models.UserFlowNode, Data.UserFlowNode, List<Data.UserFlowAnswer>>
     {
-        public List<Models.UserFlowAnswer> Resolve(Data.UserFlowNode source, Models.UserFlowNode destination, List<Models.UserFlowAnswer> member, ResolutionContext context)
+        public List<Data.UserFlowAnswer> Resolve(Models.UserFlowNode source, Data.UserFlowNode destination, List<Data.UserFlowAnswer> member, ResolutionContext context)
         {
-            member = new List<Models.UserFlowAnswer>();
+            member = new List<Data.UserFlowAnswer>();
 
             foreach (var userFlowAnswer in source.UserFlowAnswers)
             {
