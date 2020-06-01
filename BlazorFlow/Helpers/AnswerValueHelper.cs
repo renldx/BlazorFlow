@@ -13,30 +13,30 @@ namespace BlazorFlow.Helpers
             FlowValueType.None =>
                 new List<Models.UserFlowAnswer>(),
             FlowValueType.Radio =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!, valueType) },
             FlowValueType.Select =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!, valueType) },
             FlowValueType.Number =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.NumberValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.NumberValue!, valueType) },
             FlowValueType.Checkbox =>
-                HashSetToAnswers(model.CheckboxValues!),
+                HashSetToAnswers(model.CheckboxValues!, valueType),
             FlowValueType.DateTime =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.DateTimeValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.DateTimeValue!, valueType) },
             FlowValueType.Text =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!, valueType) },
             FlowValueType.TextArea =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!) },
+                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue!, valueType) },
             _ => throw new Exception()
         };
 
         // To improve
-        public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSetComparable<string> set)
+        public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSetComparable<string> set, FlowValueType valueType)
         {
             var answerList = new List<Models.UserFlowAnswer>();
 
             foreach(var value in set)
             {
-                answerList.Add(new Models.UserFlowAnswer(value));
+                answerList.Add(new Models.UserFlowAnswer(value, valueType));
             }
 
             return answerList;

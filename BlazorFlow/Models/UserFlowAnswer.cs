@@ -5,9 +5,10 @@ namespace BlazorFlow.Models
 {
     public class UserFlowAnswer
     {
-        public UserFlowAnswer(IComparable userFlowAnswerValue)
+        public UserFlowAnswer(IComparable userFlowAnswerValue, FlowValueType userFlowAnswerType)
         {
             UserFlowAnswerValue = userFlowAnswerValue;
+            UserFlowAnswerType = userFlowAnswerType;
         }
 
         //public int UserFlowAnswerId { get; set; }

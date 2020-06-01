@@ -233,7 +233,7 @@ else
 
     async void SaveAnswer()
     {
-        var userFlowAnswers = AnswerValueHelper.GetUserFlowAnswers(CurrentNodeType, PageModel);
+        var userFlowAnswers = AnswerValueHelper.GetUserFlowAnswerModels(CurrentNodeType, PageModel);
 
         // Check if user has answered this question before
         if (CurrentUserFlowNode is {} existingUserNode)

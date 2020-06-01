@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using AutoMapper;
-using BlazorFlow.Data;
 using BlazorFlow.Enums;
 
 namespace BlazorFlow.Mappers
@@ -17,20 +16,19 @@ namespace BlazorFlow.Mappers
                 var userValueString = userFlowAnswer.UserFlowAnswerValue;
                 var userValueType = userFlowAnswer.UserFlowAnswerType;
 
-                // To move into helper
                 IComparable userValue = userValueType switch
                 {
-                    FlowValueType.Radio => int.Parse(userFlowAnswer.UserFlowAnswerValue),
-                    FlowValueType.Select => int.Parse(userFlowAnswer.UserFlowAnswerValue),
                     FlowValueType.Number => decimal.Parse(userValueString),
                     FlowValueType.DateTime => DateTime.Parse(userValueString),
-                    FlowValueType.Checkbox => userValueType.ToString(),
-                    FlowValueType.Text => userValueType.ToString(),
-                    FlowValueType.TextArea => userValueType.ToString(),
+                    FlowValueType.Radio => userValueString,
+                    FlowValueType.Select => userValueString,
+                    FlowValueType.Checkbox => userValueString,
+                    FlowValueType.Text => userValueString,
+                    FlowValueType.TextArea => userValueString,
                     _ => throw new Exception()
                 };
 
-                var userFlowAnswerModel = new Models.UserFlowAnswer(userValue);
+                var userFlowAnswerModel = new Models.UserFlowAnswer(userValue, userValueType);
                 member.Add(userFlowAnswerModel);
             }
 
