@@ -52,15 +52,21 @@ namespace BlazorFlow.Data
                     v => (FlowConditionOperator)Enum.Parse(typeof(FlowConditionOperator), v));
 
             modelBuilder
-                .Entity<FlowNodeAnswer>()
-                .HasKey(fna => new { fna.FlowNodeId, fna.FlowAnswerId });
-
-            modelBuilder
                 .Entity<UserFlowAnswer>()
                 .Property(u => u.UserFlowAnswerType)
                 .HasConversion(
                     v => v.ToString(),
                     v => (FlowValueType)Enum.Parse(typeof(FlowValueType), v));
+
+            // Composite keys for join tables
+
+            modelBuilder
+                .Entity<FlowNodeAnswer>()
+                .HasKey(fna => new { fna.FlowNodeId, fna.FlowAnswerId });
+
+            modelBuilder
+                .Entity<FlowLinkCondition>()
+                .HasKey(flc => new { flc.FlowLinkId, flc.FlowConditionId });
 
             // Seed Data
 
@@ -362,13 +368,20 @@ namespace BlazorFlow.Data
                 .Entity<FlowLinkCondition>()
                 .HasData(new FlowLinkCondition[]
                 {
+                    // Yes / No
                     new FlowLinkCondition() { FlowLinkConditionId = 1, FlowLinkId = 2, FlowConditionId = 1},
-                    new FlowLinkCondition() { FlowLinkConditionId = 2, FlowLinkId = 5, FlowConditionId = 2 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 3, FlowLinkId = 5, FlowConditionId = 3 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 4, FlowLinkId = 5, FlowConditionId = 4 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 5, FlowLinkId = 7, FlowConditionId = 5 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 6, FlowLinkId = 7, FlowConditionId = 6 },
-                    new FlowLinkCondition() { FlowLinkConditionId = 7, FlowLinkId = 9, FlowConditionId = 7 }
+
+                    //  Between 9 and 10k
+                    new FlowLinkCondition() { FlowLinkConditionId = 2, FlowLinkId = 5, FlowConditionId = 5 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 3, FlowLinkId = 5, FlowConditionId = 6 },
+
+                    // Checkboxes
+                    new FlowLinkCondition() { FlowLinkConditionId = 4, FlowLinkId = 7, FlowConditionId = 2 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 5, FlowLinkId = 7, FlowConditionId = 3 },
+                    new FlowLinkCondition() { FlowLinkConditionId = 6, FlowLinkId = 7, FlowConditionId = 4 },
+
+                    // Future Date
+                    new FlowLinkCondition() { FlowLinkConditionId = 7, FlowLinkId = 9, FlowConditionId = 7 },
                 });
 
             modelBuilder

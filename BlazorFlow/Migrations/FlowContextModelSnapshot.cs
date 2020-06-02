@@ -45,21 +45,21 @@ namespace BlazorFlow.Migrations
                         new
                         {
                             ContactId = 1,
-                            DateOfBirth = new DateTime(2020, 6, 1, 18, 19, 34, 914, DateTimeKind.Local).AddTicks(3050),
+                            DateOfBirth = new DateTime(2020, 6, 1, 21, 33, 2, 496, DateTimeKind.Local).AddTicks(7690),
                             FirstName = "John",
                             LastName = "Doe"
                         },
                         new
                         {
                             ContactId = 2,
-                            DateOfBirth = new DateTime(2020, 6, 1, 18, 19, 34, 922, DateTimeKind.Local).AddTicks(6680),
+                            DateOfBirth = new DateTime(2020, 6, 1, 21, 33, 2, 504, DateTimeKind.Local).AddTicks(8860),
                             FirstName = "Eddie",
                             LastName = "Murphy"
                         },
                         new
                         {
                             ContactId = 3,
-                            DateOfBirth = new DateTime(2020, 6, 1, 18, 19, 34, 922, DateTimeKind.Local).AddTicks(6730),
+                            DateOfBirth = new DateTime(2020, 6, 1, 21, 33, 2, 504, DateTimeKind.Local).AddTicks(8910),
                             FirstName = "Jim",
                             LastName = "Carrey"
                         });
@@ -370,68 +370,63 @@ namespace BlazorFlow.Migrations
 
             modelBuilder.Entity("BlazorFlow.Data.FlowLinkCondition", b =>
                 {
-                    b.Property<int>("FlowLinkConditionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+                    b.Property<int>("FlowLinkId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("FlowConditionId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("FlowLinkId")
+                    b.Property<int>("FlowLinkConditionId")
                         .HasColumnType("integer");
 
-                    b.HasKey("FlowLinkConditionId");
+                    b.HasKey("FlowLinkId", "FlowConditionId");
 
-                    b.HasIndex("FlowConditionId")
-                        .IsUnique();
-
-                    b.HasIndex("FlowLinkId");
+                    b.HasIndex("FlowConditionId");
 
                     b.ToTable("FlowLinkConditions");
 
                     b.HasData(
                         new
                         {
-                            FlowLinkConditionId = 1,
+                            FlowLinkId = 2,
                             FlowConditionId = 1,
-                            FlowLinkId = 2
+                            FlowLinkConditionId = 1
                         },
                         new
                         {
-                            FlowLinkConditionId = 2,
-                            FlowConditionId = 2,
-                            FlowLinkId = 5
-                        },
-                        new
-                        {
-                            FlowLinkConditionId = 3,
-                            FlowConditionId = 3,
-                            FlowLinkId = 5
-                        },
-                        new
-                        {
-                            FlowLinkConditionId = 4,
-                            FlowConditionId = 4,
-                            FlowLinkId = 5
-                        },
-                        new
-                        {
-                            FlowLinkConditionId = 5,
+                            FlowLinkId = 5,
                             FlowConditionId = 5,
-                            FlowLinkId = 7
+                            FlowLinkConditionId = 2
                         },
                         new
                         {
-                            FlowLinkConditionId = 6,
+                            FlowLinkId = 5,
                             FlowConditionId = 6,
-                            FlowLinkId = 7
+                            FlowLinkConditionId = 3
                         },
                         new
                         {
-                            FlowLinkConditionId = 7,
+                            FlowLinkId = 7,
+                            FlowConditionId = 2,
+                            FlowLinkConditionId = 4
+                        },
+                        new
+                        {
+                            FlowLinkId = 7,
+                            FlowConditionId = 3,
+                            FlowLinkConditionId = 5
+                        },
+                        new
+                        {
+                            FlowLinkId = 7,
+                            FlowConditionId = 4,
+                            FlowLinkConditionId = 6
+                        },
+                        new
+                        {
+                            FlowLinkId = 9,
                             FlowConditionId = 7,
-                            FlowLinkId = 9
+                            FlowLinkConditionId = 7
                         });
                 });
 
@@ -854,8 +849,8 @@ namespace BlazorFlow.Migrations
             modelBuilder.Entity("BlazorFlow.Data.FlowLinkCondition", b =>
                 {
                     b.HasOne("BlazorFlow.Data.FlowCondition", "FlowCondition")
-                        .WithOne("FlowLinkConditions")
-                        .HasForeignKey("BlazorFlow.Data.FlowLinkCondition", "FlowConditionId")
+                        .WithMany("FlowLinkConditions")
+                        .HasForeignKey("FlowConditionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

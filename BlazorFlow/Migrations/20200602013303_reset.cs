@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BlazorFlow.Migrations
 {
-    public partial class initialadd : Migration
+    public partial class reset : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,7 +44,10 @@ namespace BlazorFlow.Migrations
                 columns: table => new
                 {
                     FlowConditionId = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FlowConditionValue = table.Column<string>(nullable: false),
+                    FlowConditionOperator = table.Column<string>(nullable: false),
+                    FlowConditionType = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -77,27 +80,6 @@ namespace BlazorFlow.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Flows", x => x.FlowId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FlowConditionValues",
-                columns: table => new
-                {
-                    FlowConditionValueId = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    FlowConditionValueString = table.Column<string>(nullable: false),
-                    FlowConditionId = table.Column<int>(nullable: false),
-                    FlowConditionValueOperator = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FlowConditionValues", x => x.FlowConditionValueId);
-                    table.ForeignKey(
-                        name: "FK_FlowConditionValues_FlowConditions_FlowConditionId",
-                        column: x => x.FlowConditionId,
-                        principalTable: "FlowConditions",
-                        principalColumn: "FlowConditionId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -158,18 +140,11 @@ namespace BlazorFlow.Migrations
                     FlowLinkVersion = table.Column<double>(nullable: false),
                     FlowId = table.Column<int>(nullable: false),
                     FlowNodePreviousId = table.Column<int>(nullable: false),
-                    FlowNodeNextId = table.Column<int>(nullable: false),
-                    FlowConditionId = table.Column<int>(nullable: true)
+                    FlowNodeNextId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FlowLinks", x => x.FlowLinkId);
-                    table.ForeignKey(
-                        name: "FK_FlowLinks_FlowConditions_FlowConditionId",
-                        column: x => x.FlowConditionId,
-                        principalTable: "FlowConditions",
-                        principalColumn: "FlowConditionId",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_FlowLinks_Flows_FlowId",
                         column: x => x.FlowId,
@@ -194,14 +169,13 @@ namespace BlazorFlow.Migrations
                 name: "FlowNodeAnswers",
                 columns: table => new
                 {
-                    FlowNodeAnswerId = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     FlowNodeId = table.Column<int>(nullable: false),
-                    FlowAnswerId = table.Column<int>(nullable: false)
+                    FlowAnswerId = table.Column<int>(nullable: false),
+                    FlowNodeAnswerId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FlowNodeAnswers", x => x.FlowNodeAnswerId);
+                    table.PrimaryKey("PK_FlowNodeAnswers", x => new { x.FlowNodeId, x.FlowAnswerId });
                     table.ForeignKey(
                         name: "FK_FlowNodeAnswers_FlowAnswers_FlowAnswerId",
                         column: x => x.FlowAnswerId,
@@ -217,10 +191,10 @@ namespace BlazorFlow.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserFlowAnswers",
+                name: "UserFlowNodes",
                 columns: table => new
                 {
-                    UserFlowAnswerId = table.Column<int>(nullable: false)
+                    UserFlowNodeId = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     IsStale = table.Column<bool>(nullable: false),
                     UserFlowId = table.Column<int>(nullable: false),
@@ -228,15 +202,15 @@ namespace BlazorFlow.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFlowAnswers", x => x.UserFlowAnswerId);
+                    table.PrimaryKey("PK_UserFlowNodes", x => x.UserFlowNodeId);
                     table.ForeignKey(
-                        name: "FK_UserFlowAnswers_FlowNodes_FlowNodeId",
+                        name: "FK_UserFlowNodes_FlowNodes_FlowNodeId",
                         column: x => x.FlowNodeId,
                         principalTable: "FlowNodes",
                         principalColumn: "FlowNodeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserFlowAnswers_UserFlows_UserFlowId",
+                        name: "FK_UserFlowNodes_UserFlows_UserFlowId",
                         column: x => x.UserFlowId,
                         principalTable: "UserFlows",
                         principalColumn: "UserFlowId",
@@ -244,22 +218,48 @@ namespace BlazorFlow.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserFlowAnswerValues",
+                name: "FlowLinkConditions",
                 columns: table => new
                 {
-                    UserFlowAnswerValueId = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    UserFlowAnswerValueString = table.Column<string>(nullable: false),
-                    UserFlowAnswerId = table.Column<int>(nullable: false)
+                    FlowLinkId = table.Column<int>(nullable: false),
+                    FlowConditionId = table.Column<int>(nullable: false),
+                    FlowLinkConditionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFlowAnswerValues", x => x.UserFlowAnswerValueId);
+                    table.PrimaryKey("PK_FlowLinkConditions", x => new { x.FlowLinkId, x.FlowConditionId });
                     table.ForeignKey(
-                        name: "FK_UserFlowAnswerValues_UserFlowAnswers_UserFlowAnswerId",
-                        column: x => x.UserFlowAnswerId,
-                        principalTable: "UserFlowAnswers",
-                        principalColumn: "UserFlowAnswerId",
+                        name: "FK_FlowLinkConditions_FlowConditions_FlowConditionId",
+                        column: x => x.FlowConditionId,
+                        principalTable: "FlowConditions",
+                        principalColumn: "FlowConditionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FlowLinkConditions_FlowLinks_FlowLinkId",
+                        column: x => x.FlowLinkId,
+                        principalTable: "FlowLinks",
+                        principalColumn: "FlowLinkId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserFlowAnswers",
+                columns: table => new
+                {
+                    UserFlowAnswerId = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserFlowAnswerValue = table.Column<string>(nullable: false),
+                    UserFlowAnswerType = table.Column<string>(nullable: false),
+                    UserFlowNodeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFlowAnswers", x => x.UserFlowAnswerId);
+                    table.ForeignKey(
+                        name: "FK_UserFlowAnswers_UserFlowNodes_UserFlowNodeId",
+                        column: x => x.UserFlowNodeId,
+                        principalTable: "UserFlowNodes",
+                        principalColumn: "UserFlowNodeId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -268,9 +268,9 @@ namespace BlazorFlow.Migrations
                 columns: new[] { "ContactId", "DateOfBirth", "FirstName", "LastName" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2020, 5, 24, 15, 29, 37, 456, DateTimeKind.Local).AddTicks(820), "John", "Doe" },
-                    { 2, new DateTime(2020, 5, 24, 15, 29, 37, 464, DateTimeKind.Local).AddTicks(8670), "Eddie", "Murphy" },
-                    { 3, new DateTime(2020, 5, 24, 15, 29, 37, 464, DateTimeKind.Local).AddTicks(8720), "Jim", "Carrey" }
+                    { 1, new DateTime(2020, 6, 1, 21, 33, 2, 496, DateTimeKind.Local).AddTicks(7690), "John", "Doe" },
+                    { 2, new DateTime(2020, 6, 1, 21, 33, 2, 504, DateTimeKind.Local).AddTicks(8860), "Eddie", "Murphy" },
+                    { 3, new DateTime(2020, 6, 1, 21, 33, 2, 504, DateTimeKind.Local).AddTicks(8910), "Jim", "Carrey" }
                 });
 
             migrationBuilder.InsertData(
@@ -288,13 +288,16 @@ namespace BlazorFlow.Migrations
 
             migrationBuilder.InsertData(
                 table: "FlowConditions",
-                column: "FlowConditionId",
-                values: new object[]
+                columns: new[] { "FlowConditionId", "FlowConditionOperator", "FlowConditionType", "FlowConditionValue" },
+                values: new object[,]
                 {
-                    3,
-                    2,
-                    4,
-                    1
+                    { 7, "GreaterThanOrEqualTo", "DateTime", "2025-01-01" },
+                    { 6, "LessThan", "Number", "10000" },
+                    { 4, "EqualTo", "Checkbox", "AMAZING" },
+                    { 5, "GreaterThan", "Number", "9000" },
+                    { 2, "EqualTo", "Checkbox", "GOOD" },
+                    { 1, "EqualTo", "Radio", "YES" },
+                    { 3, "EqualTo", "Checkbox", "GREAT" }
                 });
 
             migrationBuilder.InsertData(
@@ -302,18 +305,18 @@ namespace BlazorFlow.Migrations
                 columns: new[] { "FlowQuestionId", "FlowQuestionCode", "FlowQuestionTextEn", "FlowQuestionTextFr" },
                 values: new object[,]
                 {
-                    { 12, "TEXTAREA", "This is a paragraph input box.", "" },
-                    { 1, "START", "Welcome! You're starting a new application.", "" },
-                    { 2, "SINGLERADIO", "This is a single-choice question, in the form of radio buttons, representing primitive values.", "" },
-                    { 3, "SINGLESELECT", "This is a single-choice question, in the form of a drop-down list, representing a lookup to an associated entity.", "" },
-                    { 4, "BADSINGLE", "Invalid selection, try again.", "" },
-                    { 5, "NUMBER", "This is a number range check, which needs to be in between 9000 and 10000.", "" },
-                    { 6, "BADNUMBER", "Invalid number, try again.", "" },
-                    { 7, "MULTI", "This is a multi-choice question, in the form of checkboxes.", "" },
-                    { 8, "BADMULTI", "Invalid selections, try again.", "" },
-                    { 9, "DATE", "This is a date check, which needs to be in the future from now.", "" },
-                    { 10, "BADDATE", "Invalid date, try again.", "" },
                     { 11, "TEXT", "This is a text input box.", "" },
+                    { 10, "BADDATE", "Invalid date, try again.", "" },
+                    { 9, "DATE", "This is a date check, which needs to be in the future from now.", "" },
+                    { 8, "BADMULTI", "Invalid selections, try again.", "" },
+                    { 7, "MULTI", "This is a multi-choice question, in the form of checkboxes.", "" },
+                    { 6, "BADNUMBER", "Invalid number, try again.", "" },
+                    { 5, "NUMBER", "This is a number range check, which needs to be in between 9000 and 10000.", "" },
+                    { 3, "SINGLESELECT", "This is a single-choice question, in the form of a drop-down list, representing a lookup to an associated entity.", "" },
+                    { 2, "SINGLERADIO", "This is a single-choice question, in the form of radio buttons, representing primitive values.", "" },
+                    { 1, "START", "Welcome! You're starting a new application.", "" },
+                    { 12, "TEXTAREA", "This is a paragraph input box.", "" },
+                    { 4, "BADSINGLE", "Invalid selection, try again.", "" },
                     { 13, "END", "You've completed the application. Thanks!", "" }
                 });
 
@@ -323,79 +326,74 @@ namespace BlazorFlow.Migrations
                 values: new object[] { 1, 1.0 });
 
             migrationBuilder.InsertData(
-                table: "FlowConditionValues",
-                columns: new[] { "FlowConditionValueId", "FlowConditionId", "FlowConditionValueOperator", "FlowConditionValueString" },
-                values: new object[,]
-                {
-                    { 1, 1, "None", "YES" },
-                    { 2, 2, "None", "GOOD" },
-                    { 3, 2, "None", "GREAT" },
-                    { 4, 2, "None", "AMAZING" },
-                    { 5, 3, "GreaterThan", "9000" },
-                    { 6, 3, "LessThan", "10000" },
-                    { 7, 4, "GreaterThanOrEqualTo", "2025-01-01" }
-                });
-
-            migrationBuilder.InsertData(
                 table: "FlowNodes",
                 columns: new[] { "FlowNodeId", "FlowId", "FlowNodeEntity", "FlowNodeType", "FlowNodeVersion", "FlowQuestionId" },
                 values: new object[,]
                 {
-                    { 11, 1, "none", "text", 1.0, 11 },
-                    { 10, 1, "none", "none", 1.0, 10 },
-                    { 9, 1, "none", "datetime", 1.0, 9 },
-                    { 8, 1, "none", "none", 1.0, 8 },
-                    { 7, 1, "none", "checkbox", 1.0, 7 },
-                    { 3, 1, "contact", "select", 1.0, 3 },
-                    { 5, 1, "none", "number", 1.0, 5 },
-                    { 4, 1, "none", "none", 1.0, 4 },
-                    { 12, 1, "none", "textarea", 1.0, 12 },
-                    { 2, 1, "none", "radio", 1.0, 2 },
-                    { 1, 1, "none", "none", 1.0, 1 },
-                    { 6, 1, "none", "none", 1.0, 6 },
-                    { 13, 1, "none", "none", 1.0, 13 }
+                    { 1, 1, "None", "None", 1.0, 1 },
+                    { 2, 1, "None", "Radio", 1.0, 2 },
+                    { 3, 1, "Contact", "Select", 1.0, 3 },
+                    { 4, 1, "None", "None", 1.0, 4 },
+                    { 5, 1, "None", "Number", 1.0, 5 },
+                    { 6, 1, "None", "None", 1.0, 6 },
+                    { 7, 1, "None", "Checkbox", 1.0, 7 },
+                    { 8, 1, "None", "None", 1.0, 8 },
+                    { 9, 1, "None", "DateTime", 1.0, 9 },
+                    { 10, 1, "None", "None", 1.0, 10 },
+                    { 11, 1, "None", "Text", 1.0, 11 },
+                    { 12, 1, "None", "TextArea", 1.0, 12 },
+                    { 13, 1, "None", "None", 1.0, 13 }
                 });
 
             migrationBuilder.InsertData(
                 table: "FlowLinks",
-                columns: new[] { "FlowLinkId", "FlowConditionId", "FlowId", "FlowLinkVersion", "FlowNodeNextId", "FlowNodePreviousId" },
+                columns: new[] { "FlowLinkId", "FlowId", "FlowLinkVersion", "FlowNodeNextId", "FlowNodePreviousId" },
                 values: new object[,]
                 {
-                    { 1, null, 1, 1.0, 2, 1 },
-                    { 9, 4, 1, 1.0, 11, 9 },
-                    { 10, null, 1, 1.0, 10, 9 },
-                    { 7, 3, 1, 1.0, 9, 7 },
-                    { 8, null, 1, 1.0, 8, 7 },
-                    { 11, null, 1, 1.0, 12, 11 },
-                    { 5, 2, 1, 1.0, 7, 5 },
-                    { 12, null, 1, 1.0, 13, 12 },
-                    { 4, null, 1, 1.0, 5, 3 },
-                    { 3, null, 1, 1.0, 4, 2 },
-                    { 2, 1, 1, 1.0, 3, 2 },
-                    { 6, null, 1, 1.0, 6, 5 }
+                    { 1, 1, 1.0, 2, 1 },
+                    { 9, 1, 1.0, 11, 9 },
+                    { 10, 1, 1.0, 10, 9 },
+                    { 7, 1, 1.0, 9, 7 },
+                    { 8, 1, 1.0, 8, 7 },
+                    { 11, 1, 1.0, 12, 11 },
+                    { 5, 1, 1.0, 7, 5 },
+                    { 12, 1, 1.0, 13, 12 },
+                    { 4, 1, 1.0, 5, 3 },
+                    { 3, 1, 1.0, 4, 2 },
+                    { 2, 1, 1.0, 3, 2 },
+                    { 6, 1, 1.0, 6, 5 }
                 });
 
             migrationBuilder.InsertData(
                 table: "FlowNodeAnswers",
-                columns: new[] { "FlowNodeAnswerId", "FlowAnswerId", "FlowNodeId" },
+                columns: new[] { "FlowNodeId", "FlowAnswerId", "FlowNodeAnswerId" },
                 values: new object[,]
                 {
-                    { 4, 4, 7 },
-                    { 5, 5, 7 },
-                    { 6, 6, 7 },
+                    { 7, 4, 4 },
+                    { 7, 5, 5 },
+                    { 7, 6, 6 },
                     { 2, 2, 2 },
-                    { 1, 1, 2 },
-                    { 3, 3, 7 }
+                    { 2, 1, 1 },
+                    { 7, 3, 3 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "FlowLinkConditions",
+                columns: new[] { "FlowLinkId", "FlowConditionId", "FlowLinkConditionId" },
+                values: new object[,]
+                {
+                    { 2, 1, 1 },
+                    { 5, 5, 2 },
+                    { 5, 6, 3 },
+                    { 7, 2, 4 },
+                    { 7, 3, 5 },
+                    { 7, 4, 6 },
+                    { 9, 7, 7 }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlowConditionValues_FlowConditionId",
-                table: "FlowConditionValues",
-                column: "FlowConditionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FlowLinks_FlowConditionId",
-                table: "FlowLinks",
+                name: "IX_FlowLinkConditions_FlowConditionId",
+                table: "FlowLinkConditions",
                 column: "FlowConditionId");
 
             migrationBuilder.CreateIndex(
@@ -419,11 +417,6 @@ namespace BlazorFlow.Migrations
                 column: "FlowAnswerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FlowNodeAnswers_FlowNodeId",
-                table: "FlowNodeAnswers",
-                column: "FlowNodeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_FlowNodes_FlowId",
                 table: "FlowNodes",
                 column: "FlowId");
@@ -434,19 +427,19 @@ namespace BlazorFlow.Migrations
                 column: "FlowQuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFlowAnswers_FlowNodeId",
+                name: "IX_UserFlowAnswers_UserFlowNodeId",
                 table: "UserFlowAnswers",
+                column: "UserFlowNodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFlowNodes_FlowNodeId",
+                table: "UserFlowNodes",
                 column: "FlowNodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFlowAnswers_UserFlowId",
-                table: "UserFlowAnswers",
+                name: "IX_UserFlowNodes_UserFlowId",
+                table: "UserFlowNodes",
                 column: "UserFlowId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserFlowAnswerValues_UserFlowAnswerId",
-                table: "UserFlowAnswerValues",
-                column: "UserFlowAnswerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserFlows_FlowId",
@@ -460,25 +453,25 @@ namespace BlazorFlow.Migrations
                 name: "Contacts");
 
             migrationBuilder.DropTable(
-                name: "FlowConditionValues");
-
-            migrationBuilder.DropTable(
-                name: "FlowLinks");
+                name: "FlowLinkConditions");
 
             migrationBuilder.DropTable(
                 name: "FlowNodeAnswers");
 
             migrationBuilder.DropTable(
-                name: "UserFlowAnswerValues");
+                name: "UserFlowAnswers");
 
             migrationBuilder.DropTable(
                 name: "FlowConditions");
 
             migrationBuilder.DropTable(
+                name: "FlowLinks");
+
+            migrationBuilder.DropTable(
                 name: "FlowAnswers");
 
             migrationBuilder.DropTable(
-                name: "UserFlowAnswers");
+                name: "UserFlowNodes");
 
             migrationBuilder.DropTable(
                 name: "FlowNodes");

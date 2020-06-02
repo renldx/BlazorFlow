@@ -11,6 +11,6 @@ namespace BlazorFlow.Data
         public FlowConditionOperator FlowConditionOperator { get; set; }
         public FlowValueType FlowConditionType { get; set; }
         
-        public FlowLinkCondition FlowLinkConditions { get; set; } = null!;
+        public List<FlowLinkCondition> FlowLinkConditions { get; set; } = null!;
     }
 }
