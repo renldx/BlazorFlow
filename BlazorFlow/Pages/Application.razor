@@ -285,10 +285,10 @@ else
                 }
                 else if (CurrentNodeType == FlowValueType.Checkbox)
                 {
-                    //if (link.IsAvailable(PageModel.CheckboxValues!))
-                    //{
-                    //    availableLinks.Add(link);
-                    //}
+                    if (link.IsAvailable(PageModel.CheckboxValues!))
+                    {
+                        availableLinks.Add(link);
+                    }
                 }
                 else if (CurrentNodeType == FlowValueType.DateTime)
                 {
