@@ -22,87 +22,84 @@
 }
 else
 {
-<EditForm Model="@PageModel" OnValidSubmit="Next">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@PageModel" OnValidSubmit="Next">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div id="question">
-        <p>@CurrentQuestion.FlowQuestionTextEn</p>
-    </div>
+        <div id="question">
+            <p>@CurrentQuestion.FlowQuestionTextEn</p>
+        </div>
 
-    <div id="answer">
-        @if (CurrentNodeType == FlowValueType.Radio)
-        {
-            if (CurrentAnswers is {} flowAnswers)
+        <div id="answer">
+            @if (CurrentAnswers is {} existingAnswers)
             {
-                @foreach (var answer in flowAnswers)
+                @if (CurrentNodeType == FlowValueType.Radio)
                 {
-                    <label class="radio-answer">
-                        <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.StringValue" />
-                        @answer.FlowAnswerTextEn
-                    </label>
+                    @foreach (var answer in existingAnswers)
+                    {
+                        <label class="radio-answer">
+                            <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.StringValue"></InputRadio>
+                            @answer.FlowAnswerTextEn
+                        </label>
+                    }
+                }
+                else if (CurrentNodeType == FlowValueType.Select)
+                {
+                    if (CurrentNodeEntity is FlowEntity.None)
+                    {
+                        <InputSelect @bind-Value="PageModel.StringValue">
+                            <option value="">Select...</option>
+                            @foreach (var answer in existingAnswers)
+                            {
+                                <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
+                            }
+                        </InputSelect>
+                    }
+                    else if (PageModel.LookupValues is {} lookup)
+                    {
+                        <InputSelect @bind-Value="PageModel.StringValue">
+                            <option value="">Select...</option>
+                            @foreach (var value in lookup)
+                            {
+                                <option value="@value.Key">@value.Value</option>
+                            }
+                        </InputSelect>
+                    }
+                }
+                else if (CurrentNodeType == FlowValueType.Number)
+                {
+                    <InputNumber @bind-Value="PageModel.NumberValue"></InputNumber>
+                }
+                else if (CurrentNodeType == FlowValueType.Checkbox)
+                {
+                    @foreach (var answer in existingAnswers)
+                    {
+                        <label class="checkbox-answer">
+                            <input type="checkbox" name="checkbox" checked="@CheckboxIsChecked(answer.FlowAnswerValue)" @onchange="@((e) => CheckboxChanged(answer.FlowAnswerValue, e))" />
+                            @answer.FlowAnswerTextEn
+                        </label>
+                    }
+                }
+                else if (CurrentNodeType == FlowValueType.DateTime)
+                {
+                    <InputDate @bind-Value="PageModel.DateTimeValue"></InputDate>
+                }
+                else if (CurrentNodeType == FlowValueType.Text)
+                {
+                    <InputText @bind-Value="PageModel.StringValue"></InputText>
+                }
+                else if (CurrentNodeType == FlowValueType.TextArea)
+                {
+                    <InputTextArea @bind-Value="PageModel.StringValue"></InputTextArea>
                 }
             }
-        }
-        else if (CurrentNodeType == FlowValueType.Select)
-        {
-            if (CurrentAnswers is {} flowAnswers)
-            {
-                <InputSelect @bind-Value="PageModel.StringValue">
-                    <option value="">Select...</option>
-                    @foreach (var answer in flowAnswers)
-                    {
-                        <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
-                    }
-                </InputSelect>
-            }
-            else if (CurrentNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup)
-            {
-                <InputSelect @bind-Value="PageModel.StringValue">
-                    <option value="">Select...</option>
-                    @foreach (var value in lookup)
-                    {
-                        <option value="@value.Key">@value.Value</option>
-                    }
-                </InputSelect>
-            }
-        }
-        else if (CurrentNodeType == FlowValueType.Number)
-        {
-            <InputNumber @bind-Value="PageModel.NumberValue" />
-        }
-        else if (CurrentNodeType == FlowValueType.Checkbox)
-        {
-            if (CurrentAnswers is {} flowAnswers)
-            {
-                @foreach (var answer in flowAnswers)
-                {
-                    <label class="checkbox-answer">
-                        <input type="checkbox" name="checkbox" checked="@CheckboxIsChecked(answer.FlowAnswerValue)" @onchange="@((e) => CheckboxChanged(answer.FlowAnswerValue, e))" />
-                        @answer.FlowAnswerTextEn
-                    </label>
-                }
-            }
-        }
-        else if (CurrentNodeType == FlowValueType.DateTime)
-        {
-            <InputDate @bind-Value="PageModel.DateTimeValue" />
-        }
-        else if (CurrentNodeType == FlowValueType.Text)
-        {
-            <InputText @bind-Value="PageModel.StringValue" />
-        }
-        else if (CurrentNodeType == FlowValueType.TextArea)
-        {
-            <InputTextArea @bind-Value="PageModel.StringValue" />
-        }
-    </div>
+        </div>
 
-    <div id="navigation" class="row">
-        <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
-        <button class="btn btn-primary" type="submit">Next</button>
-    </div>
-</EditForm>
+        <div id="navigation" class="row">
+            <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
+            <button class="btn btn-primary" type="submit">Next</button>
+        </div>
+    </EditForm>
 }
 
 @code {
@@ -140,7 +137,7 @@ else
         CurrentQuestion = FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
         CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
 
-        if (CurrentNodeEntity is {} entity && entity != FlowEntity.None)
+        if (CurrentNodeEntity is {} entity && entity != FlowEntity.None) // To simplify
         {
             PageModel.LookupValues = LookupService.GetLookup(entity);
         }
@@ -208,27 +205,6 @@ else
         // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
         UpdateView();
-    }
-
-    bool CheckboxIsChecked(string flowAnswerValue)
-    {
-        return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
-    }
-
-    // To be improved
-    void CheckboxChanged(string checkboxValue, ChangeEventArgs e)
-    {
-        PageModel.CheckboxValues ??= new HashSetComparable<string>();
-        var isChecked = (bool)e.Value;
-
-        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue))
-        {
-            PageModel.CheckboxValues.Add(checkboxValue);
-        }
-        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue))
-        {
-            PageModel.CheckboxValues.Remove(checkboxValue);
-        }
     }
 
     async void SaveAnswer()
@@ -336,6 +312,27 @@ else
         }
     }
 
+    bool CheckboxIsChecked(string flowAnswerValue)
+    {
+        return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
+    }
+
+    // To be improved
+    void CheckboxChanged(string checkboxValue, ChangeEventArgs e)
+    {
+        PageModel.CheckboxValues ??= new HashSetComparable<string>();
+        var isChecked = (bool)e.Value;
+
+        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue))
+        {
+            PageModel.CheckboxValues.Add(checkboxValue);
+        }
+        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue))
+        {
+            PageModel.CheckboxValues.Remove(checkboxValue);
+        }
+    }
+
     // To add validation
     public class Model
     {
@@ -348,7 +345,7 @@ else
         // Nullable DateTimes not supported; broken in Safari
         public DateTime DateTimeValue { get; set; }
 
-        public Dictionary<string, string>? LookupValues { get; set; }
+        public Dictionary<int, string>? LookupValues { get; set; }
     }
 }
 

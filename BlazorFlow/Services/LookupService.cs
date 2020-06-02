@@ -7,20 +7,21 @@ namespace BlazorFlow.Services
 {
     public static class LookupService
     {
-        public static Dictionary<string, string> GetLookup(FlowEntity entity) => entity switch
+        public static Dictionary<int, string> GetLookup(FlowEntity entity) => entity switch
         {
             FlowEntity.Contact => GetContactLookup(),
             _ => throw new NotImplementedException()
         };
 
-        public static Dictionary<string, string> GetContactLookup()
+        public static Dictionary<int, string> GetContactLookup()
         {
             var contacts = ContactService.GetContacts();
-            var contactsDict = new Dictionary<string, string>();
+            var contactsDict = new Dictionary<int, string>();
+            var contactId = 0;
 
             foreach (var contact in contacts)
             {
-                contactsDict.Add(contact.ContactId.ToString(), contact.Name);
+                contactsDict.Add(++contactId, contact.Name);
             }
 
             return contactsDict;
