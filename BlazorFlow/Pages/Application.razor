@@ -251,6 +251,7 @@ else
         }
     }
 
+    // Need to be able to iterate over collections for checkboxes
     FlowLink EvaluateLinks()
     {
         if (CurrentLinks?.Length == 0)
@@ -270,7 +271,6 @@ else
             {
                 if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
                 {
-                    //if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true)
                     if (link.IsAvailable(PageModel.StringValue!))
                     {
                         availableLinks.Add(link);
@@ -278,7 +278,6 @@ else
                 }
                 else if (CurrentNodeType == FlowValueType.Number)
                 {
-                    //if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true)
                     if (link.IsAvailable(PageModel.NumberValue!))
                     {
                         availableLinks.Add(link);
@@ -286,14 +285,13 @@ else
                 }
                 else if (CurrentNodeType == FlowValueType.Checkbox)
                 {
-                    //if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true)
+                    //if (link.IsAvailable(PageModel.CheckboxValues!))
                     //{
-                        //availableLinks.Add(link);
+                    //    availableLinks.Add(link);
                     //}
                 }
                 else if (CurrentNodeType == FlowValueType.DateTime)
                 {
-                    //if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true)
                     if (link.IsAvailable(PageModel.DateTimeValue))
                     {
                         availableLinks.Add(link);
@@ -341,7 +339,7 @@ else
 
         public decimal? NumberValue { get; set; }
 
-        public HashSetComparable<string>? CheckboxValues { get; set; }
+        public HashSet<string>? CheckboxValues { get; set; }
 
         // Nullable DateTimes not supported; broken in Safari
         public DateTime DateTimeValue { get; set; }

@@ -30,7 +30,7 @@ namespace BlazorFlow.Helpers
         };
 
         // To improve
-        public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSetComparable<string> set, FlowValueType valueType)
+        public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSet<string> set, FlowValueType valueType)
         {
             var answerList = new List<Models.UserFlowAnswer>();
 
