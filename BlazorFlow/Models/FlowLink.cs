@@ -16,7 +16,8 @@ namespace BlazorFlow.Models
         public double FlowLinkVersion { get; set; }
         List<FlowCondition> FlowConditions { get; set; }
 
-        public bool IsAvailable(IComparable userValue) {
+        public bool IsAvailable(IComparable userValue)
+        {
             foreach (var condition in FlowConditions)
             {
                 if (condition.Evaluate(userValue) == false)

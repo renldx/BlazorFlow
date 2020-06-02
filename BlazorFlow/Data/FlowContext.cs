@@ -532,19 +532,22 @@ namespace BlazorFlow.Data
                 .Entity<Contact>()
                 .HasData(new Contact[]
                 {
-                    new Contact() {
+                    new Contact()
+                    {
                         ContactId = 1,
                         FirstName = "John",
                         LastName = "Doe",
                         DateOfBirth = DateTime.Now
                     },
-                    new Contact() {
+                    new Contact()
+                    {
                         ContactId = 2,
                         FirstName = "Eddie",
                         LastName = "Murphy",
                         DateOfBirth = DateTime.Now
                     },
-                    new Contact() {
+                    new Contact()
+                    {
                         ContactId = 3,
                         FirstName = "Jim",
                         LastName = "Carrey",
