@@ -12,6 +12,7 @@
 @inject NavigationManager NavigationManager
 @inject IFlowService FlowService
 @inject IUserFlowService UserFlowService
+@inject ILookupService LookupService
 
 <h1>Flow</h1>
 
@@ -44,30 +45,13 @@ else
                 }
                 else if (CurrentNodeType == FlowValueType.Select)
                 {
-                    if (CurrentNodeEntity is FlowEntity.None)
-                    {
-                        <InputSelect @bind-Value="PageModel.StringValue">
-                            <option value="">Select...</option>
-                            @foreach (var answer in existingAnswers)
-                            {
-                                <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
-                            }
-                        </InputSelect>
-                    }
-                    else if (PageModel.LookupValues is {} lookup)
-                    {
-                        <InputSelect @bind-Value="PageModel.StringValue">
-                            <option value="">Select...</option>
-                            @foreach (var value in lookup)
-                            {
-                                <option value="@value.Key">@value.Value</option>
-                            }
-                        </InputSelect>
-                    }
-                }
-                else if (CurrentNodeType == FlowValueType.Number)
-                {
-                    <InputNumber @bind-Value="PageModel.NumberValue"></InputNumber>
+                    <InputSelect @bind-Value="PageModel.StringValue">
+                        <option value="">Select...</option>
+                        @foreach (var answer in existingAnswers)
+                        {
+                            <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
+                        }
+                    </InputSelect>
                 }
                 else if (CurrentNodeType == FlowValueType.Checkbox)
                 {
@@ -78,6 +62,13 @@ else
                             @answer.FlowAnswerTextEn
                         </label>
                     }
+                }
+            }
+            else
+            {
+                if (CurrentNodeType == FlowValueType.Number)
+                {
+                    <InputNumber @bind-Value="PageModel.NumberValue"></InputNumber>
                 }
                 else if (CurrentNodeType == FlowValueType.DateTime)
                 {
@@ -135,15 +126,14 @@ else
     void UpdateView()
     {
         CurrentQuestion = FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
-        CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
 
-        if (CurrentNodeEntity is {} entity && entity != FlowEntity.None) // To simplify
+        if (CurrentNodeEntity is FlowEntity.None)
         {
-            PageModel.LookupValues = LookupService.GetLookup(entity);
+            CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
         }
         else
         {
-            PageModel.LookupValues?.Clear();
+            CurrentAnswers = LookupService.GetLookupValues(CurrentNodeEntity);
         }
 
         CurrentUserFlowNode = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
@@ -346,8 +336,6 @@ else
 
         // Nullable DateTimes not supported; broken in Safari
         public DateTime DateTimeValue { get; set; }
-
-        public Dictionary<int, string>? LookupValues { get; set; }
     }
 }
 

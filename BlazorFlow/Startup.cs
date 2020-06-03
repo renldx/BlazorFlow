@@ -27,6 +27,7 @@ namespace BlazorFlow {
 
             services.AddTransient<IFlowService, FlowService>();
             services.AddTransient<IUserFlowService, UserFlowService>();
+            services.AddTransient<ILookupService, LookupService>();
 
             services.AddDbContext<FlowContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL")),
