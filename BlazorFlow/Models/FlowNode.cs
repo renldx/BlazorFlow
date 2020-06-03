@@ -23,6 +23,7 @@ namespace BlazorFlow.Models
         public FlowQuestion FlowQuestion { get; set; }
         public List<FlowAnswer> FlowAnswers { get; set; }
 
+        // To implement interface
         public override bool Equals(object? obj)
         {
             if (obj is {} existing && existing is FlowNode)

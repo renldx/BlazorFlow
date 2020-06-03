@@ -2,7 +2,6 @@
 
 @using System
 @using System.Collections.Generic
-@using System.ComponentModel.DataAnnotations
 @using BlazorFlow.Enums
 @using BlazorFlow.Extensions
 @using BlazorFlow.Helpers
@@ -22,7 +21,7 @@
 }
 else
 {
-    <EditForm Model="@PageModel" OnValidSubmit="Next">
+    <EditForm Model="@PageModel">
         <DataAnnotationsValidator />
         <ValidationSummary />
 
@@ -31,7 +30,7 @@ else
         </div>
 
         <div id="answer">
-            @if (CurrentAnswers is {} existingAnswers)
+            @if (CurrentAnswers is {} existingAnswers && existingAnswers.Any())
             {
                 @if (CurrentNodeType == FlowValueType.Radio)
                 {
@@ -97,7 +96,7 @@ else
 
         <div id="navigation" class="row">
             <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
-            <button class="btn btn-primary" type="submit">Next</button>
+            <button class="btn btn-primary" @onclick="Next" disabled="@isLastNode">Next</button>
         </div>
     </EditForm>
 }
@@ -215,23 +214,27 @@ else
         // Check if user has answered this question before
         if (CurrentUserFlowNode is {} existingUserNode)
         {
-            // Compare existing answer to selected answer and update if needed
-            if (existingUserNode.Value.UserFlowAnswers != userFlowAnswers)
+            // Check if this node even has answers
+            if (CurrentAnswers is {} existingAnswers && existingAnswers.Any())
             {
-                existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
-                existingUserNode.Value.IsStale = false;
+                // Check if existing answers changed and update if needed
+                if (existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count() == 0)
+                {
+                    existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
+                    existingUserNode.Value.IsStale = false;
+
+                    // Set all subsequent userFlowNodes as stale
+                    var nextUserFlowAnswer = existingUserNode.Next;
+
+                    while (nextUserFlowAnswer is {} existingUserAnswer)
+                    {
+                        existingUserAnswer.Value.IsStale = true;
+                        existingUserAnswer = existingUserAnswer.Next;
+                    }
+
+                    await UserFlowService.UpdateUserFlowAnswer(existingUserNode.Value);
+                }
             }
-
-            // Set all subsequent userFlowNodes as stale
-            var nextUserFlowAnswer = existingUserNode.Next;
-
-            while (nextUserFlowAnswer is {} existingUserAnswer)
-            {
-                existingUserAnswer.Value.IsStale = true;
-                existingUserAnswer = existingUserAnswer.Next;
-            }
-
-            await UserFlowService.UpdateUserFlowAnswer(existingUserNode.Value);
         }
         // User hasn't answered this question before, so create a new user node
         else
