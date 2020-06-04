@@ -208,7 +208,9 @@ else
             if (CurrentAnswers is {} existingAnswers && existingAnswers.Any())
             {
                 // Check if existing answers changed and update if needed
-                if (existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count() == 0)
+                var differentAnswers = existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count();
+
+                if (differentAnswers > 0)
                 {
                     existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
                     existingUserNode.Value.IsStale = false;
@@ -222,7 +224,7 @@ else
                         existingUserAnswer = existingUserAnswer.Next;
                     }
 
-                    await UserFlowService.UpdateUserFlowAnswer(existingUserNode.Value);
+                    await UserFlowService.UpdateUserFlowNode(existingUserNode.Value);
                 }
             }
         }
@@ -240,7 +242,7 @@ else
                 CurrentUserFlow.UserFlowNodes.AddFirst(CurrentUserFlowNode);
             }
 
-            await UserFlowService.AddUserFlowAnswer(CurrentUserFlowNode.Value);
+            await UserFlowService.AddUserFlowNode(CurrentUserFlowNode.Value);
         }
     }
 

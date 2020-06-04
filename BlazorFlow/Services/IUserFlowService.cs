@@ -8,7 +8,7 @@ namespace BlazorFlow.Services
     {
         Task<Models.UserFlow> GetUserFlow(int userFlowId);
         Task<Models.UserFlow> CreateUserFlow(int userId, int flowId);
-        Task AddUserFlowAnswer(Models.UserFlowNode userNode);
-        Task UpdateUserFlowAnswer(Models.UserFlowNode userNode);
+        Task<Models.UserFlowNode> AddUserFlowNode(Models.UserFlowNode userNode);
+        Task<Models.UserFlowNode> UpdateUserFlowNode(Models.UserFlowNode userNode);
     }
 }

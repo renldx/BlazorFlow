@@ -42,21 +42,26 @@ namespace BlazorFlow.Services
             var userFlowData = new UserFlow() { UserFlowId = 1, UserId = userId, FlowId = flowId };
             context.UserFlows.Add(userFlowData);
             await context.SaveChangesAsync();
-            return mapper.Map<Models.UserFlow>(userFlowData);
+            var userFlowModel = mapper.Map<Models.UserFlow>(userFlowData);
+            userFlowModel.UserFlowId = userFlowData.UserFlowId;
+            return userFlowModel;
         }
 
-        public async Task AddUserFlowAnswer(Models.UserFlowNode userNode)
+        public async Task<Models.UserFlowNode> AddUserFlowNode(Models.UserFlowNode userNode)
         {
             var userNodeData = mapper.Map<UserFlowNode>(userNode);
             context.UserFlowNodes.Add(userNodeData);
             await context.SaveChangesAsync();
+            userNode.UserFlowNodeId = userNodeData.UserFlowNodeId;
+            return userNode;
         }
 
-        public async Task UpdateUserFlowAnswer(Models.UserFlowNode userNode)
+        public async Task<Models.UserFlowNode> UpdateUserFlowNode(Models.UserFlowNode userNode)
         {
             var userNodeData = mapper.Map<UserFlowNode>(userNode);
-            context.Entry(userNodeData).State = EntityState.Modified;
+            context.Update(userNodeData);
             await context.SaveChangesAsync();
+            return userNode;
         }
     }
 }
