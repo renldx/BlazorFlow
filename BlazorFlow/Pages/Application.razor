@@ -152,7 +152,7 @@ else
             }
             else if (CurrentNodeType == FlowValueType.Checkbox)
             {
-                var userStrings = userFlowNode.UserFlowAnswers.ConvertAll(i => i.ToString());
+                var userStrings = userFlowNode.UserFlowAnswers.ConvertAll(i => i.UserFlowAnswerValue.ToString());
                 var hashSet = new HashSetComparable<string>(userStrings!);
                 PageModel.CheckboxValues = hashSet;
             }
@@ -204,8 +204,7 @@ else
         // Check if user has answered this question before
         if (CurrentUserFlowNode is {} existingUserNode)
         {
-            // Check if this node even has answers
-            if (CurrentAnswers is {} existingAnswers && existingAnswers.Any())
+            if (CurrentNodeType != FlowValueType.None)
             {
                 // Check if existing answers changed and update if needed
                 var differentAnswers = existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count();
