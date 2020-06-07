@@ -1,22 +1,14 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BlazorFlow.Data
 {
     public class FlowQuestion
     {
-        //int FlowQuestionId;
-        public string FlowQuestionCode { get; }
-        public string FlowQuestionTextEn { get; }
-        public string? FlowQuestionTextFr { get; }
+        public int FlowQuestionId { get; set; }
+        public string FlowQuestionCode { get; set; } = null!;
+        public string FlowQuestionTextEn { get; set; } = null!;
+        public string FlowQuestionTextFr { get; set; } = null!;
 
-        public FlowQuestion(string flowQuestionCode, string flowQuestionTextEn, string? flowQuestionTextFr = null)
-        {
-            FlowQuestionCode = flowQuestionCode;
-            FlowQuestionTextEn = flowQuestionTextEn;
-            FlowQuestionTextFr = flowQuestionTextFr;
-        }
+        public List<FlowNode> FlowNodes { get; set; } = null!;
     }
 }

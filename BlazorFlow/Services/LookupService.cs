@@ -1,25 +1,35 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using BlazorFlow.Data;
 using BlazorFlow.Enums;
+using AutoMapper;
 
 namespace BlazorFlow.Services
 {
-    public static class LookupService
+    public class LookupService : ILookupService
     {
-        public static Dictionary<string, string> GetLookup(FlowNodeEntity entity) => entity switch {
-            FlowNodeEntity.contact => GetContactLookup(),
+        private readonly FlowContext context;
+        private readonly IMapper mapper;
+
+        public LookupService(FlowContext context, IMapper mapper)
+        {
+            this.context = context;
+            this.mapper = mapper;
+        }
+
+        public List<Models.FlowAnswer> GetLookupValues(FlowEntity entity) => entity switch
+        {
+            FlowEntity.Contact => GetContacts(),
             _ => throw new NotImplementedException()
         };
 
-        public static Dictionary<string, string> GetContactLookup() {
-            var contacts = ContactService.GetContacts();
-            var contactsDict = new Dictionary<string, string>();
-
-            foreach (var contact in contacts) {
-                contactsDict.Add(contact.ContactId.ToString(), contact.Name);
-            }
-
-            return contactsDict;
+        private List<Models.FlowAnswer> GetContacts()
+        {
+            var contacts = context.Contacts.ToList();
+            return mapper.Map<List<Models.FlowAnswer>>(contacts);
         }
     }
 }

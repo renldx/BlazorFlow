@@ -1,21 +1,19 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using QuikGraph;
 
 namespace BlazorFlow.Data
 {
-    public class FlowLink : Edge<FlowNode>
+    public class FlowLink
     {
-        //int FlowLinkId;
-        public double FlowLinkVersion { get; }
-        public FlowCondition? FlowCondition { get; }
+        public int FlowLinkId { get; set; }
+        public double FlowLinkVersion { get; set; }
 
-        public FlowLink(double flowLinkVersion, FlowNode fromFlowNode, FlowNode toFlowNode, FlowCondition? flowCondition = null) : base(fromFlowNode, toFlowNode)
-        {
-            FlowLinkVersion = flowLinkVersion;
-            FlowCondition = flowCondition;
-        }
+        public int FlowId { get; set; }
+        public Flow Flow { get; set; } = null!;
+        public int FlowNodePreviousId { get; set; }
+        public FlowNode FlowNodePrevious { get; set; } = null!;
+        public int FlowNodeNextId { get; set; }
+        public FlowNode FlowNodeNext { get; set; } = null!;
+        
+        public List<FlowLinkCondition> FlowLinkConditions { get; set; } = null!;
     }
 }

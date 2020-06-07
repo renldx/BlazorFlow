@@ -1,22 +1,14 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BlazorFlow.Data
 {
     public class UserFlow
     {
-        //int UserFlowId;
-        public int FlowId { get; }
-        public int UserId { get; }
-        public LinkedList<UserFlowAnswer> UserFlowAnswers { get; }
+        public int UserFlowId { get; set; }
+        public int UserId { get; set; }
 
-        public UserFlow(int flowId, int userId)
-        {
-            FlowId = flowId;
-            UserId = userId;
-            UserFlowAnswers = new LinkedList<UserFlowAnswer>();
-        }
+        public int FlowId { get; set; }
+        public Flow Flow { get; set; } = null!;
+        public List<UserFlowNode> UserFlowNodes { get; set; } = null!;
     }
 }

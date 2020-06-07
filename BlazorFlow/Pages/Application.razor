@@ -1,13 +1,18 @@
 ﻿@page "/application"
 
-@using BlazorFlow.Data
+@using System
+@using System.Collections.Generic
 @using BlazorFlow.Enums
+@using BlazorFlow.Extensions
 @using BlazorFlow.Helpers
+@using BlazorFlow.Models
 @using BlazorFlow.Services
 @using BlazorFlow.Shared.Components
 
 @inject NavigationManager NavigationManager
-@inject FlowService FlowService
+@inject IFlowService FlowService
+@inject IUserFlowService UserFlowService
+@inject ILookupService LookupService
 
 <h1>Flow</h1>
 
@@ -17,201 +22,234 @@
 }
 else
 {
-<EditForm Model="@PageModel">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@PageModel">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div id="question">
-        <p>@CurrentNode.FlowQuestion.FlowQuestionTextEn</p>
-    </div>
+        <div id="question">
+            <p>@CurrentQuestion.FlowQuestionTextEn</p>
+        </div>
 
-    <div id="answer">
-        @if (CurrentNode.FlowNodeType == FlowNodeType.radio)
-        {
-            if (CurrentNode.FlowAnswers is {} flowAnswers)
+        <div id="answer">
+            @if (CurrentAnswers is {} existingAnswers && existingAnswers.Any())
             {
-                @foreach (var answer in flowAnswers)
+                @if (CurrentNodeType == FlowValueType.Radio)
                 {
-                    <label class="radio-answer">
-                        <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.StringValue" />
-                        @answer.FlowAnswerTextEn
-                    </label>
+                    @foreach (var answer in existingAnswers)
+                    {
+                        <label class="radio-answer">
+                            <InputRadio name="radio" SelectedValue="answer.FlowAnswerValue" @bind-Value="PageModel.StringValue"></InputRadio>
+                            @answer.FlowAnswerTextEn
+                        </label>
+                    }
+                }
+                else if (CurrentNodeType == FlowValueType.Select)
+                {
+                    <InputSelect @bind-Value="PageModel.StringValue">
+                        <option value="">Select...</option>
+                        @foreach (var answer in existingAnswers)
+                        {
+                            <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
+                        }
+                    </InputSelect>
+                }
+                else if (CurrentNodeType == FlowValueType.Checkbox)
+                {
+                    @foreach (var answer in existingAnswers)
+                    {
+                        <label class="checkbox-answer">
+                            <input type="checkbox" name="checkbox" checked="@CheckboxIsChecked(answer.FlowAnswerValue)" @onchange="@((e) => CheckboxChanged(answer.FlowAnswerValue, e))" />
+                            @answer.FlowAnswerTextEn
+                        </label>
+                    }
                 }
             }
-        }
-        else if (CurrentNodeType == FlowNodeType.select) {
-            if (CurrentNode.FlowAnswers is {} flowAnswers) {
-                <InputSelect @bind-Value="PageModel.StringValue">
-                    <option value="">Select...</option>
-                    @foreach (var answer in flowAnswers) {
-                        <option value="@answer.FlowAnswerValue">@answer.FlowAnswerTextEn</option>
-                    }
-                </InputSelect>
-            }
-            else if (CurrentNode.FlowNodeEntity is {} flowNodeEntity && PageModel.LookupValues is {} lookup) {
-                <InputSelect @bind-Value="PageModel.StringValue">
-                    <option value="">Select...</option>
-                    @foreach (var value in lookup) {
-                        <option value="@value.Key">@value.Value</option>
-                    }
-                </InputSelect>
-            }
-        }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.number)
-        {
-            <InputNumber @bind-Value="PageModel.NumberValue" />
-        }
-        else if (CurrentNode.FlowNodeType == FlowNodeType.checkbox)
-        {
-            if (CurrentNode.FlowAnswers is {} flowAnswers)
+            else
             {
-                @foreach (var answer in flowAnswers)
+                if (CurrentNodeType == FlowValueType.Number)
                 {
-                    <label class="checkbox-answer">
-                        <input type="checkbox" name="checkbox" checked="@CheckboxIsChecked(answer.FlowAnswerValue)" @onchange="@((e) => CheckboxChanged(answer.FlowAnswerValue, e))" />
-                        @answer.FlowAnswerTextEn
-                    </label>
+                    <InputNumber @bind-Value="PageModel.NumberValue"></InputNumber>
+                }
+                else if (CurrentNodeType == FlowValueType.DateTime)
+                {
+                    <InputDate @bind-Value="PageModel.DateTimeValue"></InputDate>
+                }
+                else if (CurrentNodeType == FlowValueType.Text)
+                {
+                    <InputText @bind-Value="PageModel.StringValue"></InputText>
+                }
+                else if (CurrentNodeType == FlowValueType.TextArea)
+                {
+                    <InputTextArea @bind-Value="PageModel.StringValue"></InputTextArea>
                 }
             }
-        }
-        else if (CurrentNodeType == FlowNodeType.datetime) {
-            <InputDate @bind-Value="PageModel.DateTimeValue" />
-        }
-        else if (CurrentNodeType == FlowNodeType.text) {
-            <InputText @bind-Value="PageModel.StringValue" />
-        }
-        else if (CurrentNodeType == FlowNodeType.textarea) {
-            <InputTextArea @bind-Value="PageModel.StringValue" />
-        }
-    </div>
-</EditForm>
+        </div>
 
-<div id="navigation" class="row">
-    <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
-
-    @if (CurrentLinks?.Length == 0)
-    {
-        <button class="btn btn-primary" @onclick="Submit">Submit</button>
-    }
-    else
-    {
-        <button class="btn btn-primary" @onclick="Next">Next</button>
-    }
-</div>
+        <div id="navigation" class="row">
+            <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
+            <button class="btn btn-primary" @onclick="Next" disabled="@isLastNode">Next</button>
+        </div>
+    </EditForm>
 }
 
-@code {
+@code
+{
     Flow CurrentFlow = null!;
-    FlowNode? CurrentNode;
-    FlowNodeType? CurrentNodeType => CurrentNode?.FlowNodeType;
-    FlowNodeEntity? CurrentNodeEntity => CurrentNode?.FlowNodeEntity;
-    FlowLink[]? CurrentLinks => CurrentFlow.OutEdges(CurrentNode!).ToArray();
-
+    FlowNode CurrentNode = null!;
+    FlowValueType CurrentNodeType => CurrentNode.FlowNodeType;
+    FlowEntity CurrentNodeEntity => CurrentNode.FlowNodeEntity;
+    FlowLink[]? CurrentLinks => CurrentNode is null ? new FlowLink[0] : CurrentFlow.OutEdges(CurrentNode).ToArray();
+    FlowQuestion CurrentQuestion = null!;
+    List<FlowAnswer>? CurrentAnswers;
     UserFlow CurrentUserFlow = null!;
-    LinkedListNode<UserFlowAnswer>? CurrentUserFlowAnswer;
+    LinkedListNode<UserFlowNode>? CurrentUserFlowNode;
 
     bool isFirstNode => CurrentFlow.Edges.All(l => l.Target != CurrentNode);
-    bool isLastNode => CurrentFlow.IsOutEdgesEmpty(CurrentNode!);
+    bool isLastNode => CurrentFlow.IsOutEdgesEmpty(CurrentNode);
 
     Model PageModel = new Model();
 
     protected override async Task OnInitializedAsync()
     {
-        var flowVersion = 1;
-        CurrentFlow = await FlowService.GetFlow(flowVersion);
-        CurrentNode = CurrentFlow.Vertices.First(x => x.FlowQuestion.FlowQuestionCode == "START"); // To use algorithm instead of hard coding
-        CurrentUserFlow = new UserFlow(flowVersion, 1);
-        SetModel();
+        var flowId = 1;
+        var userId = 1;
+
+        CurrentFlow = await FlowService.GetFlow(1);
+        CurrentUserFlow = await UserFlowService.GetUserFlow(flowId);
+        CurrentUserFlow ??= await UserFlowService.CreateUserFlow(userId, CurrentFlow.FlowId);
+        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == 1); // To improve
+        
+        UpdateView();
+    }
+
+    // To be improved
+    void UpdateView()
+    {
+        CurrentQuestion = FlowService.GetFlowNodeQuestion(CurrentNode.FlowQuestionId);
+
+        if (CurrentNodeEntity is FlowEntity.None)
+        {
+            CurrentAnswers = FlowService.GetFlowNodeAnswers(CurrentNode.FlowNodeId);
+        }
+        else
+        {
+            CurrentAnswers = LookupService.GetLookupValues(CurrentNodeEntity);
+        }
+
+        CurrentUserFlowNode = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
+
+        if (CurrentUserFlowNode is { Value: var userFlowNode } existing)
+        {
+            if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
+            {
+                var userString = userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue.ToString() ?? string.Empty;
+                PageModel.StringValue = userString;
+            }
+            else if (CurrentNodeType == FlowValueType.Number)
+            {
+                var userDecimal = (decimal)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
+                PageModel.NumberValue = userDecimal;
+            }
+            else if (CurrentNodeType == FlowValueType.Checkbox)
+            {
+                var userStrings = userFlowNode.UserFlowAnswers.ConvertAll(i => i.UserFlowAnswerValue.ToString());
+                var hashSet = new HashSetComparable<string>(userStrings!);
+                PageModel.CheckboxValues = hashSet;
+            }
+            else if (CurrentNodeType == FlowValueType.DateTime)
+            {
+                var userDateTime  = (DateTime)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
+                PageModel.DateTimeValue = userDateTime;
+            }
+            else if (CurrentNodeType == FlowValueType.Text || CurrentNodeType == FlowValueType.TextArea)
+            {
+                var userText = (string)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
+                PageModel.StringValue = userText;
+            }
+        }
+        else
+        {
+            PageModel.StringValue = string.Empty;
+            PageModel.NumberValue = default(decimal);
+            PageModel.CheckboxValues?.Clear();
+            PageModel.DateTimeValue = default(DateTime);
+        }
+    }
+
+    void Previous()
+    {
+        // User has answered this question before, so there should be an answer that targets this node
+        var prevUserFlowNodeId = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
+        // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
+        prevUserFlowNodeId ??= CurrentUserFlow.UserFlowNodes.Nodes().Where(ufa => ufa.Value.IsStale == false).Last().Value.FlowNodeId;
+
+        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowNodeId);
+        UpdateView();
     }
 
     void Next()
     {
         SaveAnswer();
         var appointedLink = EvaluateLinks();
+        // if no links, we're at the end
+        // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
-        SetModel();
+        UpdateView();
     }
 
-    void Previous()
+    async void SaveAnswer()
     {
-        // User has answered this question before, so there should be an answer that targets this node
-        var prevUserFlowAnswerId = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(ufa => ufa.Next?.Value.FlowNodeId == CurrentNode?.FlowNodeId)?.Value.FlowNodeId;
-        // User hasn't answered this question yet, therefore the previous answer target is still null, so use the last answer that isn't stale
-        prevUserFlowAnswerId ??= CurrentUserFlow.UserFlowAnswers.Nodes().Where(ufa => ufa.Value.isStale == false).Last().Value.FlowNodeId;
+        var userFlowAnswers = AnswerValueHelper.GetUserFlowAnswerModels(CurrentNodeType, PageModel);
 
-        CurrentNode = CurrentFlow.Vertices.First(n => n.FlowNodeId == prevUserFlowAnswerId);
-        SetModel();
-    }
-
-    void Submit()
-    {
-        NavigationManager.NavigateTo("/");
-    }
-
-    bool CheckboxIsChecked(string flowAnswerValue) {
-        return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
-    }
-
-    // To be improved
-    void CheckboxChanged(string checkboxValue, ChangeEventArgs e) {
-        PageModel.CheckboxValues ??= new HashSet<string>();
-        var isChecked = (bool)e.Value;
-
-        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue)) {
-            PageModel.CheckboxValues.Add(checkboxValue);
-        }
-        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue)) {
-            PageModel.CheckboxValues.Remove(checkboxValue);
-        }
-    }
-
-    void SaveAnswer()
-    {
-        // To be improved
-        string[] newAnswerValue() => CurrentNodeType switch
+        // Check if user has answered this question before
+        if (CurrentUserFlowNode is {} existingUserNode)
         {
-            FlowNodeType.radio => new string[] { PageModel.StringValue! },
-            FlowNodeType.select => new string[] { PageModel.StringValue! },
-            FlowNodeType.number => new string[] { PageModel.NumberValue.ToString()! },
-            FlowNodeType.checkbox => PageModel.CheckboxValues.ToArray(),
-            FlowNodeType.datetime => new string[] { PageModel.DateTimeValue.ToString()! },
-            FlowNodeType.text => new string[] { PageModel.StringValue! },
-            FlowNodeType.textarea => new string[] { PageModel.StringValue! },
-            _ => new string[0]
-        };
+            if (CurrentNodeType != FlowValueType.None)
+            {
+                // Check if existing answers changed and update if needed
+                var differentAnswers = existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count();
 
-        if (CurrentUserFlowAnswer is {} existing)
-        {
-            if (existing.Value.UserFlowAnswerValue != newAnswerValue()) {
-                CurrentUserFlowAnswer.Value.UserFlowAnswerValue = newAnswerValue();
-                CurrentUserFlowAnswer.Value.isStale = false;
-            }
+                if (differentAnswers > 0)
+                {
+                    existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
+                    existingUserNode.Value.IsStale = false;
 
-            // Set all subsequent userFlowAnswers as stale
-            var nextUserFlowAnswer = CurrentUserFlowAnswer.Next;
+                    // Set all subsequent userFlowNodes as stale
+                    var nextUserFlowAnswer = existingUserNode.Next;
 
-            while (nextUserFlowAnswer is {} alsoExisting) {
-                nextUserFlowAnswer.Value.isStale = true;
-                nextUserFlowAnswer = nextUserFlowAnswer.Next;
+                    while (nextUserFlowAnswer is {} existingUserAnswer)
+                    {
+                        existingUserAnswer.Value.IsStale = true;
+                        existingUserAnswer = existingUserAnswer.Next;
+                    }
+
+                    await UserFlowService.UpdateUserFlowNode(existingUserNode.Value);
+                }
             }
         }
+        // User hasn't answered this question before, so create a new user node
         else
         {
-            CurrentUserFlowAnswer = new LinkedListNode<UserFlowAnswer>(new UserFlowAnswer(CurrentNode!.FlowNodeId, newAnswerValue()));
+            CurrentUserFlowNode = new LinkedListNode<UserFlowNode>(new UserFlowNode(CurrentUserFlow.UserFlowId, CurrentNode.FlowNodeId, userFlowAnswers));
 
-            if (CurrentUserFlow.UserFlowAnswers.Any()) {
-                var lastUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Last!;
-                CurrentUserFlow.UserFlowAnswers.AddAfter(lastUserFlowAnswer, CurrentUserFlowAnswer);
+            if (CurrentUserFlow.UserFlowNodes.Last is {} existingLastNode)
+            {
+                CurrentUserFlow.UserFlowNodes.AddAfter(existingLastNode, CurrentUserFlowNode);
             }
-            else {
-                CurrentUserFlow.UserFlowAnswers.AddFirst(CurrentUserFlowAnswer);
+            else
+            {
+                CurrentUserFlow.UserFlowNodes.AddFirst(CurrentUserFlowNode);
             }
+
+            await UserFlowService.AddUserFlowNode(CurrentUserFlowNode.Value);
         }
     }
 
+    // Need to be able to iterate over collections for checkboxes
     FlowLink EvaluateLinks()
     {
-        if (CurrentLinks?.Length == 0) {
+        if (CurrentLinks?.Length == 0)
+        {
             throw new NotImplementedException();
         }
         else if (CurrentLinks?.Length == 1)
@@ -223,81 +261,68 @@ else
             var availableLinks = new List<FlowLink>();
 
             // To be improved; no condition means automatic pass
-            foreach (var link in CurrentLinks!) {
-                if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                    if (link.FlowCondition?.Evaluate(PageModel.StringValue) ?? true) {
+            foreach (var link in CurrentLinks!)
+            {
+                if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
+                {
+                    if (link.IsAvailable(PageModel.StringValue!))
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.number) {
-                    if (link.FlowCondition?.Evaluate(PageModel.NumberValue) ?? true) {
+                else if (CurrentNodeType == FlowValueType.Number)
+                {
+                    if (link.IsAvailable(PageModel.NumberValue!))
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.checkbox) {
-                    if (link.FlowCondition?.Evaluate(PageModel.CheckboxValues) ?? true) {
+                else if (CurrentNodeType == FlowValueType.Checkbox)
+                {
+                    if (link.IsAvailable(PageModel.CheckboxValues!))
+                    {
                         availableLinks.Add(link);
                     }
                 }
-                else if (CurrentNodeType == FlowNodeType.datetime) {
-                    if (link.FlowCondition?.Evaluate(PageModel.DateTimeValue) ?? true) {
+                else if (CurrentNodeType == FlowValueType.DateTime)
+                {
+                    if (link.IsAvailable(PageModel.DateTimeValue))
+                    {
                         availableLinks.Add(link);
                     }
                 }
             }
 
-            if (availableLinks.Count > 1) {
+            if (availableLinks.Count > 1)
+            {
                 // Go to link with condition since no condition is catch-all
-                return availableLinks.First(l => l.FlowCondition != null);
+                return availableLinks.First(l => l.HasCondition());
             }
-            else {
+            else
+            {
                 return availableLinks.First();
             }
         }
     }
 
+    bool CheckboxIsChecked(string flowAnswerValue)
+    {
+        return PageModel.CheckboxValues?.Contains(flowAnswerValue) ?? false;
+    }
+
     // To be improved
-    void SetModel() {
-        if (CurrentNodeEntity is {} entity && entity != FlowNodeEntity.none) {
-            PageModel.LookupValues = LookupService.GetLookup(entity);
+    void CheckboxChanged(string checkboxValue, ChangeEventArgs e)
+    {
+        PageModel.CheckboxValues ??= new HashSetComparable<string>();
+        var isChecked = (bool)e.Value;
+
+        if (isChecked && !PageModel.CheckboxValues.Contains(checkboxValue))
+        {
+            PageModel.CheckboxValues.Add(checkboxValue);
         }
-        else {
-            PageModel.LookupValues?.Clear();
-        }
-
-        CurrentUserFlowAnswer = CurrentUserFlow.UserFlowAnswers.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode!.FlowNodeId);
-
-        if (CurrentUserFlowAnswer is { Value: var userFlowAnswer } existing) {
-            if (CurrentNodeType == FlowNodeType.radio || CurrentNodeType == FlowNodeType.select) {
-                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
-            }
-            else if (CurrentNodeType == FlowNodeType.number) {
-                var parsed = Decimal.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
-
-                if (parsed) {
-                    PageModel.NumberValue = result;
-                }
-            }
-            else if (CurrentNodeType == FlowNodeType.checkbox) {
-                var hashSet = new HashSet<string>(userFlowAnswer.UserFlowAnswerValue!);
-                PageModel.CheckboxValues = hashSet;
-            }
-            else if (CurrentNodeType == FlowNodeType.datetime) {
-                var parsed = DateTime.TryParse(userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault(), out var result);
-
-                if (parsed) {
-                    PageModel.DateTimeValue = result;
-                }
-            }
-            else if (CurrentNodeType == FlowNodeType.text || CurrentNodeType == FlowNodeType.textarea) {
-                PageModel.StringValue = userFlowAnswer?.UserFlowAnswerValue?.FirstOrDefault() ?? string.Empty;
-            }
-        }
-        else {
-            PageModel.StringValue = string.Empty;
-            PageModel.NumberValue = default(decimal);
-            PageModel.CheckboxValues?.Clear();
-            PageModel.DateTimeValue = default(DateTime);
+        else if (!isChecked && PageModel.CheckboxValues.Contains(checkboxValue))
+        {
+            PageModel.CheckboxValues.Remove(checkboxValue);
         }
     }
 
@@ -312,8 +337,6 @@ else
 
         // Nullable DateTimes not supported; broken in Safari
         public DateTime DateTimeValue { get; set; }
-
-        public Dictionary<string, string>? LookupValues { get; set; }
     }
 }
 
