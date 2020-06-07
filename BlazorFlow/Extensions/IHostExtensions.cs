@@ -6,7 +6,7 @@ using BlazorFlow.Data;
 
 namespace BlazorFlow.Extensions
 {
-    public static class IWebHostExtensions
+    public static class IHostExtensions
     {
         public static IHost MigrateDatabase(this IHost host)
         {
