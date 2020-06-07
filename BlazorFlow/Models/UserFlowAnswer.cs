@@ -25,5 +25,8 @@ namespace BlazorFlow.Models
             
             return false;
         }
+
+        public override bool Equals(object? obj) => Equals(obj as UserFlowAnswer);
+        public override int GetHashCode() => UserFlowAnswerId;
     }
 }

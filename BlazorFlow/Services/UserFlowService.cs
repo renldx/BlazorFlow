@@ -58,8 +58,8 @@ namespace BlazorFlow.Services
 
         public async Task<Models.UserFlowNode> UpdateUserFlowNode(Models.UserFlowNode userNode)
         {
-            var userNodeData = mapper.Map<UserFlowNode>(userNode);
-            context.Update(userNodeData);
+            var userNodeData = await context.UserFlowNodes.FindAsync(userNode.UserFlowNodeId);
+            userNodeData.UserFlowAnswers = mapper.Map<UserFlowNode>(userNode).UserFlowAnswers;
             await context.SaveChangesAsync();
             return userNode;
         }
