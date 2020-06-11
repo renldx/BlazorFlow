@@ -17,13 +17,13 @@ namespace BlazorFlow.Models
         public double FlowLinkVersion { get; set; }
         List<FlowCondition> FlowConditions { get; set; }
 
-        public bool IsAvailable(IComparable userValue)
+        public bool IsAvailable(IComparable? userValue)
         {
-            if (FlowConditions.Any())
+            if (FlowConditions.Any() && userValue is {} existing)
             {
                 foreach (var condition in FlowConditions)
                 {
-                    if (condition.Evaluate(userValue) == false)
+                    if (condition.Evaluate(existing) == false)
                     {
                         return false;
                     }
@@ -31,21 +31,25 @@ namespace BlazorFlow.Models
 
                 return true;
             }
+            else if (FlowConditions.Any() && userValue is null)
+            {
+                return false;
+            }
             else
             {
                 return true;
             }
         }
 
-        public bool IsAvailable(HashSet<string> userValues)
+        public bool IsAvailable(HashSet<string>? userValues)
         {
-            if (FlowConditions.Any())
+            if (FlowConditions.Any() && userValues is {} existing)
             {
                 var matchedFlowConditions = new List<FlowCondition>();
 
                 foreach (var condition in FlowConditions)
                 {
-                    foreach (var userValue in userValues)
+                    foreach (var userValue in existing)
                     {
                         if (condition.Evaluate(userValue))
                         {
@@ -55,6 +59,10 @@ namespace BlazorFlow.Models
                 }
 
                 return matchedFlowConditions.Count() >= FlowConditions.Count();
+            }
+            else if (FlowConditions.Any() && userValues is null)
+            {
+                return false;
             }
             else
             {

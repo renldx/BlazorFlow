@@ -8,29 +8,37 @@ namespace BlazorFlow.Helpers
 {
     public static class AnswerValueHelper
     {
-        // Should change to defaults of type?
         public static List<Models.UserFlowAnswer> GetUserFlowAnswerModels(FlowValueType valueType, Pages.Application.Model model) => valueType switch
         {
             FlowValueType.None =>
                 new List<Models.UserFlowAnswer>(),
             FlowValueType.Radio =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
+                string.IsNullOrEmpty(model.StringValue) ?
+                    new List<Models.UserFlowAnswer>() :
+                    new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue, valueType) },
             FlowValueType.Select =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
+                string.IsNullOrEmpty(model.StringValue) ?
+                    new List<Models.UserFlowAnswer>() :
+                    new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue, valueType) },
             FlowValueType.Number =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.NumberValue ?? 0, valueType) },
+                model.NumberValue.HasValue ?
+                    new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.NumberValue, valueType) } :
+                    new List<Models.UserFlowAnswer>(),
             FlowValueType.Checkbox =>
                 HashSetToAnswers(model.CheckboxValues ?? new HashSet<string>(), valueType),
             FlowValueType.DateTime =>
                 new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.DateTimeValue, valueType) },
             FlowValueType.Text =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
+                string.IsNullOrEmpty(model.StringValue) ?
+                    new List<Models.UserFlowAnswer>() :
+                    new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
             FlowValueType.TextArea =>
-                new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
-            _ => throw new Exception()
+                string.IsNullOrEmpty(model.StringValue) ?
+                    new List<Models.UserFlowAnswer>() :
+                    new List<Models.UserFlowAnswer> { new Models.UserFlowAnswer(model.StringValue ?? string.Empty, valueType) },
+            _ => throw new Exception("Unsupported node type.")
         };
 
-        // Don't save answers when values are empty / null
         public static List<Models.UserFlowAnswer> HashSetToAnswers(HashSet<string> set, FlowValueType valueType)
         {
             var answerList = new List<Models.UserFlowAnswer>();

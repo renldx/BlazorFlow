@@ -138,41 +138,49 @@ else
 
         CurrentUserFlowNode = CurrentUserFlow.UserFlowNodes.Nodes().FirstOrDefault(x => x.Value.FlowNodeId == CurrentNode.FlowNodeId);
 
-        if (CurrentUserFlowNode is { Value: var userFlowNode } existing)
+        if (CurrentUserFlowNode is { Value: var userFlowNode } existing && userFlowNode.UserFlowAnswers.Any())
         {
             if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
             {
-                var userString = userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue.ToString() ?? string.Empty;
-                PageModel.StringValue = userString;
+                var userAnswer = userFlowNode.UserFlowAnswers.FirstOrDefault().UserFlowAnswerValue.ToString();
+                PageModel.StringValue = userAnswer;
             }
             else if (CurrentNodeType == FlowValueType.Number)
             {
-                var userDecimal = (decimal)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
-                PageModel.NumberValue = userDecimal;
+                var userAnswer = userFlowNode.UserFlowAnswers.FirstOrDefault().UserFlowAnswerValue.ToString();
+                if (Decimal.TryParse(userAnswer, out decimal parsedAnswer))
+                {
+                    PageModel.NumberValue = parsedAnswer;
+                }
             }
             else if (CurrentNodeType == FlowValueType.Checkbox)
             {
-                var userStrings = userFlowNode.UserFlowAnswers.ConvertAll(i => i.UserFlowAnswerValue.ToString());
-                var hashSet = new HashSetComparable<string>(userStrings!);
-                PageModel.CheckboxValues = hashSet;
+                var userAnswers = userFlowNode.UserFlowAnswers.ConvertAll(a => a.UserFlowAnswerValue.ToString());
+                if (userAnswers.Any())
+                {
+                    PageModel.CheckboxValues = new HashSet<string>(userAnswers!);
+                }
             }
             else if (CurrentNodeType == FlowValueType.DateTime)
             {
-                var userDateTime  = (DateTime)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
-                PageModel.DateTimeValue = userDateTime;
+                var userAnswer  = userFlowNode.UserFlowAnswers.FirstOrDefault().UserFlowAnswerValue.ToString();
+                if (DateTime.TryParse(userAnswer, out DateTime parsedAnswer))
+                {
+                    PageModel.DateTimeValue = parsedAnswer;
+                }
             }
             else if (CurrentNodeType == FlowValueType.Text || CurrentNodeType == FlowValueType.TextArea)
             {
-                var userText = (string)userFlowNode?.UserFlowAnswers?.FirstOrDefault().UserFlowAnswerValue!;
-                PageModel.StringValue = userText;
+                var userAnswer = userFlowNode.UserFlowAnswers.FirstOrDefault().UserFlowAnswerValue.ToString();
+                PageModel.StringValue = userAnswer;
             }
         }
         else
         {
-            PageModel.StringValue = string.Empty;
+            PageModel.StringValue = default(string);
             PageModel.NumberValue = default(decimal);
             PageModel.CheckboxValues?.Clear();
-            PageModel.DateTimeValue = default(DateTime);
+            PageModel.DateTimeValue = DateTime.Now;
         }
     }
 
@@ -206,15 +214,16 @@ else
         {
             if (CurrentNodeType != FlowValueType.None)
             {
-                // Check if existing answers changed and update if needed
-                var differentAnswers = existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Count();
+                // Check if existing answers changed and update if needed; to be improved
+                var differentAnswers = existingUserNode.Value.UserFlowAnswers.Except(userFlowAnswers).Any() ||
+                    existingUserNode.Value.UserFlowAnswers.Count() != userFlowAnswers.Count();
 
-                if (differentAnswers > 0)
+                if (differentAnswers)
                 {
                     existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
                     existingUserNode.Value.IsStale = false;
 
-                    // Set all subsequent userFlowNodes as stale
+                    // Set all subsequent userFlowNodes as stale; broken; services not called
                     var nextUserFlowAnswer = existingUserNode.Next;
 
                     while (nextUserFlowAnswer is {} existingUserAnswer)
@@ -265,21 +274,21 @@ else
             {
                 if (CurrentNodeType == FlowValueType.Radio || CurrentNodeType == FlowValueType.Select)
                 {
-                    if (link.IsAvailable(PageModel.StringValue!))
+                    if (link.IsAvailable(PageModel.StringValue))
                     {
                         availableLinks.Add(link);
                     }
                 }
                 else if (CurrentNodeType == FlowValueType.Number)
                 {
-                    if (link.IsAvailable(PageModel.NumberValue!))
+                    if (link.IsAvailable(PageModel.NumberValue))
                     {
                         availableLinks.Add(link);
                     }
                 }
                 else if (CurrentNodeType == FlowValueType.Checkbox)
                 {
-                    if (link.IsAvailable(PageModel.CheckboxValues!))
+                    if (link.IsAvailable(PageModel.CheckboxValues))
                     {
                         availableLinks.Add(link);
                     }
@@ -335,7 +344,7 @@ else
 
         public HashSet<string>? CheckboxValues { get; set; }
 
-        // Nullable DateTimes not supported; broken in Safari
+        // Nullable DateTimes not supported; broken in Safari; has built-in validation in FF?
         public DateTime DateTimeValue { get; set; }
     }
 }
