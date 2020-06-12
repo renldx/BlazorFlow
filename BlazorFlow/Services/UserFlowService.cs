@@ -60,6 +60,7 @@ namespace BlazorFlow.Services
         {
             var userNodeData = await context.UserFlowNodes.FindAsync(userNode.UserFlowNodeId);
             userNodeData.UserFlowAnswers = mapper.Map<UserFlowNode>(userNode).UserFlowAnswers;
+            userNodeData.IsStale = userNode.IsStale;
             await context.SaveChangesAsync();
             return userNode;
         }

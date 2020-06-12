@@ -222,17 +222,15 @@ else
                 {
                     existingUserNode.Value.UserFlowAnswers = userFlowAnswers;
                     existingUserNode.Value.IsStale = false;
-
-                    // Set all subsequent userFlowNodes as stale; broken; services not called
-                    var nextUserFlowAnswer = existingUserNode.Next;
-
-                    while (nextUserFlowAnswer is {} existingUserAnswer)
-                    {
-                        existingUserAnswer.Value.IsStale = true;
-                        existingUserAnswer = existingUserAnswer.Next;
-                    }
-
                     await UserFlowService.UpdateUserFlowNode(existingUserNode.Value);
+
+                    // Set all subsequent userFlowNodes as stale
+                    while (existingUserNode.Next is {} nextExistingUserNode)
+                    {
+                        nextExistingUserNode.Value.IsStale = true;
+                        await UserFlowService.UpdateUserFlowNode(nextExistingUserNode.Value);
+                        existingUserNode = nextExistingUserNode;
+                    }
                 }
             }
         }
