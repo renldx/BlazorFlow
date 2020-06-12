@@ -5,7 +5,7 @@ A graph-based dynamic branching form + admin panel fully built in Blazor and .NE
 
 - [x] Initial prototype
 - [x] Persistent data
+- [ ] Admin panel
 - [ ] Input validation
 - [ ] Multiple questions
-- [ ] Admin panel
 - [ ] Custom/more node types
