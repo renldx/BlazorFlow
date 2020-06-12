@@ -1,5 +1,5 @@
 ﻿# BlazorFlow
-A graph-based branching form + admin panel fully built in Blazor and .NET Core.
+A graph-based dynamic branching form + admin panel fully built in Blazor and .NET Core.
 
 ## To-Do
 
