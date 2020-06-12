@@ -41,8 +41,10 @@ namespace BlazorFlow.Models
             }
         }
 
+        // Currently selecting all checkboxes will work unless specifically adding a condition to keep "bad" unselected
         public bool IsAvailable(HashSet<string>? userValues)
         {
+            // Theres a condition and user answer
             if (FlowConditions.Any() && userValues is {} existing)
             {
                 var matchedFlowConditions = new List<FlowCondition>();
@@ -60,10 +62,12 @@ namespace BlazorFlow.Models
 
                 return matchedFlowConditions.Count() >= FlowConditions.Count();
             }
+            // Theres a condition but no user answer
             else if (FlowConditions.Any() && userValues is null)
             {
                 return false;
             }
+            // Theres no condition
             else
             {
                 return true;

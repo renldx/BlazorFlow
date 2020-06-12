@@ -2,6 +2,7 @@
 
 @using System
 @using System.Collections.Generic
+@using System.ComponentModel.DataAnnotations
 @using BlazorFlow.Enums
 @using BlazorFlow.Extensions
 @using BlazorFlow.Helpers
@@ -23,9 +24,6 @@
 else
 {
     <EditForm Model="@PageModel">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
         <div id="question">
             <p>@CurrentQuestion.FlowQuestionTextEn</p>
         </div>
@@ -87,7 +85,14 @@ else
 
         <div id="navigation" class="row">
             <button class="btn btn-primary" @onclick="Previous" disabled="@isFirstNode">Previous</button>
-            <button class="btn btn-primary" @onclick="Next" disabled="@isLastNode">Next</button>
+            @if (isLastNode)
+            {
+                <button class="btn btn-primary" @onclick="Submit">Submit</button>
+            }
+            else
+            {
+                <button class="btn btn-primary" @onclick="Next">Next</button>
+            }
         </div>
     </EditForm>
 }
@@ -199,10 +204,14 @@ else
     {
         SaveAnswer();
         var appointedLink = EvaluateLinks();
-        // if no links, we're at the end
-        // NavigationManager.NavigateTo("/");
         CurrentNode = appointedLink.Target;
         UpdateView();
+    }
+
+    void Submit()
+    {
+        SaveAnswer();
+        NavigationManager.NavigateTo("/");
     }
 
     async void SaveAnswer()
